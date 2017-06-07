@@ -24,3 +24,4 @@ social:
 gems:
   - jekyll-paginate
   - jekyll-gist
+  - github-pages
