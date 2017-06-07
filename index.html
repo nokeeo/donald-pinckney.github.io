@@ -14,17 +14,21 @@ title: Home
 
     <span class="post-date">{{ post.date | date_to_string }}</span>
 
-    {% assign BREAK_SIZE = 50 %}
-
-    {% assign con = post.content | strip_html | lstrip %}
-    {% assign pars = con | newline_to_br | split: "<br />" %}
-    {% assign firstP = pars.first %}
-    {% assign shortFirst = firstP | truncatewords: BREAK_SIZE %}
-
-    {% if shortFirst != firstP %}
-      {{ con | markdownify | truncatewords: BREAK_SIZE }}
+    {% if post.excerptShowsAll %}
+      {{ post.content }}
     {% else %}
-      {{ firstP }}
+      {% assign BREAK_SIZE = 50 %}
+
+      {% assign con = post.content | strip_html | lstrip %}
+      {% assign pars = con | newline_to_br | split: "<br />" %}
+      {% assign firstP = pars.first %}
+      {% assign shortFirst = firstP | truncatewords: BREAK_SIZE %}
+
+      {% if shortFirst != firstP %}
+        {{ con | markdownify | truncatewords: BREAK_SIZE }}
+      {% else %}
+        {{ firstP }}
+      {% endif %}
     {% endif %}
 
   </div>
