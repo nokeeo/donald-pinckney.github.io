@@ -55,7 +55,10 @@ html {
 
 .sidebar {
   text-align: center;
-  padding: 2rem 1rem;
+  padding-left: 1rem;
+  padding-right: 1em;
+  padding-top: 1em;
+  padding-bottom: 0.001em;
   color: rgba(255,255,255,.5);
   background-color: #202020;
 }
@@ -65,8 +68,12 @@ html {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 18rem;
+    width: 14rem;
     text-align: left;
+    overflow-y: auto;
+    max-height: 100%;
+    padding-bottom: 0px;
+    padding-top: 1rem;
   }
 }
 
@@ -80,12 +87,45 @@ html {
   color: #fff;
   margin-top: 0;
   font-family: "Abril Fatface", Helvetica, Arial, sans-serif;
-  /*font-weight: bold;*/
-  font-size: 3.25rem;
+  font-weight: lighter;
+  font-size: 2.25rem;
 }
 
 .sidebar-about p {
   font-family: "CMU Classical Serif", Helvetica, Arial, sans-serif;
+  font-size: 1.0rem;
+  display: none;
+}
+
+
+.sidebar hr {
+  position: relative;
+  margin: 0.75rem 0;
+  border: 0;
+  border-top: 1px solid #eee;
+  border-bottom: 0px solid #fff;
+}
+
+@media (min-width: 48em) {
+  .sidebar hr {
+    margin: 1.5rem 0;
+  }
+}
+
+.sidebar-footnote {
+  display: none;
+  font-size: 0.6rem;
+}
+@media (min-width: 48em) {
+  .sidebar-footnote {
+    display: block;
+  }
+}
+
+@media (min-width: 48em) {
+  .sidebar-about p {
+    display: block;
+  }
 }
 
 /* Sidebar nav */
@@ -93,9 +133,45 @@ html {
   margin-bottom: 1rem;
 }
 .sidebar-nav-item {
-  display: block;
-  line-height: 1.75;
+  display: inline;
 }
+
+@media (min-width: 48em) {
+  .sidebar-nav-item {
+    display: block;
+    line-height: 1.75;
+  }
+}
+
+
+/* Horizontal blocks: Disable on large viewport */
+@media not all and (min-width: 48em) {
+  .horizontal-block {
+    text-align: justify;
+  }
+  .horizontal-block:after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+  }
+  .horizontal-block:before {
+    content: '';
+    display: block;
+    margin-top: -1.25em;
+  }
+
+  .horizontal-item {
+    display: inline-block;
+    margin-left: 0em;
+    margin-right: 0em;
+    /*padding: 0.75em 0.75em;*/
+    position: relative;
+    top: 1.25em;
+  }
+}
+
+
+
 a.sidebar-nav-item:hover,
 a.sidebar-nav-item:focus {
   text-decoration: underline;
@@ -103,6 +179,7 @@ a.sidebar-nav-item:focus {
 .sidebar-nav-item.active {
   font-weight: bold;
 }
+
 
 /*.sidebar p {
   font-family: "CMU Classical Serif", Helvetica, Arial, sans-serif;
@@ -117,12 +194,11 @@ a.sidebar-nav-item:focus {
 @media (min-width: 48em) {
   .sidebar-sticky {
     position: absolute;
-    right:  1rem;
+    right:  0rem;
     bottom: 1rem;
     left:   1rem;
   }
 }
-
 
 /* Container
  *
@@ -135,17 +211,18 @@ a.sidebar-nav-item:focus {
   padding-bottom: 4rem;
 }
 
-@media (min-width: 48em) {
+/*@media (min-width: 48em) {
   .content {
     max-width: 38rem;
     margin-left: 20rem;
     margin-right: 2rem;
   }
-}
+}*/
 
-@media (min-width: 64em) {
+@media (min-width: 48em) {
   .content {
-    margin-left: 22rem;
+    /*max-width: 44rem;*/
+    margin-left: 16rem;
     margin-right: 4rem;
   }
 }

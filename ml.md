@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Machine Learning Resources
+title: ML Resources
 ---
 
 Easily the best way to improve at machine learning is to just get practice at it. Practice helps you improve at machine learning in two ways:
