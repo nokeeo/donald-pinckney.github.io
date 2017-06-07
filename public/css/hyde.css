@@ -122,6 +122,13 @@ html {
   }
 }
 
+
+@media not all and (min-width: 48em) {
+  .only-desktop {
+    display: none;
+  }
+}
+
 @media (min-width: 48em) {
   .sidebar-about p {
     display: block;
@@ -169,6 +176,8 @@ html {
     top: 1.25em;
   }
 }
+
+
 
 
 
