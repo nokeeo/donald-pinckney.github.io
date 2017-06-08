@@ -8,7 +8,7 @@ Welcome to Donald's blog! Since I just made it a few days ago, there isn't a lot
 
 To give you a sneak preview of what to expect, I'll likely post about topics in these areas:
 
-1. Machine learning
+1. Machine Learning
 2. Programming Languages
 3. Swift
 4. iOS Development / Apple stuff
