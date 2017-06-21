@@ -3,9 +3,9 @@
 # Setup
 title:            Donald Pinckney
 tagline:          'Explorations in math and computer science.'
-description:      'Who tinkers with math, computer science, and random stuff.'
+description:      'Who tinkers with math, CS, and random stuff.'
 url:              http://donaldpinckney.com
-baseurl:          /
+baseurl:          ""
 
 author:
   name:           'Donald Pinckney'
@@ -14,14 +14,22 @@ author:
 paginate:         5
 
 # Custom vars
-
 social:
   github: donald-pinckney
   twitter: donald_pinckney
 
 # Gems
-
 gems:
   - jekyll-paginate
   - jekyll-gist
   - github-pages
+  - jekyll-autolink_email
+  - jekyll-sitemap
+
+# Sitemap stuff
+sitemap:
+  include_posts:
+    - "/index.html"
+
+# Plugins
+plugins_dir: [jekyll-autolink_email, jekyll-sitemap]

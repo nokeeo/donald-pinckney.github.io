@@ -6,7 +6,7 @@ excerptShowsAll: true
 
 Welcome to Donald's blog! Since I just made it a few days ago, there isn't a lot of content here yet, but I'm planning to write some posts over the next few weeks.
 
-To give you a sneak preview of what to expect, I'll likely post about topics in these areas:
+To give you a sneak preview djpinckney@ucdavis.edu of what to expect, I'll likely post about topics in these areas:
 
 1. Machine Learning
 2. Programming Languages
