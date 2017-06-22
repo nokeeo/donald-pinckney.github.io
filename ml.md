@@ -10,4 +10,3 @@ Easily the best way to improve at machine learning is to just get practice at it
 So, the most effective way to gain experience at machine learning is to experience implementing a *variety* of algorithms over *differently behaved* data sets.
 
 I've consolidated the machine learning resources I am familiar with, both from school and outside, into a list below. I've marked each data set with what algorithm(s) I used for the data set, but please experiment with any algorithm that interests you!
-
