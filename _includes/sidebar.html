@@ -1,0 +1,65 @@
+<div class="sidebar">
+  <div class="container">
+    <div class="sidebar-about">
+      <h1>
+        <a href="{{ site.baseurl }}">
+          {{ site.title }}
+        </a>
+      </h1>
+      <p class="lead">{{ site.description }}</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="horizontal-block">
+        <div class="horizontal-item">
+        </div>
+        <a class="horizontal-item sidebar-nav-item{% if page.url == site.baseurl %} active{% endif %}" href="{{ site.baseurl }}">Home</a>
+
+        {% comment %}
+          The code below dynamically generates a sidebar nav of pages with
+          `layout: page` in the front-matter. See readme for usage.
+        {% endcomment %}
+
+        {% assign pages_list = site.pages %}
+        {% for node in pages_list %}
+          {% if node.title != null and node.sortBelow != true %}
+            {% if node.layout == "page" %}
+              <a class="horizontal-item sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        <div class="horizontal-item">
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="horizontal-block">
+        {% for node in pages_list %}
+          {% if node.title != null and node.sortBelow == true %}
+            {% if node.layout == "page" %}
+              <a class="horizontal-item sidebar-nav-item{% if page.url == node.url %} active{% endif %}" href="{{ node.url }}">{{ node.title }}</a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+
+        <a href="https://github.com/{{ site.social.github }}" class="sidebar-nav-item horizontal-item" target="_blank">
+          <i class="fa fa-github"></i><span class="only-desktop"> {{ site.social.github}}</span>
+        </a>
+        <a href="https://twitter.com/{{ site.social.twitter }}" class="sidebar-nav-item horizontal-item" target="_blank">
+          <i class="fa fa-twitter"></i><span class="only-desktop">@{{site.social.twitter}}</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footnote">
+      <p class="sidebar-footnote">
+        &copy; {{ site.time | date: '%Y' }} Donald Pinckney. All rights reserved.
+        <br />
+        The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc.
+      </p>
+    </div>
+  </div>
+</div>
