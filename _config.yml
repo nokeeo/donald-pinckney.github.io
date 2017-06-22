@@ -26,6 +26,7 @@ gems:
   - github-pages
   - jekyll-autolink_email
   - jekyll-sitemap
+  - jekyll-seo-tag
 
 # Sitemap stuff
 sitemap:
@@ -33,4 +34,4 @@ sitemap:
     - "/index.html"
 
 # Plugins
-plugins_dir: [jekyll-autolink_email, jekyll-sitemap]
+plugins_dir: [jekyll-autolink_email, jekyll-sitemap, jekyll-seo-tag]
