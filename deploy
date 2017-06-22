@@ -1,0 +1,33 @@
+#!/bin/bash
+# Make temporary dest dir, and clean up.
+dest=$(mktemp -d)
+trap "{ rm -rf $dest; }" EXIT SIGINT SIGTERM
+
+# Commit to src branch if needed
+git checkout -q src
+if [[ `git status --porcelain` ]]; then
+	if test "$#" -ne 1; then
+    	>&2 echo "Commit message required!"
+    	exit 1
+	fi
+    git add .
+    git commit -qm "$1"
+fi
+git push -q
+
+# Build to temp directory
+jekyll build -qd $dest
+
+# Checkout master, nuke everything
+git checkout -q master
+git rm -qr .
+rm -rf *
+
+# Copy in built files
+cp -R $dest/* .
+
+git add .
+git commit -qm "build"
+git push -q
+
+git checkout -q src
