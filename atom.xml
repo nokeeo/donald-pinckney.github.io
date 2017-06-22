@@ -1,28 +1,39 @@
----
-layout: null
----
-
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
- <title>{{ site.title }}</title>
- <link href="{{ site.url }}/atom.xml" rel="self"/>
- <link href="{{ site.url }}/"/>
- <updated>{{ site.time | date_to_xmlschema }}</updated>
- <id>{{ site.url }}</id>
+ <title>Donald Pinckney</title>
+ <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
+ <link href="http://donaldpinckney.com/"/>
+ <updated>2017-06-21T22:35:32-07:00</updated>
+ <id>http://donaldpinckney.com</id>
  <author>
-   <name>{{ site.author.name }}</name>
-   <email>{{ site.author.email }}</email>
+   <name>Donald Pinckney</name>
+   <email>djpinckney@ucdavis.edu</email>
  </author>
 
- {% for post in site.posts %}
+ 
  <entry>
-   <title>{{ post.title }}</title>
-   <link href="{{ site.url }}{{ post.url }}"/>
-   <updated>{{ post.date | date_to_xmlschema }}</updated>
-   <id>{{ site.url }}{{ post.id }}</id>
-   <content type="html">{{ post.content | xml_escape }}</content>
+   <title>A Sneak Peek of What's to Come</title>
+   <link href="http://donaldpinckney.com/2017/06/06/content-coming-soon.html"/>
+   <updated>2017-06-06T00:00:00-07:00</updated>
+   <id>http://donaldpinckney.com/2017/06/06/content-coming-soon</id>
+   <content type="html">&lt;p&gt;Welcome to Donald’s blog! Since I just made it a few days ago, there isn’t a lot of content here yet, but I’m planning to write some posts over the next few weeks.&lt;/p&gt;
+
+&lt;p&gt;To give you a sneak preview &lt;a href=&quot;mailto:djpinckney@ucdavis.edu&quot;&gt;djpinckney@ucdavis.edu&lt;/a&gt; of what to expect, I’ll likely post about topics in these areas:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Machine Learning&lt;/li&gt;
+  &lt;li&gt;Programming Languages&lt;/li&gt;
+  &lt;li&gt;Swift&lt;/li&gt;
+  &lt;li&gt;iOS Development / Apple stuff&lt;/li&gt;
+  &lt;li&gt;Math&lt;/li&gt;
+  &lt;li&gt;Music&lt;/li&gt;
+  &lt;li&gt;Martial Arts&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Stay tuned for lots of exciting content!&lt;/p&gt;
+</content>
  </entry>
- {% endfor %}
+ 
 
 </feed>
