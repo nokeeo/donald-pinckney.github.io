@@ -3,7 +3,7 @@ layout: page
 title: ML Resources
 ---
 
-Easily the best way to improve at machine learning is to just get practice at it. Practice helps you improve at machine learning in two ways:
+TEST Easily the best way to improve at machine learning is to just get practice at it. Practice helps you improve at machine learning in two ways:
 1. You get familiar with implementing common algorithms. Whether you use machine learning libraries or roll your own, becoming comfortable with these algorithms is critical.
 2. By working with a variety of data sets, you can also gain an intuition of how data is structured, so you know when to apply what algorithms.
 
