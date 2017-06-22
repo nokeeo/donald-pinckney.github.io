@@ -2,7 +2,7 @@
   <div class="container">
     <div class="sidebar-about">
       <h1>
-        <a href="{{ site.baseurl }}">
+        <a href="{{ site.baseurl }}/">
           {{ site.title }}
         </a>
       </h1>
@@ -13,8 +13,8 @@
       <div class="horizontal-block">
         <div class="horizontal-item">
         </div>
-        <a class="horizontal-item sidebar-nav-item{% if page.url == site.baseurl %} active{% endif %}" href="{{ site.baseurl }}">Home</a>
-
+        {% assign bu = site.baseurl | append: "/" %}
+        <a class="horizontal-item sidebar-nav-item{% if page.url == bu %} active{% endif %}" href="{{ site.baseurl }}/">Home</a>
         {% comment %}
           The code below dynamically generates a sidebar nav of pages with
           `layout: page` in the front-matter. See readme for usage.
