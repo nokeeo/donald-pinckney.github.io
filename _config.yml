@@ -6,7 +6,8 @@ tagline:          'Explorations in math and computer science.'
 description:      'Who tinkers with math, CS, and random stuff.'
 url:              http://donaldpinckney.com
 baseurl:          ""
-
+timezone:         America/Los_Angeles
+exclude:          [deploy]
 author:
   name:           'Donald Pinckney'
   email:          djpinckney@ucdavis.edu
