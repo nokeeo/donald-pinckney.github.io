@@ -10,6 +10,7 @@ if [[ `git status --porcelain` ]]; then
     git add .
     git commit -m "$1"
 fi
+git push
 
 # Build to temp directory
 jekyll build -d $dest
@@ -24,5 +25,6 @@ cp -R $dest/* .
 
 git add .
 git commit -m "build"
+git push
 
-# git push
+git checkout src
