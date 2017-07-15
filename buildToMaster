@@ -46,10 +46,12 @@ jekyll build -qd $dest
 # Checkout master, nuke everything
 
 git checkout -b master
-git pull origin master
-
 git rm -qr .
 rm -rf *
+git commit -m "Nuke"
+
+git pull origin master
+
 
 # Copy in built files
 cp -R $dest/* .
