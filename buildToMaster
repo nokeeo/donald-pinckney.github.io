@@ -15,6 +15,10 @@ chmod 600 travis_rsa
 eval `ssh-agent -s`
 ssh-add travis_rsa
 
+# Set git info
+git config user.name "Travis CI"
+git config user.email "$COMMIT_AUTHOR_EMAIL"
+
 
 # Save some useful information
 REPO=`git config remote.origin.url`
@@ -50,9 +54,6 @@ rm -rf *
 # Copy in built files
 cp -R $dest/* .
 
-# Set git info
-git config user.name "Travis CI"
-git config user.email "$COMMIT_AUTHOR_EMAIL"
 
 git add .
 git commit -m "Deploy to GitHub Pages: ${SHA}"
