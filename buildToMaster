@@ -24,6 +24,7 @@ SHA=`git rev-parse --verify HEAD`
 # Commit to src branch if needed
 git fetch origin master
 git branch
+git remote -v
 git checkout src
 # if [[ `git status --porcelain` ]]; then
 # 	if test "$#" -ne 1; then
