@@ -22,7 +22,7 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 # Commit to src branch if needed
-git fetch
+git fetch origin master
 git checkout src
 # if [[ `git status --porcelain` ]]; then
 # 	if test "$#" -ne 1; then
@@ -38,6 +38,7 @@ git checkout src
 jekyll build -qd $dest
 
 # Checkout master, nuke everything
+
 git checkout master
 git pull
 
