@@ -41,7 +41,7 @@ jekyll build -qd $dest
 
 # Checkout master, nuke everything
 
-git checkout master
+git checkout -b master
 git pull
 
 git rm -qr .
