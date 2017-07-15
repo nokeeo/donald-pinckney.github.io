@@ -22,7 +22,7 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 # Commit to src branch if needed
-git checkout -q src
+git checkout src
 # if [[ `git status --porcelain` ]]; then
 # 	if test "$#" -ne 1; then
 #     	>&2 echo "Commit message required!"
@@ -37,7 +37,7 @@ git checkout -q src
 jekyll build -qd $dest
 
 # Checkout master, nuke everything
-git checkout -q master
+git checkout master
 git rm -qr .
 rm -rf *
 
@@ -52,8 +52,4 @@ git add .
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 
 
-
-
 git push $SSH_REPO master
-
-git checkout -q src

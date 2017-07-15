@@ -1,4 +1,6 @@
-language: generic
+language: ruby
+rvm:
+  - 2.3.3
 
 script: ./buildToMaster
 env:
