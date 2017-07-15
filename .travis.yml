@@ -2,6 +2,11 @@ language: ruby
 rvm:
   - 2.3.3
 
+branches:
+  only:
+    - src
+    - master
+
 script: ./buildToMaster
 env:
   global:

@@ -15,10 +15,6 @@ chmod 600 travis_rsa
 eval `ssh-agent -s`
 ssh-add travis_rsa
 
-# Set git info
-git config user.name "Travis CI"
-git config user.email "$COMMIT_AUTHOR_EMAIL"
-
 
 # Save some useful information
 REPO=`git config remote.origin.url`
@@ -26,9 +22,6 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 # Commit to src branch if needed
-git fetch origin master
-git branch
-git remote -v
 git checkout src
 # if [[ `git status --porcelain` ]]; then
 # 	if test "$#" -ne 1; then
@@ -44,21 +37,21 @@ git checkout src
 jekyll build -qd $dest
 
 # Checkout master, nuke everything
-
-git checkout -b master
+git checkout master
 git rm -qr .
 rm -rf *
-git commit -m "Nuke"
-
-git pull origin master
-
 
 # Copy in built files
 cp -R $dest/* .
 
+# Set git info
+git config user.name "Travis CI"
+git config user.email "$COMMIT_AUTHOR_EMAIL"
 
 git add .
 git commit -m "Deploy to GitHub Pages: ${SHA}"
+
+
 
 
 git push $SSH_REPO master
