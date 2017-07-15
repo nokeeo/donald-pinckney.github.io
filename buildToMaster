@@ -3,6 +3,19 @@
 dest=$(mktemp -d)
 trap "{ rm -rf $dest; }" EXIT SIGINT SIGTERM
 
+
+# Setup all the ssh stuff
+# Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
+ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
+ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
+ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
+ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in travis_rsa.enc -out travis_rsa -d
+chmod 600 travis_rsa
+eval `ssh-agent -s`
+ssh-add travis_rsa
+
+
 # Save some useful information
 REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
@@ -10,15 +23,15 @@ SHA=`git rev-parse --verify HEAD`
 
 # Commit to src branch if needed
 git checkout -q src
-if [[ `git status --porcelain` ]]; then
-	if test "$#" -ne 1; then
-    	>&2 echo "Commit message required!"
-    	exit 1
-	fi
-    git add .
-    git commit -qm "$1"
-fi
-git push -q
+# if [[ `git status --porcelain` ]]; then
+# 	if test "$#" -ne 1; then
+#     	>&2 echo "Commit message required!"
+#     	exit 1
+# 	fi
+#     git add .
+#     git commit -qm "$1"
+# fi
+# git push -q
 
 # Build to temp directory
 jekyll build -qd $dest
@@ -38,15 +51,9 @@ git config user.email "$COMMIT_AUTHOR_EMAIL"
 git add .
 git commit -m "Deploy to GitHub Pages: ${SHA}"
 
-# Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
-ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in ../deploy_key.enc -out ../deploy_key -d
-chmod 600 ../deploy_key
-eval `ssh-agent -s`
-ssh-add deploy_key
+
+
+
 git push $SSH_REPO master
 
 git checkout -q src
