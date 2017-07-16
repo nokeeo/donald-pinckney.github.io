@@ -5,7 +5,11 @@ rvm:
 branches:
   only:
     - src
-    - master
+
+install:
+  - git clone https://github.com/donald-pinckney/donald-pinckney.github.io $TRAVIS_REPO_SLUG
+  - cd $TRAVIS_REPO_SLUG
+  - git checkout -qf $TRAVIS_COMMIT    
 
 script: ./buildToMaster
 env:
