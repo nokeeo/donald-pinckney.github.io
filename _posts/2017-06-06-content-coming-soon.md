@@ -16,4 +16,4 @@ To give you a sneak preview of what to expect, I'll likely post about topics in 
 6. Music
 7. Martial Arts
 
-Stay tuned for lots of exciting content!
+Stay tuned for lots of epic content!
