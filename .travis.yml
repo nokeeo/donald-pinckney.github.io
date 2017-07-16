@@ -1,23 +1,14 @@
-# language: ruby
-# rvm:
-#   - 2.3.3
+language: ruby
+rvm:
+  - 2.3.3
 
-# branches:
-#   only:
-#     - src
-#     - master
+branches:
+  only:
+    - src
+    - master
 
-# script: ./buildToMaster
-# env:
-#   global:
-#     - ENCRYPTION_LABEL: "f45b69d04d69"
-#     - COMMIT_AUTHOR_EMAIL: "donald_pinckney@icloud.com"
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  github_token: $GH_TOKEN
-  target_branch: master
-  fqdn: donald_pinckney@icloud.com
-  on:
-    branch: src
+script: ./buildToMaster
+env:
+  global:
+    - ENCRYPTION_LABEL: "f45b69d04d69"
+    - COMMIT_AUTHOR_EMAIL: "donald_pinckney@icloud.com"
