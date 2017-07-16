@@ -12,3 +12,6 @@ env:
   global:
     - ENCRYPTION_LABEL: "f45b69d04d69"
     - COMMIT_AUTHOR_EMAIL: "donald_pinckney@icloud.com"
+
+notifications:
+  email: false
