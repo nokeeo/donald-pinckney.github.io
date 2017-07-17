@@ -41,6 +41,29 @@
           box-sizing: border-box;
 }
 
+
+/* Generic stuff */
+.floating-box-left {
+    display: inline-block;
+    width: 70%;
+    /* height: 5%; */
+    /* margin: 0%;
+    padding: 0%; */
+}
+
+.floating-box-right {
+    display: inline-block;
+    width: 25%;
+    /* height: 5%; */
+    margin: 0%;
+    padding: 0%;
+    text-align: right;
+}
+
+.fa {
+  padding-right: 0.2rem;
+}
+
 html,
 body {
   margin: 0;

@@ -8,6 +8,7 @@ url:              http://donaldpinckney.com
 baseurl:          ""
 timezone:         America/Los_Angeles
 exclude:          [deploy]
+repo:             https://github.com/donald-pinckney/donald-pinckney.github.io
 author:
   name:           'Donald Pinckney'
   email:          djpinckney@ucdavis.edu
