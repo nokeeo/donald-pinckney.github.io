@@ -25,7 +25,6 @@ gems:
   - jekyll-paginate
   - jekyll-gist
   - github-pages
-  - jekyll-autolink_email
   - jekyll-sitemap
   - jekyll-seo-tag
 
@@ -35,4 +34,4 @@ sitemap:
     - "/index.html"
 
 # Plugins
-plugins_dir: [jekyll-autolink_email, jekyll-sitemap, jekyll-seo-tag]
+plugins_dir: [jekyll-sitemap, jekyll-seo-tag]
