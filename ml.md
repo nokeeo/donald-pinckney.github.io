@@ -19,7 +19,7 @@ I've consolidated the machine learning resources I am familiar with, both from s
 
 * Predict car MPG from 7 variables. Download: [auto_data.csv](public/files/ml_data/auto_data.csv). Dataset from [UCI repository](https://archive.ics.uci.edu/ml/datasets/Auto+MPG){:target="_blank"}. Models I used: linear regression.
 
-* Predict E. coli bacterial growth rate. For this, use only the gene expressions as attributes. Download: [ecoli_data.zip](public/files/ml_data/ecoli_data.zip). Dataset from Ilias Tagkopoulos at UC Davis. Models I used: linear regression with regularization.
+* Predict E. coli bacterial growth rate. For this, use only the gene expressions as attributes. Download: [ecoli_data.zip](public/files/ml_data/ecoli_data.zip). Dataset from [Ilias Tagkopoulos](https://faculty.engineering.ucdavis.edu/tagkopoulos/){:target="_blank"} at UC Davis. Models I used: linear regression with regularization.
 
 
 ## Classification
