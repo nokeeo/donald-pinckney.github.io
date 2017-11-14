@@ -1,2 +1,8 @@
 #!/bin/bash
-bundle exec jekyll serve
+
+# Build books
+books/build_book.sh books/tensorflow
+
+# Build rest of site
+bundle exec jekyll serve --drafts
+

@@ -38,8 +38,17 @@ git checkout src
 # fi
 # git push -q
 
+
+
+
+# Build books
+books/build_book.sh books/tensorflow
+
 # Build to temp directory
 jekyll build -qd $dest
+
+
+
 
 # Checkout master, nuke everything
 git checkout master
