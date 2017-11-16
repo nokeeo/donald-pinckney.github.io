@@ -1,6 +1,18 @@
 # Summary
 
-- [Chapter 1](./chapter_1.md)
+
+- [Setting up Python and TensorFlow](ch1-setup/intro.md)
+- [Linear Regression]()
+    - [Single Variable Regression]()
+    - [Multivariable Regression]()
+
+
+
+
+
+
+
+
 
 
 
