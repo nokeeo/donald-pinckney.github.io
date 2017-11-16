@@ -9,13 +9,17 @@ branches:
 
 install:
   - gem install jekyll
+  - gem install jekyll-paginate
+  - gem install jekyll-gist
+  - gem install github-pages
+  - gem install jekyll-sitemap
+  - gem install jekyll-seo-tag
   - curl https://sh.rustup.rs > temp.sh
   - chmod +x temp.sh
   - ./temp.sh -y
   - source $HOME/.cargo/env
   - rm temp.sh
   - cargo install mdbook
-  - gem install jekyll-paginate
 
 script: ./buildToMaster
 env:

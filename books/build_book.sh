@@ -31,10 +31,12 @@ bookName=$(basename $bookDir)
 currDir=$(pwd)
 echo "In directory: $currDir"
 echo "Copying src/ to $srcDir/../_drafts/$bookName"
-ls src/
 echo "Copying src/ to $srcDir/../_posts/$bookName"
-cp -R src/ $srcDir/../_drafts/$bookName
-cp -R src/ $srcDir/../_posts/$bookName
+cp -R src/ $srcDir/../_drafts/$bookName/
+ls src/
+ls $srcDir/../_drafts/$bookName/
+
+cp -R src/ $srcDir/../_posts/$bookName/
 rm $srcDir/../_drafts/$bookName/SUMMARY.md
 rm $srcDir/../_posts/$bookName/SUMMARY.md
 
