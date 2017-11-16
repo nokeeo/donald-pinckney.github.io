@@ -9,8 +9,7 @@ branches:
 
 cache:
   cargo: true
-  directories:
-    - vendor/bundle
+  bundler: true
 
 before_install:
   - sudo apt-get -qq update
