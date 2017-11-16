@@ -28,7 +28,10 @@ done
 # Copy the book to _drafts and _posts
 bookName=$(basename $bookDir)
 
-echo "Copying book $bookName to _drafts and _posts"
+currDir=$(pwd)
+echo "In directory: $currDir"
+echo "Copying src/ to $srcDir/../_drafts/$bookName"
+echo "Copying src/ to $srcDir/../_posts/$bookName"
 cp -R src/ $srcDir/../_drafts/$bookName
 cp -R src/ $srcDir/../_posts/$bookName
 rm $srcDir/../_drafts/$bookName/SUMMARY.md

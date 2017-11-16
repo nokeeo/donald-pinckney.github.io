@@ -45,7 +45,7 @@ git checkout src
 books/build_all.sh
 
 # Build to temp directory
-jekyll build -qd $dest
+bundle exec jekyll build -qd $dest
 
 
 
