@@ -16,7 +16,7 @@ before_install:
   - sudo apt-get install -y tree
 
 install:
-  - bundle install --deployment
+  - # bundle install --deployment
   - gem install jekyll
   - gem install jekyll-paginate
   - gem install jekyll-gist
