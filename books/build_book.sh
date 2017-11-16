@@ -32,9 +32,9 @@ currDir=$(pwd)
 echo "In directory: $currDir"
 echo "Copying src/ to $srcDir/../_drafts/$bookName"
 echo "Copying src/ to $srcDir/../_posts/$bookName"
-tree
+tree $srcDir/..
 cp -R src/ $srcDir/../_drafts/$bookName/
-tree
+tree $srcDir/..
 
 cp -R src/ $srcDir/../_posts/$bookName/
 rm $srcDir/../_drafts/$bookName/SUMMARY.md
