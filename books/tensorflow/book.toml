@@ -1,0 +1,6 @@
+title = "Machine Learning with Python and TensorFlow"
+description = "An introductory look at implementing machine learning algorithms using TensorFlow in Python."
+author = "Donald Pinckney"
+
+[output.html]
+mathjax-support = true

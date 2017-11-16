@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Build books
+books/build_all.sh
+
+# Build rest of site
+bundle exec jekyll serve --drafts
+
