@@ -3,9 +3,14 @@ rvm:
   - 2.3.3
 
 sudo: false
+dist: trusty
 branches:
   only:
-    - src   
+    - src
+
+install:
+  - curl https://sh.rustup.rs -sSf | sh
+  - cargo install mdbood
 
 script: ./buildToMaster
 env:
