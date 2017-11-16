@@ -40,7 +40,7 @@ tree $srcDir/..
 
 echo "Copying src/ to $srcDir/../_posts/$bookName"
 
-rm -rf $srcDir/../_drafts/$bookName/
+rm -rf $srcDir/../_posts/$bookName/
 mkdir $srcDir/../_posts/$bookName
 cp -R src/* $srcDir/../_posts/$bookName/
 tree $srcDir/..
