@@ -9,7 +9,7 @@ branches:
 
 cache:
   cargo: true
-  bundler: true
+  bundler: false
 
 before_install:
   - # sudo apt-get -qq update
