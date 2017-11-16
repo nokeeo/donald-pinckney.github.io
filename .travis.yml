@@ -7,11 +7,17 @@ branches:
   only:
     - src
 
+cache:
+  cargo: true
+  directories:
+    - vendor/bundle
+
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y tree
 
 install:
+  - bundle install --deployment
   - gem install jekyll
   - gem install jekyll-paginate
   - gem install jekyll-gist
