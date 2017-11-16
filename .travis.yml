@@ -7,6 +7,10 @@ branches:
   only:
     - src
 
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y tree
+
 install:
   - gem install jekyll
   - gem install jekyll-paginate
