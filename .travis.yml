@@ -12,6 +12,7 @@ install:
   - curl https://sh.rustup.rs > temp.sh
   - chmod +x temp.sh
   - ./temp.sh -y
+  - source $HOME/.cargo/env
   - rm temp.sh
   - cargo install mdbood
 
