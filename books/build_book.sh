@@ -1,5 +1,7 @@
 #!/bin/bash
 
+srcDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 bookDir=$1
 cd $bookDir
 
@@ -21,5 +23,16 @@ for f in $files; do
 	backupF="$f".mdbak
 	mv $backupF $f
 done
+
+
+# Copy the book to _drafts and _posts
+bookName=$(basename $bookDir)
+
+echo "Copying book $bookName to _drafts and _posts"
+cp -R src/ $srcDir/../_drafts/$bookName
+cp -R src/ $srcDir/../_posts/$bookName
+rm $srcDir/../_drafts/$bookName/SUMMARY.md
+rm $srcDir/../_posts/$bookName/SUMMARY.md
+
 
 

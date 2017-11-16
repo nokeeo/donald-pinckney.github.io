@@ -42,7 +42,7 @@ git checkout src
 
 
 # Build books
-books/build_book.sh books/tensorflow
+books/build_all.sh
 
 # Build to temp directory
 jekyll build -qd $dest
