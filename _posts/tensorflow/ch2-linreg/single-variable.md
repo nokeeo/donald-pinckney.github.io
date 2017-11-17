@@ -1,9 +1,0 @@
-# Single Variable Regression
-
-
-
-
-
-
-
-

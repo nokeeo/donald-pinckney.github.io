@@ -42,3 +42,5 @@ node_modules
 Gemfile.lock
 travis_rsa
 books/tensorflow/book/
+_posts/tensorflow/
+_drafts/tensorflow/

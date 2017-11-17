@@ -1,9 +1,0 @@
-# Multivariable Regression
-
-
-
-
-
-
-
-
