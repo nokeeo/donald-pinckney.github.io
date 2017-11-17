@@ -5,9 +5,8 @@
 - [Linear Regression]()
     - [Single Variable Regression]()
     - [Multivariable Regression]()
-
-
-
+---
+[By Donald Pinckney](http://donaldpinckney.com)
 
 
 
