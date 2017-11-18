@@ -6,7 +6,7 @@
     - [Single Variable Regression]()
     - [Multivariable Regression]()
 ---
-[By Donald Pinckney](/)
+[By Donald Pinckney](http://index)
 
 
 
