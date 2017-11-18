@@ -29,17 +29,19 @@
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
   <!-- Begin Jekyll SEO tag v2.3.0 -->
-<title>Home | Donald Pinckney</title>
-<meta property="og:title" content="Home" />
+<title>Setting up Python and TensorFlow | Donald Pinckney</title>
+<meta property="og:title" content="Setting up Python and TensorFlow" />
 <meta name="author" content="Donald Pinckney" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Who tinkers with math, CS, and random stuff." />
 <meta property="og:description" content="Who tinkers with math, CS, and random stuff." />
-<link rel="canonical" href="http://donaldpinckney.com/" />
-<meta property="og:url" content="http://donaldpinckney.com/" />
+<link rel="canonical" href="http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak" />
+<meta property="og:url" content="http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak" />
 <meta property="og:site_name" content="Donald Pinckney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-11-13T00:00:00-08:00" />
 <script type="application/ld+json">
-{"name":"Donald Pinckney","description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"WebSite","url":"http://donaldpinckney.com/","publisher":null,"image":null,"headline":"Home","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+{"name":null,"description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak","publisher":null,"image":null,"headline":"Setting up Python and TensorFlow","dateModified":"2017-11-13T00:00:00-08:00","datePublished":"2017-11-13T00:00:00-08:00","sameAs":null,"mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -63,7 +65,7 @@
         <div class="horizontal-item">
         </div>
         
-        <a class="horizontal-item sidebar-nav-item active" href="/">Home</a>
+        <a class="horizontal-item sidebar-nav-item" href="/">Home</a>
         
 
         
@@ -164,49 +166,41 @@
 
 
     <div class="content container">
-      <div class="posts">
+      <div class="post">
+
   
-  <div class="post">
-    <h1 class="post-title">
-      <a href="/2017/06/06/content-coming-soon.html" class="titular">
-        A Sneak Peek of What's to Come
-      </a>
-    </h1>
+    <h1 class="post-title titular">Setting up Python and TensorFlow</h1>
+  
+  
+  
 
-    <span class="post-date">06 Jun 2017</span>
+  <span class="post-date">13 Nov 2017
 
-    
-      <p>Welcome to Donald’s blog! Since I just made it a few days ago, there isn’t a lot of content here yet, but I’m planning to write some posts over the next few weeks.</p>
-
-<p>To give you a sneak preview of what to expect, I’ll likely post about topics in these areas:</p>
-
-<ol>
-  <li>Machine Learning</li>
-  <li>Programming Languages</li>
-  <li>Swift</li>
-  <li>iOS Development / Apple stuff</li>
-  <li>Math</li>
-  <li>Music</li>
-  <li>Martial Arts</li>
-</ol>
-
-<p>Stay tuned for lots of epic content!</p>
-
-    
-
-  </div>
+  <div class="post-categories">
+  
+  
+  <a href="/books/TensorFlow/book">Read the TensorFlow book</a>
+  
   
 </div>
 
+</span>
 
-<div class="pagination">
-  
-    <span class="pagination-item older">Older</span>
-  
-  
-    <span class="pagination-item newer">Newer</span>
-  
+  # Setting up Python and TensorFlow
+Hello! Here is math: 
+\\(\int_a^b x dx \\)
+\\[\int_a^b x dx\\]
 </div>
+
+
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+  </ul>
+</div>
+
     </div>
 
   </body>
