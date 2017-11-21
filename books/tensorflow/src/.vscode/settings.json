@@ -1,0 +1,36 @@
+{
+    "cSpell.enabledLanguageIds": [
+        "c",
+        "cpp",
+        "csharp",
+        "go",
+        "handlebars",
+        "javascript",
+        "javascriptreact",
+        "json",
+        "latex",
+        "markdown",
+        "md",
+        "php",
+        "plaintext",
+        "python",
+        "restructuredtext",
+        "text",
+        "typescript",
+        "typescriptreact",
+        "yml"
+    ],
+    "cSpell.words": [
+        "GPAs",
+        "Homebrew's",
+        "LLVM",
+        "Virtualenv",
+        "bookpost",
+        "linreg",
+        "matplotlib",
+        "numpy",
+        "pyplot",
+        "sess",
+        "tensorflow"
+    ]
+}
