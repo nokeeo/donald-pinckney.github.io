@@ -1,7 +1,7 @@
 ---
 layout: bookpost
 title: Introduction to Machine Learning with TensorFlow
-date: 2017-11-13
+date: 2017-11-21
 categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch1-setup/intro.md
