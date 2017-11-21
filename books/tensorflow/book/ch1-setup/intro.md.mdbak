@@ -39,9 +39,9 @@
 <meta property="og:url" content="http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak" />
 <meta property="og:site_name" content="Donald Pinckney" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2017-11-13T00:00:00-08:00" />
+<meta property="article:published_time" content="2017-11-21T00:00:00-08:00" />
 <script type="application/ld+json">
-{"name":null,"description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak","publisher":null,"image":null,"headline":"Introduction to Machine Learning with TensorFlow","dateModified":"2017-11-13T00:00:00-08:00","datePublished":"2017-11-13T00:00:00-08:00","sameAs":null,"mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak"},"@context":"http://schema.org"}</script>
+{"name":null,"description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak","publisher":null,"image":null,"headline":"Introduction to Machine Learning with TensorFlow","dateModified":"2017-11-21T00:00:00-08:00","datePublished":"2017-11-21T00:00:00-08:00","sameAs":null,"mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/books/tensorflow/book/ch1-setup/intro.md.mdbak"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -109,6 +109,8 @@
           
         
 
+        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book">TensorFlow Book</a>
+
         <div class="horizontal-item">
         </div>
       </div>
@@ -157,8 +159,8 @@
     <div class="sidebar-footnote">
       <p class="sidebar-footnote">
         &copy; 2017 Donald Pinckney. All rights reserved.
-        <br />
-        The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc.
+        <!-- <br />
+        The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc. -->
       </p>
     </div>
   </div>
@@ -182,7 +184,7 @@
     </div> 
   
 
-  <span class="post-date">13 Nov 2017
+  <span class="post-date">21 Nov 2017
 
   <div class="post-categories">
   

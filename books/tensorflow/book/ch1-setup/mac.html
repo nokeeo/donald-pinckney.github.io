@@ -92,6 +92,64 @@
 
                 <div id="content" class="content">
                     <a class="header" href="ch1-setup/mac.html#macos-setup" id="macos-setup"><h1>macOS Setup</h1></a>
+<p>Without a doubt, Python 3 is the future of Python, and thus we will use Python 3 with TensorFlow. While I summarize the instructions to install TensorFlow with Python 3 here, the <a href="https://www.tensorflow.org/install/install_mac">official TensorFlow documentation</a> should always provide up-to-date and comprehensive instructions for installation as well. If you run into any installation problems, please file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,TensorFlow">here</a>.</p>
+<a class="header" href="ch1-setup/mac.html#installing-python-3" id="installing-python-3"><h2>Installing Python 3</h2></a>
+<p>macOS does not come installed with Python 3 (only Python 2.7), so we need to install it ourselves. The first step is to open terminal (Terminal.app on your Mac), and install the <a href="https://brew.sh">Homebrew</a> package manager for macOS, if you haven't already installed it before. Just paste the appropriate command into terminal, and follow Homebrew's installation prompts:</p>
+<pre><code class="language-bash"># For bash, ksh, zsh, csh, and other shells:
+/usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+# For fish shell:
+/usr/bin/ruby -e &quot;(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+</code></pre>
+<p>Now that Homebrew is installed, we need to install Python 3:</p>
+<pre><code class="language-bash">brew install python3
+</code></pre>
+<p>You can test that <code>python3</code> installed correctly by running the command <code>python3</code>. You should see output similar to:</p>
+<pre><code>~ $ python3
+Python 3.6.3 (default, Nov 20 2017, 14:17:35) 
+[GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.38)] on darwin
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt;
+</code></pre>
+<p>The Python version should be 3.x.y instead of 2.x.y.</p>
+<a class="header" href="ch1-setup/mac.html#installing-tensorflow-and-friends" id="installing-tensorflow-and-friends"><h2>Installing TensorFlow and friends</h2></a>
+<p>Installing Python 3 (<code>python3</code>) also installs the Python 3 package manager (<code>pip3</code>). We can use <code>pip3</code> to install a Python utility called <code>virtualenv</code>. Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. So, first we need to install <code>virtualenv</code>:</p>
+<pre><code class="language-bash">pip3 install --upgrade virtualenv
+</code></pre>
+<p>Now, create a new virtualenv:</p>
+<pre><code class="language-bash"># In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
+# You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
+virtualenv --system-site-packages -p python3 ~/tensorflow
+</code></pre>
+<p>Then, we need to <em>activate</em> the virtualenv so we can install things inside it:</p>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
+source ~/tensorflow/bin/activate.csh # If using csh or tcsh
+source ~/tensorflow/bin/activate.fish # If using fish
+</code></pre>
+<p>After activating the virtualenv, your command prompt should change to look like: <code>(tensorflow)$</code>. At this point, we are finally ready to install TensorFlow:</p>
+<pre><code class="language-bash">pip3 install --upgrade tensorflow 
+</code></pre>
+<p>In addition, we also install a few other Python packages that are useful for machine learning:</p>
+<pre><code class="language-bash">pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
+pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
+pip3 install --upgrade pandas # Used for loading datasets
+</code></pre>
+<p>Once everything is installed, you can exit the virtualenv using the command <code>deactivate</code>.</p>
+<a class="header" href="ch1-setup/mac.html#testing-the-installation" id="testing-the-installation"><h2>Testing the installation</h2></a>
+<p>Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate activate command from above. Then, run the <code>python</code> command, and type the following code into Python:</p>
+<pre><code class="language-python">import tensorflow as tf
+import numpy as np
+import pandas
+import matplotlib.pyplot as plt
+hello = tf.constant('Hello, TensorFlow!')
+sess = tf.Session()
+print(sess.run(hello))
+</code></pre>
+<p>If everything is installed correctly, you should see the output:</p>
+<pre><code>Hello, TensorFlow!
+</code></pre>
+<p>If the above test produces errors, please see this list of <a href="https://www.tensorflow.org/install/install_mac#common_installation_problems">common TensorFlow installation problems</a> or Google it, and file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,Duplicate&amp;title=Installation%20error%20on%20macOS">here</a>.</p>
+<a class="header" href="ch1-setup/mac.html#optional-installing-an-ide" id="optional-installing-an-ide"><h2>Optional: Installing an IDE</h2></a>
+<p>At this point, everything we need for writing TensorFlow code is installed. We can write our Python code in a text editor of our choice, and run it using <code>python</code> from terminal. In the future I won't assume use of an IDE specifically, but rather assume that you can create new Python files and run them, either from terminal or an IDE. However, some people may prefer using an IDE, which can reduce the time spent in Terminal, and help provide better syntax and semantic checking of Python code. Personally, I use and recommend PyCharm, which you can download for free <a href="https://www.jetbrains.com/pycharm/download/#section=mac">here</a>. I won't provide specific installation instructions, but I found it very easy to install and configure to use the <code>~/tensorflow</code> virtualenv.</p>
 
                 </div>
 
