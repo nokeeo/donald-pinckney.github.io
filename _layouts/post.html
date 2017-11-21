@@ -14,7 +14,13 @@ layout: default
   
   {% if page.isEditable == true %}
     <div class="edit-me floating-box-right">
-      <a href="{{site.repo}}/blob/src/{{page.path}}" target="_blank"><i class="fa fa-pencil"></i>Edit this page</a>
+      {% if page.editPath %}
+        <a href="{{site.repo}}/blob/src/{{page.editPath}}" target="_blank">
+      {% else %}
+        <a href="{{site.repo}}/blob/src/{{page.path}}" target="_blank">
+      {% endif %}
+      <i class="fa fa-pencil"></i>Edit this page</a>
+
     </div> 
   {% endif %}
 

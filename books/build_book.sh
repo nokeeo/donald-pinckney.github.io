@@ -18,6 +18,10 @@ done
 # Build book with mdbook
 mdbook build
 
+# Delete buggy output of mdbook
+rm -rf src/http:/
+rm -rf book/http:/
+
 # Restore files with original front matter
 for f in $files; do
 	backupF="$f".mdbak
@@ -32,18 +36,15 @@ currDir=$(pwd)
 echo "In directory: $currDir"
 
 echo "Copying src/ to $srcDir/../_drafts/$bookName"
-tree $srcDir/..
 rm -rf $srcDir/../_drafts/$bookName/
 mkdir $srcDir/../_drafts/$bookName
 cp -R src/* $srcDir/../_drafts/$bookName/
-tree $srcDir/..
 
 echo "Copying src/ to $srcDir/../_posts/$bookName"
 
 rm -rf $srcDir/../_posts/$bookName/
 mkdir $srcDir/../_posts/$bookName
 cp -R src/* $srcDir/../_posts/$bookName/
-tree $srcDir/..
 
 rm $srcDir/../_drafts/$bookName/SUMMARY.md
 rm $srcDir/../_posts/$bookName/SUMMARY.md
