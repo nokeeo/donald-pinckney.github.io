@@ -5,11 +5,13 @@
     - [macOS Setup](ch1-setup/mac.md)
     - [Linux Setup](ch1-setup/linux.md)
     - [Windows Setup](ch1-setup/windows.md)
-- [Linear Regression]()
+- [Linear Regression](ch2-linreg/intro.md)
     - [Single Variable Regression]()
     - [Multivariable Regression]()
 ---
 [By Donald Pinckney](http://index)
+
+
 
 
 
