@@ -48,7 +48,7 @@ Now, create a new virtualenv:
 virtualenv --system-site-packages -p python3 ~/tensorflow
 ```
 
-Then, we need to *activate* the virtualenv so we can install things inside it:
+Then, we need to activate the virtualenv so we can install things inside it:
 ```bash
 source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
 source ~/tensorflow/bin/activate.csh # If using csh or tcsh
