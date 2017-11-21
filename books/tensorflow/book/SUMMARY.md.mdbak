@@ -7,7 +7,7 @@
     - [Windows Setup](ch1-setup/windows.md)
 - [Linear Regression](ch2-linreg/intro.md)
     - [Single Variable Regression]()
-    - [Multivariable Regression]()
+    - [Multi Variable Regression]()
 ---
 [By Donald Pinckney](http://index)
 

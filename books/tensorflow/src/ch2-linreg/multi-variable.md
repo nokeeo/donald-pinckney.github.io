@@ -1,4 +1,4 @@
-# Multivariable Regression
+# Multi Variable Regression
 
 
 
