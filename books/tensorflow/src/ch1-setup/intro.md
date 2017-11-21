@@ -27,6 +27,6 @@ Qualitatively, humans do not seem to comprehend the apparent gender of a face by
 
 Without diving into the details of various machine learning methods, I'll generally state that there **could** be a fairly significant amount of math involved. Not necessarily super difficult math, but some pretty cumbersome math. Roughly, TensorFlow takes care of the calculus grunt work for us: instead of spending a ton of time finding messy derivatives and many lines of code to compute them, TensorFlow lets us focus on the fairly elegant work of defining our machine learning methods, and the more important math necessary to obtain intuition.
 
-So, without further ado, we can get started by installing Python, TensorFlow, and a few other useful tools.
+So, without further ado, we can get started by installing Python, TensorFlow, and a few other useful tools. Just follow the appropriate directions for your operating system.
 
 [lenna]: /books/tensorflow/book/ch1-setup/lenna.png
