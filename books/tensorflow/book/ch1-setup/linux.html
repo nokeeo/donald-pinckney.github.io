@@ -100,8 +100,7 @@
 <pre><code class="language-bash">sudo apt-get install python3-pip python3-dev python-virtualenv
 </code></pre>
 <a class="header" href="ch1-setup/linux.html#installing-tensorflow-and-friends" id="installing-tensorflow-and-friends"><h2>Installing TensorFlow and friends</h2></a>
-<p>Now that we
-Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. Now, we need to create a new virtualenv:</p>
+<p>Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. Now, we need to create a new virtualenv:</p>
 <pre><code class="language-bash"># In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
 virtualenv --system-site-packages -p python3 ~/tensorflow
