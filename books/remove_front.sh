@@ -12,7 +12,6 @@ l1=$1
 l2=$2
 
 if [[ -z $l2 ]]; then
-	echo ""
 	exit 0
 fi
 
