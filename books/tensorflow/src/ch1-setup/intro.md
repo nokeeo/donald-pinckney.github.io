@@ -23,7 +23,7 @@ Golden Retriever                |  Poodle
 
 Most people would easily be able to differentiate the two breeds above, and accurately dogs of those breeds. But, can you explain *how* you came to this conclusion, in very specific steps? Perhaps, one might say that the hair of the Golden Retriever seems less curly, but then one would need to explain how to determine that the hair is less curly. There does not seem to exist a natural way to describe the curliness of hair in specific steps. Maybe, the shape of facial features such as nose shape are useful for determining dog breed, but it still seems nearly impossible to describe a precise algorithm that uses this data.
 
-Qualitatively, humans do not seem to comprehend the beed of a dog by performing some precise algorithm, and this suggests that a computer program to solve this problem should not either. By using machine learning, we can use data to help the computer learn to recognize a dog breed, objects in general, human speech, etc., without explicitly programming it.
+Qualitatively, humans do not seem to comprehend the breed of a dog by performing some precise algorithm, and this suggests that a computer program to solve this problem should not either. By using machine learning, we can use data to help the computer learn to recognize a dog breed, objects in general, human speech, etc., without explicitly programming it.
 
 ## So, what is TensorFlow, and why do we need it?
 
