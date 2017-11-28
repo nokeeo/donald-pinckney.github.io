@@ -309,8 +309,25 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
   <li>Define the model</li>
   <li>Define the loss function</li>
   <li>Run the gradient descent optimization algorithm</li>
-  <li>Use the optimal model to make predictions! (profit)</li>
+  <li>Use the optimal model to make predictions</li>
+  <li>Profit!</li>
 </ol>
+
+<p>When coding this we will follow the exact same steps. So, create a new file <code class="highlighter-rouge">single_var_reg.py</code> in the text editor or IDE of your choice (or experiment in the Python REPL), and download the <a href="/books/tensorflow/book/ch2-linreg/homicide.csv">homicide death rate data set</a> into the same directory.</p>
+
+<h3 id="importing-the-data">Importing the data</h3>
+
+<p>First, we need to import all the modules we will need:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</code></pre></div></div>
+
+<p>We use pandas to easily load the CSV homicide data:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="n">x_data</span> <span class="o">=</span> 
+</code></pre></div></div>
 
 <div class="footnotes">
   <ol>

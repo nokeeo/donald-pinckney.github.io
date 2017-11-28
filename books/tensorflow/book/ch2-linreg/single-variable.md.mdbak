@@ -295,15 +295,34 @@ Let's quickly review what we did when defining the theory of linear regression:
 2. Define the model
 3. Define the loss function
 4. Run the gradient descent optimization algorithm
-5. Use the optimal model to make predictions! (profit)
+5. Use the optimal model to make predictions
+6. Profit!
 
+When coding this we will follow the exact same steps. So, create a new file `single_var_reg.py` in the text editor or IDE of your choice (or experiment in the Python REPL), and download the [homicide death rate data set][data] into the same directory.
 
+### Importing the data
+
+First, we need to import all the modules we will need:
+```python
+import numpy as np
+import tensorflow as tf
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+We use pandas to easily load the CSV homicide data:
+```python
+D = pd.read_csv("homicide.csv").values
+x_data = 
+```
 
 [^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.
 
 [homicide]: /books/tensorflow/book/ch2-linreg/homicide.png
 [homicide_fit]: /books/tensorflow/book/ch2-linreg/homicide_fit.png
 [minimum]: /books/tensorflow/book/ch2-linreg/minimum.png
+[data]: /books/tensorflow/book/ch2-linreg/homicide.csv
+
 </div>
 
 

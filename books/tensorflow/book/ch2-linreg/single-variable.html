@@ -160,8 +160,21 @@ y'(x) = ax + b
 <li>Define the model</li>
 <li>Define the loss function</li>
 <li>Run the gradient descent optimization algorithm</li>
-<li>Use the optimal model to make predictions! (profit)</li>
+<li>Use the optimal model to make predictions</li>
+<li>Profit!</li>
 </ol>
+<p>When coding this we will follow the exact same steps. So, create a new file <code>single_var_reg.py</code> in the text editor or IDE of your choice (or experiment in the Python REPL), and download the <a href="/books/tensorflow/book/ch2-linreg/homicide.csv">homicide death rate data set</a> into the same directory.</p>
+<a class="header" href="ch2-linreg/single-variable.html#importing-the-data" id="importing-the-data"><h3>Importing the data</h3></a>
+<p>First, we need to import all the modules we will need:</p>
+<pre><code class="language-python">import numpy as np
+import tensorflow as tf
+import pandas as pd
+import matplotlib.pyplot as plt
+</code></pre>
+<p>We use pandas to easily load the CSV homicide data:</p>
+<pre><code class="language-python">D = pd.read_csv(&quot;homicide.csv&quot;).values
+x_data = 
+</code></pre>
 <div class="footnote-definition" id="fn1"><sup class="footnote-definition-label">1</sup>
 <p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.</p>
 </div>
