@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Single Variable Regression - Machine Learning with TensorFlow</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="An introductory look at implementing machine learning algorithms using TensorFlow in Python.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <!-- Fetch JQuery from CDN but have a local fallback -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <!-- Fetch store.js from local - TODO add CDN when 2.x.x is available on cdnjs -->
+        <script src="store.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </head>
+    <body class="light">
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme = store.get('mdbook-theme');
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            $('body').removeClass().addClass(theme);
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = store.get('mdbook-sidebar');
+            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
+            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+        </script>
+
+        <div id="sidebar" class="sidebar">
+            <ul class="chapter"><li><a href="ch1-setup/intro.html"><strong>1.</strong> Introduction and Setup</a></li><li><ul class="section"><li><a href="ch1-setup/mac.html"><strong>1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html"><strong>1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong>1.3.</strong> Windows Setup</a></li></ul></li><li><a href="ch2-linreg/intro.html"><strong>2.</strong> Linear Regression</a></li><li><ul class="section"><li><a href="ch2-linreg/single-variable.html" class="active"><strong>2.1.</strong> Single Variable Regression</a></li><li><strong>2.2.</strong> Multi Variable Regression</li><li class="spacer"></li></ul></li><li><a href="http:/index.html">By Donald Pinckney</a></li></ul>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page" tabindex="-1">
+                <div id="menu-bar" class="menu-bar">
+                    <div class="left-buttons">
+                        <i id="sidebar-toggle" class="fa fa-bars"></i>
+                        <i id="theme-toggle" class="fa fa-paint-brush"></i>
+                    </div>
+
+                    <h1 class="menu-title">Machine Learning with TensorFlow</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html">
+                            <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <a class="header" href="ch2-linreg/single-variable.html#single-variable-regression" id="single-variable-regression"><h1>Single Variable Regression</h1></a>
+<a class="header" href="ch2-linreg/single-variable.html#motivation" id="motivation"><h2>Motivation</h2></a>
+<p>Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age<sup class="footnote-reference"><a href="ch2-linreg/single-variable.html#fn1">1</a></sup>, and the line of best fit next to it.</p>
+<table><thead><tr><th align="center">Original data              </th><th align="center">  Result of single variable linear regression</th></tr></thead><tbody>
+<tr><td align="center"><img src="/books/tensorflow/book/ch2-linreg/homicide.png" alt="Homicide Plot" /> </td><td align="center"> <img src="/books/tensorflow/book/ch2-linreg/homicide_fit.png" alt="Homicide Regression Plot" /></td></tr>
+</tbody></table>
+<p>Visually, it appears that this data is approximated pretty well by a &quot;line of best fit&quot;. Single variable linear regression is precisely the tool to find this line. The line of best fit can then be used to guess how many homicide deaths there would be for ages we don't have data on. By the end of this tutorial you can run linear regression on this homicide data, and in fact solve any single variable regression problem.</p>
+<a class="header" href="ch2-linreg/single-variable.html#theory" id="theory"><h2>Theory</h2></a>
+<p>Since we don't have any theory yet to understand linear regression, first we need to develop the theory necessary to program it.</p>
+<a class="header" href="ch2-linreg/single-variable.html#data-set-format" id="data-set-format"><h3>Data set format</h3></a>
+<p>For regression problems, the goal is to predict a continuous variable output, given some input variables (usually also continuous). For single variable regression, we only have one input variable, called \(x\), and our <em>desired</em> output \(y\). Our data set \(D\) then consists of many examples of \(x\) and \(y\), so:
+\[
+D = \{ (x_1, y_1), (x_2, y_2), \cdots, (x_m, y_m) \}
+\]
+where \(m\) is the number of examples in the data set. For a concrete example, the homicide data set plotted above looks like:
+\[
+D = \{ (21, 652), (22, 633), \cdots, (50, 197) \}
+\]
+We will write code to load data sets from files later.</p>
+<a class="header" href="ch2-linreg/single-variable.html#model-concept" id="model-concept"><h3>Model concept</h3></a>
+<p>So, how can we mathematically model single linear regression? Since the goal is to find the perfect line, let's start by defining the <strong>model</strong> (the mathematical description of how predictions will be created) as a line:
+\[
+y'(x, a, b) = ax + b
+\]
+where \(x\) is an input, \(a, b\) are constants, and \(y'\) is the prediction for the input \(x\). Note that although this is an equation for a line with \(x\) as the variable, the values of \(a\) and \(b\) determine what specific line it is. To find the best line, we just need to find the best values for \(a\) (the slope) and \(b\) (the y-intercept). For example, the line of best fit for the homicide data above has a slope of about \(a \approx -17.69\) and a y-intercept of \(b \approx 1000\). How we find the magic best values for \(a\) and \(b\) we don't know yet, but once we find them, prediction is easy, since we just use the formula above.</p>
+<p>How then, how do we find the correct values of \(a\) and \(b\)? First, we need a way to define what the &quot;best line&quot; is exactly. To do so, we define a <strong>loss function</strong> (also called a cost function), which measures how bad a particular choice of \(a\) and \(b\) are. Values of \(a\) and \(b\) that seem poor (a line that does not fit the data set) should result in a large value of the loss function, whereas good values of \(a\) and \(b\) (a line that fits the data set well) should result in small values of the loss function. In other words, the loss function should measure how far the predicted line is from each of the data points, and add this value up for all data points. We can write this as:
+\[
+L(a, b) = \sum_{i=1}^m (y'(x_i, a, b) - y_i)^2
+\]
+Recall that there are \(m\) examples in the data set, \(x_i\) is the i'th input, and \(y_i\) is the i'th desired output. So, \((y'(x_i, a, b) - y_i)^2\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \(y'\) is 7, and the correct output \(y\) is 10, then we would get \((7 - 10)^2 = 9.\) Note that squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses.</p>
+<blockquote>
+<p>Note: The choice to square \(y'(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in section 2.3.</p>
+</blockquote>
+<a class="header" href="ch2-linreg/single-variable.html#optimizing-the-model" id="optimizing-the-model"><h3>Optimizing the model</h3></a>
+<p>At this point, we have fully defined both our model:
+\[
+y'(x, a, b) = ax + b
+\]
+and our loss function, into which we can substitute the model:
+\[
+L(a, b) = \sum_{i=1}^m (y'(x_i, a, b) - y_i)^2 = \sum_{i=1}^m (a x_i + b - y_i)^2
+\]
+We crafted \(L(a, b)\) so that it is smallest exactly when \(a\) and \(b\) produce the line of best fit. Therefore, our goal is to find the values of \(a\) and \(b\) that minimize the function \(L(a, b)\). But what does \(L\) really look like? Well, it is essentially a 3D parabola which looks like:</p>
+<p><img src="/books/tensorflow/book/ch2-linreg/minimum.png" alt="Minimum Plot" /></p>
+<p>The red dot marked on the plot of \(L\) shows where the desired minimum is. We need an algorithm to find this minimum. From calculus, we know that at the minimum \(L\) must be entirely flat, that is the derivatives are both \(0\):
+\[
+\frac{\partial L}{\partial a} = \sum_{i=1}^m 2(ax_i + b - y_i)x_i = 0 \\
+\frac{\partial L}{\partial b} = \sum_{i=1}^m 2(ax_i + b - y_i) = 0 \
+\]
+If you need to review this aspect of calculus, I would recommend <a href="https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc">Khan Academy videos</a>. Now, for this problem it is possible to solve for \(a\) and \(b\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called <em><a href="https://en.wikipedia.org/wiki/Gradient_descent">gradient descent</a></em> to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \(L\), and it will naturally roll downhill towards the flat valley of \(L\) and thus find the minimum. We know the direction of &quot;downhill&quot; at any location since we know the derivatives of \(L\): the derivatives are the direction of greatest upward slope, so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \((a, b)\), we can simulate it's motion by moving it to location \((a', b')\) like so:
+\[
+a' = a - \alpha \frac{\partial L}{\partial a} \\
+b' = b - \alpha \frac{\partial L}{\partial b} \\
+\]
+where \(\alpha\) is a constant called the <strong>learning rate</strong>, which we will talk about more later. If we repeat this process then the ball will continue to roll downhill into the minimum. An animation of this process looks like:</p>
+<video autoplay loop muted>
+<source type="video/mp4" src="/books/tensorflow/book/ch2-linreg/line_fast.mp4">
+</video>
+<p>When we run the gradient descent algorithm for long enough, then it will find the optimal location for \((a, b)\). Once we have the optimal values of \(a\) and \(b\), then that's it, we can just use them to predict a rate of homicide deaths given any age, using the model:
+\[
+y'(x) = ax + b
+\]</p>
+<a class="header" href="ch2-linreg/single-variable.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>Let's quickly review what we did when defining the theory of linear regression:</p>
+<ol>
+<li>Describe the data set</li>
+<li>Define the model</li>
+<li>Define the loss function</li>
+<li>Run the gradient descent optimization algorithm</li>
+<li>Use the optimal model to make predictions! (profit)</li>
+</ol>
+<div class="footnote-definition" id="fn1"><sup class="footnote-definition-label">1</sup>
+<p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.</p>
+</div>
+
+                </div>
+
+                <!-- Mobile navigation buttons -->
+                
+                    <a rel="prev" href="ch2-linreg/intro.html" class="mobile-nav-chapters previous">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="http:/index.html" class="mobile-nav-chapters next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+
+            </div>
+
+            
+                <a href="ch2-linreg/intro.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
+
+            
+                <a href="http:/index.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if ($(".fa").css("font-family") !== "FontAwesome") {
+                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            }
+        </script>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        
+
+        
+
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+    </body>
+</html>
