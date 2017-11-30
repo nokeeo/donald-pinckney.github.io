@@ -313,7 +313,7 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
   <li>Profit!</li>
 </ol>
 
-<p>When coding this we will follow the exact same steps. So, create a new file <code class="highlighter-rouge">single_var_reg.py</code> in the text editor or IDE of your choice (or experiment in the Python REPL), and download the <a href="/books/tensorflow/book/ch2-linreg/homicide.csv">homicide death rate data set</a> into the same directory.</p>
+<p>When coding this we will follow the exact same steps. So, create a new file <code class="highlighter-rouge">single_var_reg.py</code> in the text editor or IDE of your choice (or experiment in the Python REPL), and download the <a href="/books/tensorflow/book/ch2-linreg/code/homicide.csv">homicide death rate data set</a> into the same directory.</p>
 
 <h3 id="importing-the-data">Importing the data</h3>
 
@@ -325,9 +325,135 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
 </code></pre></div></div>
 
 <p>We use pandas to easily load the CSV homicide data:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
-<span class="n">x_data</span> <span class="o">=</span> 
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
+<span class="n">x_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 </code></pre></div></div>
+<p>Note that <code class="highlighter-rouge">x_data</code> and <code class="highlighter-rouge">y_data</code> are <em>not</em> single numbers, but are actually <a href="https://en.wikipedia.org/wiki/Vector_space">vectors</a>. The vectors are 30 numbers long, since there are 30 data points in the CSV file. So, <code class="highlighter-rouge">(x_data[0], y_data[0])</code> would be \((x_1, y_1) = (21, 652)\). When we look at multi variable regression later, we will have to work much more with vectors, matrices and linear algebra, but for now you can think of <code class="highlighter-rouge">x_data</code> and <code class="highlighter-rouge">y_data</code> just as lists of numbers. Also, we have to use <code class="highlighter-rouge">np.matrix(...)</code> to convert the array of numbers <code class="highlighter-rouge">D.age.values</code> to an actual numpy vector (likewise for <code class="highlighter-rouge">D.num_homicide_deaths.values</code>).</p>
+
+<p>Whenever possible, I would recommend plotting data, since this helps you verify that you loaded the data set correctly and gain visual intuition about the shape of the data. This is also pretty easy using matplotlib:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Relationship between age and homicide deaths in the US'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+<p>When we converted the data to vectors using <code class="highlighter-rouge">np.matrix()</code>, numpy created vectors with the shape 1 x 30. That is, <code class="highlighter-rouge">x_data</code> consists of only 1 row of numbers, and 30 columns. This is actually great for us when working with TensorFlow, but matplotlib wants vectors that have the shape 30 x 1 (30 rows and 1 column). Writing <code class="highlighter-rouge">x_data.T</code> calculates the <a href="https://en.wikipedia.org/wiki/Transpose">transpose</a> of <code class="highlighter-rouge">x_data</code>, which flips it from a 1 x 30 vector to a 30 x 1 vector. It’s fine if you don’t understand this now, as we will learn more linear algebra later. Anyways, the plot should look like this:
+<img src="/books/tensorflow/book/ch2-linreg/homicide.png" alt="Homicide Plot" />
+You need to close the plot for your code to continue executing.</p>
+
+<h3 id="defining-the-model">Defining the model</h3>
+
+<p>We have our data prepared and plotted, so now we need to define our model. Recall that the model equation is:
+\[
+    y’ = ax + b
+\]
+Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \(x\) and \(y’\) are vectors, then we don’t need to change the equation, just our interpretation of it. Multiplying the vector \(x\) by the single number \(a\) just multiplies every number in \(x\) be \(a\), and likewise for adding \(b\). So, the above equation interpreted using vectors is the same thing as:
+\[
+    \begin{bmatrix}
+           y_{1}’, &amp;
+           y_{2}’, &amp;
+           \dots, &amp;
+           y_{m}’,
+    \end{bmatrix} = \begin{bmatrix}
+           ax_{1} + b, &amp;
+           ax_{2} + b, &amp;
+           \dots, &amp;
+           ax_{m} + b
+         \end{bmatrix}
+\]</p>
+
+<p>Fortunately, TensorFlow does the work for us of interpreting the simple equation \(y’ = ax + b\) as the more complicated looking vector equation. We just have to tell TensorFlow which things are vectors (\(x\) and \(y’\)), and which are not vectors (\(a\) and \(b\)). First, we define \(x\):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+</code></pre></div></div>
+<p>This says that we create a <strong>placeholder</strong> that stores floating-point numbers, and has a <strong>shape</strong> of 1 x None. The shape of 1 x None tells TensorFlow that \(x\) is a vector with 1 row, and some unspecified number of columns. Although we don’t tell TensorFlow the number of columns, this is enough to tell TensorFlow that \(x\) is a vector.</p>
+
+<p>Secondly, note that we create a <code class="highlighter-rouge">tf.placeholder</code>: <code class="highlighter-rouge">x</code> does not have a numerical value right now. Instead, we will later feed the values of <code class="highlighter-rouge">x_data</code> into <code class="highlighter-rouge">x</code>. In short, use a <code class="highlighter-rouge">tf.placeholder</code> whenever there are values you wish to fill in later (usually data).</p>
+
+<p>Now, we define \(a\) and \(b\):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</code></pre></div></div>
+<p>Unlike <code class="highlighter-rouge">x</code>, we create <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> to be a <strong>variable</strong>, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is <strong>trainable</strong>, that is, something whose optimal value will be found by gradient descent.  Since the goal of linear regression is to find the best values of \(a\) and \(b\), the (only) TensorFlow variables in our model are <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.</p>
+
+<p>The parameters <code class="highlighter-rouge">("a", shape=(1))</code> indicate the name of the variable, and that <code class="highlighter-rouge">a</code> is a single number, <em>not</em> a vector. In comparison to <code class="highlighter-rouge">x</code>, note that a shape of <code class="highlighter-rouge">(1, None)</code> indicates a vector, while a shape of <code class="highlighter-rouge">(1)</code> indicates a single number.</p>
+
+<p>With <code class="highlighter-rouge">x</code>, <code class="highlighter-rouge">a</code> and  <code class="highlighter-rouge">b</code> defined, we can define \(y’\):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y_predicted</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
+</code></pre></div></div>
+
+<p>And that’s it to define the model!</p>
+
+<h3 id="defining-the-loss-function">Defining the loss function</h3>
+
+<p>We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \(a\) and \(b\).  Since the loss function compares the linear regression output to the correct output, we need to define \(y\), which are the actual output values from the data set. Since \(y\) consists of outside data (and we don’t need to train it), we create it as a <code class="highlighter-rouge">tf.placeholder</code>:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+</code></pre></div></div>
+<p>Like <code class="highlighter-rouge">x</code>, <code class="highlighter-rouge">y</code> is also a vector, since after all <code class="highlighter-rouge">y</code> must store the correct output for each value stored in <code class="highlighter-rouge">x</code>.</p>
+
+<p>Now, we are ready to setup the loss function. Recall that the loss function is:
+\[
+    L(a, b) = \sum_{i=1}^m (y’(x_i, a, b) - y_i)^2
+\]</p>
+
+<p>However, \(y’\) and \(y\) are now being interpreted as vectors. We can rewrite the loss function as:
+\[
+    L(a, b) = \mathrm{sum}((y’ - y)^2)
+\]
+Note that since \(y’\) and \(y\) are vectors, \(y’ - y\) is also a vector that just contains every number stored in \(y\) subtracted from every corresponding number in \(y’\). Likewise, \((y’ - y)^2\) is also a vector, with every number individually squared.  Then, the \(\mathrm{sum}\) function (I just made it up) adds up every number stored in the vector \((y’ - y)^2\). This is the same as the original loss function, but is a vector interpretation of it instead. We can code this directly:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+<p>The <code class="highlighter-rouge">tf.reduce_sum</code> function is an operation which adds up all the numbers stored in a vector. It is called “reduce” since it reduces a large vector down to a single number (the sum). The word “reduce” here has nothing to do with the fact that we will minimize the loss function.</p>
+
+<p>With just these two lines of code we have defined our loss function</p>
+
+<h3 id="minimizing-the-loss-function-with-gradient-descent">Minimizing the loss function with gradient descent</h3>
+
+<p>With our model and loss function defined, we are now ready to use the gradient descent algorithm to minimize the loss function, and thus find the optimal \(a\) and \(b\). Fortunately, TensorFlow as already implemented the gradient descent algorithm for us, we just need to use it. The algorithm simulates a ball rolling downhill into the minimum of the function, but it does so in discrete time steps. TensorFlow does not handle this aspect, we need to be responsible for performing each time step of gradient descent. So, roughly we want to do this:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Pseudo-code for gradient descent training.</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="c"># Tell TensorFlow to do 1 time step of gradient descent</span>
+</code></pre></div></div>
+<p>We can’t do this yet, since we don’t yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\(\alpha)\) of \(0.1\):</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+</code></pre></div></div>
+<p>The <code class="highlighter-rouge">tf.train.AdamOptimizer</code> knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this <em>does not yet minimize \(L\)</em>. This code only create an optimizer object which we will use later to minimize \(L\). The second problem we have is we don’t know how to make TensorFlow run actual computations. Everything so far has been only <em>defining</em> things for TensorFlow, not computing things with concrete numbers. To do so, we also need to create a <strong>session</strong>:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+</code></pre></div></div>
+<p>A TensorFlow session is how we always have to perform actual computations with TensorFlow. We actually need to perform a computation right now, before doing gradient descent. Previously, we defined the variables <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>, but they don’t have any numeric value right now. They need to have some initial value so gradient descent can work. To solve this, we have TensorFlow initialize <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> with random values:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+</code></pre></div></div>
+<p>The <code class="highlighter-rouge">session.run</code> function is how we always have to run computations with TensorFlow: the parameter is what computation we want to perform.</p>
+
+<p>Finally, we are ready to run the optimization loop pseudo-code that we originally wanted. Using <code class="highlighter-rouge">session.run</code> it looks like:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_a</span><span class="p">,</span> <span class="n">current_b</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">x_data</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">y_data</span>
+    <span class="p">})</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"t = </span><span class="si">%</span><span class="s">g, loss = </span><span class="si">%</span><span class="s">g, a = </span><span class="si">%</span><span class="s">g, b = </span><span class="si">%</span><span class="s">g"</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_a</span><span class="p">,</span> <span class="n">current_b</span><span class="p">))</span>
+</code></pre></div></div>
+<p>Let’s break this down. We use <code class="highlighter-rouge">session.run</code>, but we pass it an array of computations that we want to perform. Specifically, we want to perform 4 computations: <code class="highlighter-rouge">optimizer</code> (this is 1 time step of gradient descent), <code class="highlighter-rouge">L</code> (this returns the current value of the loss function), <code class="highlighter-rouge">a</code> (this returns the current value of <code class="highlighter-rouge">a</code>), and <code class="highlighter-rouge">b</code> (likewise returns the current value of <code class="highlighter-rouge">b</code>). Of these computations, only the <code class="highlighter-rouge">optimizer</code> does not return a value. So, <code class="highlighter-rouge">session.run</code> will return 3 values for us, which we store into variables using the syntax:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">_</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_a</span><span class="p">,</span> <span class="n">current_b</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="o">...</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Ok, but what is all of this <code class="highlighter-rouge">feed_dict</code> stuff? Recall that <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> are placeholders, and have no actual numerical value on their own. To perform 1 time step of gradient descent, we need to “feed” our actual data (<code class="highlighter-rouge">x_data</code> and <code class="highlighter-rouge">y_data</code>) into the <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> placeholders. So, we use the <code class="highlighter-rouge">feed_dict</code> parameter of <code class="highlighter-rouge">session.run</code> to feed <code class="highlighter-rouge">x_data</code> into <code class="highlighter-rouge">x</code>, and <code class="highlighter-rouge">y_data</code> into <code class="highlighter-rouge">y</code>.</p>
+
+<p>Finally, the last line of the loop prints out the current values of <code class="highlighter-rouge">t</code>, <code class="highlighter-rouge">L</code>, <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>. We don’t need to print these values out, but it is helpful to observe how the training is progressing.</p>
+
+<p>What we want to see from the print statements is that the gradient descent algorithm <strong>converged</strong>, which means that the algorithm stopped making significant progress because it found the minimum location of the loss function. When the last few print outputs look like:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>t = 9992, loss = 39295.8, a = -17.271, b = 997.281
+t = 9993, loss = 39295.8, a = -17.271, b = 997.282
+t = 9994, loss = 39295.9, a = -17.271, b = 997.282
+t = 9995, loss = 39295.9, a = -17.271, b = 997.283
+t = 9996, loss = 39295.8, a = -17.2711, b = 997.283
+t = 9997, loss = 39295.8, a = -17.2711, b = 997.284
+t = 9998, loss = 39295.9, a = -17.2711, b = 997.284
+t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
+</code></pre></div></div>
+<p>then we can tell that we have achieved convergence, and therefore found the best values of \(a\) and \(b\).</p>
+
+<h3 id="use-the-trained-model-to-make-predictions">Use the trained model to make predictions</h3>
 
 <div class="footnotes">
   <ol>
