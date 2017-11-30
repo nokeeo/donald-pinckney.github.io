@@ -453,7 +453,14 @@ t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 </code></pre></div></div>
 <p>then we can tell that we have achieved convergence, and therefore found the best values of \(a\) and \(b\).</p>
 
-<h3 id="use-the-trained-model-to-make-predictions">Use the trained model to make predictions</h3>
+<h3 id="using-the-trained-model-to-make-predictions">Using the trained model to make predictions</h3>
+
+<p>At this point we have a fully trained model, and know the best values of \(a\) and \(b\). In fact, the equation of the line of best fit is just:
+\[
+    y’ = -17.2711x + 997.285
+\]</p>
+
+<p>The last remaining thing for this single variable linear regression tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use</p>
 
 <div class="footnotes">
   <ol>

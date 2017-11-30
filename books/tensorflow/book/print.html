@@ -415,7 +415,12 @@ t = 9998, loss = 39295.9, a = -17.2711, b = 997.284
 t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 </code></pre>
 <p>then we can tell that we have achieved convergence, and therefore found the best values of \(a\) and \(b\).</p>
-<a class="header" href="print.html#use-the-trained-model-to-make-predictions" id="use-the-trained-model-to-make-predictions"><h3>Use the trained model to make predictions</h3></a>
+<a class="header" href="print.html#using-the-trained-model-to-make-predictions" id="using-the-trained-model-to-make-predictions"><h3>Using the trained model to make predictions</h3></a>
+<p>At this point we have a fully trained model, and know the best values of \(a\) and \(b\). In fact, the equation of the line of best fit is just:
+\[
+y' = -17.2711x + 997.285
+\]</p>
+<p>The last remaining thing for this single variable linear regression tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use</p>
 <div class="footnote-definition" id="fn1"><sup class="footnote-definition-label">1</sup>
 <p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.</p>
 </div>
