@@ -111,13 +111,154 @@ import matplotlib.pyplot as plt
 
 We use pandas to easily load the CSV homicide data:
 ```python
-D = pd.read_csv("homicide.csv").values
-x_data = 
+D = pd.read_csv("homicide.csv")
+x_data = np.matrix(D.age.values)
+y_data = np.matrix(D.num_homicide_deaths.values)
 ```
+Note that `x_data` and `y_data` are *not* single numbers, but are actually [vectors](https://en.wikipedia.org/wiki/Vector_space). The vectors are 30 numbers long, since there are 30 data points in the CSV file. So, `(x_data[0], y_data[0])` would be \\((x_1, y_1) = (21, 652)\\). When we look at multi variable regression later, we will have to work much more with vectors, matrices and linear algebra, but for now you can think of `x_data` and `y_data` just as lists of numbers. Also, we have to use `np.matrix(...)` to convert the array of numbers `D.age.values` to an actual numpy vector (likewise for `D.num_homicide_deaths.values`).
+
+Whenever possible, I would recommend plotting data, since this helps you verify that you loaded the data set correctly and gain visual intuition about the shape of the data. This is also pretty easy using matplotlib:
+```python
+plt.plot(x_data.T, y_data.T, 'x')
+plt.xlabel('Age')
+plt.ylabel('US Homicide Deaths in 2015')
+plt.title('Relationship between age and homicide deaths in the US')
+plt.show()
+```
+When we converted the data to vectors using `np.matrix()`, numpy created vectors with the shape 1 x 30. That is, `x_data` consists of only 1 row of numbers, and 30 columns. This is actually great for us when working with TensorFlow, but matplotlib wants vectors that have the shape 30 x 1 (30 rows and 1 column). Writing `x_data.T` calculates the [transpose](https://en.wikipedia.org/wiki/Transpose) of `x_data`, which flips it from a 1 x 30 vector to a 30 x 1 vector. It's fine if you don't understand this now, as we will learn more linear algebra later. Anyways, the plot should look like this:
+![Homicide Plot][homicide]
+You need to close the plot for your code to continue executing.
+
+### Defining the model
+
+We have our data prepared and plotted, so now we need to define our model. Recall that the model equation is:
+\\[
+    y' = ax + b
+\\]
+Before, we thought of \\(x\\) and \\(y'\\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \\(x\\) and \\(y'\\) are vectors, then we don't need to change the equation, just our interpretation of it. Multiplying the vector \\(x\\) by the single number \\(a\\) just multiplies every number in \\(x\\) be \\(a\\), and likewise for adding \\(b\\). So, the above equation interpreted using vectors is the same thing as:
+\\[
+    \\begin{bmatrix}
+           y_{1}', &
+           y_{2}', &
+           \\dots, &
+           y_{m}',
+    \\end{bmatrix} = \\begin{bmatrix}
+           ax_{1} + b, &
+           ax_{2} + b, &
+           \\dots, &
+           ax_{m} + b
+         \\end{bmatrix}
+\\]
+
+Fortunately, TensorFlow does the work for us of interpreting the simple equation \\(y' = ax + b\\) as the more complicated looking vector equation. We just have to tell TensorFlow which things are vectors (\\(x\\) and \\(y'\\)), and which are not vectors (\\(a\\) and \\(b\\)). First, we define \\(x\\):
+```python
+x = tf.placeholder(tf.float32, shape=(1, None))
+```
+This says that we create a **placeholder** that stores floating-point numbers, and has a **shape** of 1 x None. The shape of 1 x None tells TensorFlow that \\(x\\) is a vector with 1 row, and some unspecified number of columns. Although we don't tell TensorFlow the number of columns, this is enough to tell TensorFlow that \\(x\\) is a vector. 
+
+Secondly, note that we create a `tf.placeholder`: `x` does not have a numerical value right now. Instead, we will later feed the values of `x_data` into `x`. In short, use a `tf.placeholder` whenever there are values you wish to fill in later (usually data).
+
+Now, we define \\(a\\) and \\(b\\):
+```python
+a = tf.get_variable("a", shape=(1))
+b = tf.get_variable("b", shape=(1))
+```
+Unlike `x`, we create `a` and `b` to be a **variable**, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is **trainable**, that is, something whose optimal value will be found by gradient descent.  Since the goal of linear regression is to find the best values of \\(a\\) and \\(b\\), the (only) TensorFlow variables in our model are `a` and `b`. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.
+
+The parameters `("a", shape=(1))` indicate the name of the variable, and that `a` is a single number, *not* a vector. In comparison to `x`, note that a shape of `(1, None)` indicates a vector, while a shape of `(1)` indicates a single number.
+
+With `x`, `a` and  `b` defined, we can define \\(y'\\):
+```python
+y_predicted = a*x + b
+```
+
+And that's it to define the model!
+
+### Defining the loss function
+
+We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \\(a\\) and \\(b\\).  Since the loss function compares the linear regression output to the correct output, we need to define \\(y\\), which are the actual output values from the data set. Since \\(y\\) consists of outside data (and we don't need to train it), we create it as a `tf.placeholder`:
+```python
+y = tf.placeholder(tf.float32, shape=(1, None))
+```
+Like `x`, `y` is also a vector, since after all `y` must store the correct output for each value stored in `x`.
+
+Now, we are ready to setup the loss function. Recall that the loss function is:
+\\[
+    L(a, b) = \\sum_{i=1}^m (y'(x_i, a, b) - y_i)^2
+\\]
+
+However, \\(y'\\) and \\(y\\) are now being interpreted as vectors. We can rewrite the loss function as:
+\\[
+    L(a, b) = \\mathrm{sum}((y' - y)^2)
+\\]
+Note that since \\(y'\\) and \\(y\\) are vectors, \\(y' - y\\) is also a vector that just contains every number stored in \\(y\\) subtracted from every corresponding number in \\(y'\\). Likewise, \\((y' - y)^2\\) is also a vector, with every number individually squared.  Then, the \\(\\mathrm{sum}\\) function (I just made it up) adds up every number stored in the vector \\((y' - y)^2\\). This is the same as the original loss function, but is a vector interpretation of it instead. We can code this directly:
+```python
+L = tf.reduce_sum((y_predicted - y)**2)
+```
+The `tf.reduce_sum` function is an operation which adds up all the numbers stored in a vector. It is called "reduce" since it reduces a large vector down to a single number (the sum). The word "reduce" here has nothing to do with the fact that we will minimize the loss function.
+
+With just these two lines of code we have defined our loss function
+
+### Minimizing the loss function with gradient descent
+
+With our model and loss function defined, we are now ready to use the gradient descent algorithm to minimize the loss function, and thus find the optimal \\(a\\) and \\(b\\). Fortunately, TensorFlow as already implemented the gradient descent algorithm for us, we just need to use it. The algorithm simulates a ball rolling downhill into the minimum of the function, but it does so in discrete time steps. TensorFlow does not handle this aspect, we need to be responsible for performing each time step of gradient descent. So, roughly we want to do this:
+```python
+# Pseudo-code for gradient descent training.
+for t in range(10000):
+    # Tell TensorFlow to do 1 time step of gradient descent
+```
+We can't do this yet, since we don't yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\\(\\alpha)\\) of \\(0.1\\):
+```python
+optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
+```
+The `tf.train.AdamOptimizer` knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this *does not yet minimize \\(L\\)*. This code only create an optimizer object which we will use later to minimize \\(L\\). The second problem we have is we don't know how to make TensorFlow run actual computations. Everything so far has been only *defining* things for TensorFlow, not computing things with concrete numbers. To do so, we also need to create a **session**:
+```python
+session = tf.Session()
+```
+A TensorFlow session is how we always have to perform actual computations with TensorFlow. We actually need to perform a computation right now, before doing gradient descent. Previously, we defined the variables `a` and `b`, but they don't have any numeric value right now. They need to have some initial value so gradient descent can work. To solve this, we have TensorFlow initialize `a` and `b` with random values:
+```python
+session.run(tf.global_variables_initializer())
+```
+The `session.run` function is how we always have to run computations with TensorFlow: the parameter is what computation we want to perform.
+
+Finally, we are ready to run the optimization loop pseudo-code that we originally wanted. Using `session.run` it looks like:
+```python
+for t in range(10000):
+    _, current_loss, current_a, current_b = session.run([optimizer, L, a, b], feed_dict={
+        x: x_data,
+        y: y_data
+    })
+    print("t = %g, loss = %g, a = %g, b = %g" % (t, current_loss, current_a, current_b))
+```
+Let's break this down. We use `session.run`, but we pass it an array of computations that we want to perform. Specifically, we want to perform 4 computations: `optimizer` (this is 1 time step of gradient descent), `L` (this returns the current value of the loss function), `a` (this returns the current value of `a`), and `b` (likewise returns the current value of `b`). Of these computations, only the `optimizer` does not return a value. So, `session.run` will return 3 values for us, which we store into variables using the syntax:
+```python
+_, current_loss, current_a, current_b = session.run([optimizer, L, a, b], ...)
+```
+
+Ok, but what is all of this `feed_dict` stuff? Recall that `x` and `y` are placeholders, and have no actual numerical value on their own. To perform 1 time step of gradient descent, we need to "feed" our actual data (`x_data` and `y_data`) into the `x` and `y` placeholders. So, we use the `feed_dict` parameter of `session.run` to feed `x_data` into `x`, and `y_data` into `y`.
+
+Finally, the last line of the loop prints out the current values of `t`, `L`, `a` and `b`. We don't need to print these values out, but it is helpful to observe how the training is progressing.
+
+What we want to see from the print statements is that the gradient descent algorithm **converged**, which means that the algorithm stopped making significant progress because it found the minimum location of the loss function. When the last few print outputs look like:
+```
+t = 9992, loss = 39295.8, a = -17.271, b = 997.281
+t = 9993, loss = 39295.8, a = -17.271, b = 997.282
+t = 9994, loss = 39295.9, a = -17.271, b = 997.282
+t = 9995, loss = 39295.9, a = -17.271, b = 997.283
+t = 9996, loss = 39295.8, a = -17.2711, b = 997.283
+t = 9997, loss = 39295.8, a = -17.2711, b = 997.284
+t = 9998, loss = 39295.9, a = -17.2711, b = 997.284
+t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
+```
+then we can tell that we have achieved convergence, and therefore found the best values of \\(a\\) and \\(b\\).
+
+### Use the trained model to make predictions
+
+
 
 [^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.
 
 [homicide]: /books/tensorflow/book/ch2-linreg/homicide.png
 [homicide_fit]: /books/tensorflow/book/ch2-linreg/homicide_fit.png
 [minimum]: /books/tensorflow/book/ch2-linreg/minimum.png
-[data]: /books/tensorflow/book/ch2-linreg/homicide.csv
+[data]: /books/tensorflow/book/ch2-linreg/code/homicide.csv
