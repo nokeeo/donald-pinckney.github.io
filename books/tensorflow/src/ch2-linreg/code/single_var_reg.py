@@ -16,6 +16,7 @@ plt.title('Relationship between age and homicide deaths in the US')
 plt.show()
 
 
+
 ### Model definition ###
 
 # Define x (input data) placeholder
@@ -54,3 +55,22 @@ for t in range(10000):
         y: y_data
     })
     print("t = %g, loss = %g, a = %g, b = %g" % (t, current_loss, current_a, current_b))
+
+
+### Using the trained model to make predictions
+
+# x_test_data has values similar to [20.0, 20.1, 20.2, ..., 79.9, 80.0]
+x_test_data = np.matrix(np.linspace(20, 55))
+
+# Predict the homicide rate for each age in x_test_data
+y_test_data = session.run(y_predicted, feed_dict={
+    x: x_test_data
+})
+
+# Plot the original data and the prediction line
+plt.plot(x_data.T, y_data.T, 'x')
+plt.plot(x_test_data.T, y_test_data.T)
+plt.xlabel('Age')
+plt.ylabel('US Homicide Deaths in 2015')
+plt.title('Age and homicide death linear regression')
+plt.show()

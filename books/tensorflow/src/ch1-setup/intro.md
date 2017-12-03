@@ -9,7 +9,7 @@ editPath: books/tensorflow/src/ch1-setup/intro.md
 
 # Introduction
 
-Welcome to *Machine Learning with TensorFlow*, an easy to follow book / blog about understanding machine learning concepts and their implementation in [Python](https://www.python.org) and [TensorFlow](https://www.tensorflow.org). My goal is to create an intuitive explanation of machine learning methods, paired with practical knowledge of implementation with TensorFlow. This book does assume some small working knowledge of programming, but Python specific syntax will be briefly introduced as needed.  In addition, some mathematics background will be useful, in particular linear algebra and calculus, but is not needed to follow the intuition and implementation. Resources to review relevant math concepts will be provided as required.
+Welcome to *Machine Learning with TensorFlow*, an easy to follow book / blog about understanding machine learning concepts and their implementation in [Python](https://www.python.org) and [TensorFlow](https://www.tensorflow.org). My goal is to create an intuitive explanation of machine learning methods, paired with practical knowledge of implementation with TensorFlow. This book does assume some small working knowledge of programming, but Python specific syntax will be briefly introduced as needed.  In addition, some mathematics background will be useful, in particular linear algebra and calculus, but is not needed to follow the intuition and implementation. Resources to review relevant math concepts will be provided as required. Finally, this book is [open source on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/tree/src/books/tensorflow/src), and I would be happy to consider edits, both tiny and large. Feel free to open pull requests with changes to improve this book!
 
 ## What exactly is machine learning?
 
@@ -31,5 +31,5 @@ Without diving into the details of various machine learning methods, I'll genera
 
 So, without further ado, we can get started by installing Python, TensorFlow, and a few other useful tools. Just follow the appropriate directions for your operating system.
 
-[gold]: /books/tensorflow/book/ch1-setup/gold.jpg
-[poodle]: /books/tensorflow/book/ch1-setup/poodle.jpg
+[gold]: /books/tensorflow/book/ch1-setup/assets/gold.jpg
+[poodle]: /books/tensorflow/book/ch1-setup/assets/poodle.jpg

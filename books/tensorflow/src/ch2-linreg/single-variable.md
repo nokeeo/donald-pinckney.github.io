@@ -9,6 +9,8 @@ editPath: books/tensorflow/src/ch2-linreg/single-variable.md
 
 # Single Variable Regression
 
+Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow [implementation](#implementation).
+
 ## Motivation
 
 Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age[^fn1], and the line of best fit next to it.
@@ -47,9 +49,9 @@ How then, how do we find the correct values of \\(a\\) and \\(b\\)? First, we ne
 \\[
     L(a, b) = \\sum_{i=1}^m (y'(x_i, a, b) - y_i)^2
 \\]
-Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th input, and \\(y_i\\) is the i'th desired output. So, \\((y'(x_i, a, b) - y_i)^2\\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \\(y'\\) is 7, and the correct output \\(y\\) is 10, then we would get \\((7 - 10)^2 = 9.\\) Note that squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses.
+Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th input, and \\(y_i\\) is the i'th desired output. So, \\((y'(x_i, a, b) - y_i)^2\\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \\(y'\\) is 7, and the correct output \\(y\\) is 10, then we would get \\((7 - 10)^2 = 9.\\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses.
 
-> Note: The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in section 2.3.
+> Note: The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.
 
 ### Optimizing the model
 
@@ -78,7 +80,7 @@ If you need to review this aspect of calculus, I would recommend [Khan Academy v
 where \\(\\alpha\\) is a constant called the **learning rate**, which we will talk about more later. If we repeat this process then the ball will continue to roll downhill into the minimum. An animation of this process looks like:
 
 <video autoplay loop muted>
-<source type="video/mp4" src="/books/tensorflow/book/ch2-linreg/line_fast.mp4">
+<source type="video/mp4" src="/books/tensorflow/book/ch2-linreg/assets/descent_fast.mp4">
 </video>
 
 When we run the gradient descent algorithm for long enough, then it will find the optimal location for \\((a, b)\\). Once we have the optimal values of \\(a\\) and \\(b\\), then that's it, we can just use them to predict a rate of homicide deaths given any age, using the model:
@@ -127,6 +129,7 @@ plt.show()
 ```
 When we converted the data to vectors using `np.matrix()`, numpy created vectors with the shape 1 x 30. That is, `x_data` consists of only 1 row of numbers, and 30 columns. This is actually great for us when working with TensorFlow, but matplotlib wants vectors that have the shape 30 x 1 (30 rows and 1 column). Writing `x_data.T` calculates the [transpose](https://en.wikipedia.org/wiki/Transpose) of `x_data`, which flips it from a 1 x 30 vector to a 30 x 1 vector. It's fine if you don't understand this now, as we will learn more linear algebra later. Anyways, the plot should look like this:
 ![Homicide Plot][homicide]
+
 You need to close the plot for your code to continue executing.
 
 ### Defining the model
@@ -211,7 +214,9 @@ We can't do this yet, since we don't yet have a way to tell TensorFlow to perfor
 ```python
 optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
 ```
-The `tf.train.AdamOptimizer` knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this *does not yet minimize \\(L\\)*. This code only create an optimizer object which we will use later to minimize \\(L\\). The second problem we have is we don't know how to make TensorFlow run actual computations. Everything so far has been only *defining* things for TensorFlow, not computing things with concrete numbers. To do so, we also need to create a **session**:
+The `tf.train.AdamOptimizer` knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this *does not yet minimize \\(L\\)*. This code only create an optimizer object which we will use later to minimize \\(L\\). For an explanation of the `learning_rate=0.2` parameter (and the `10000` loop iterations), see the end of this tutorial.
+
+The second problem we have is we don't know how to make TensorFlow run actual computations. Everything so far has been only *defining* things for TensorFlow, not computing things with concrete numbers. To do so, we also need to create a **session**:
 ```python
 session = tf.Session()
 ```
@@ -259,12 +264,178 @@ At this point we have a fully trained model, and know the best values of \\(a\\)
     y' = -17.2711x + 997.285
 \\]
 
-The last remaining thing for this single variable linear regression tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use
+The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use `x_data` as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. We can use the numpy function `linspace` to create a bunch of evenly spaced values:
+```python
+# x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]
+x_test_data = np.matrix(np.linspace(20, 55))
+```
+Then, we can feed `x_test_data` into the `x` placeholder, and save the outputs of the prediction in `y_test_data`:
+```python
+y_test_data = session.run(y_predicted, feed_dict={
+    x: x_test_data
+})
+```
+
+Finally, we can plot the original data and the line together:
+```python
+plt.plot(x_data.T, y_data.T, 'x')
+plt.plot(x_test_data.T, y_test_data.T)
+plt.xlabel('Age')
+plt.ylabel('US Homicide Deaths in 2015')
+plt.title('Age and homicide death linear regression')
+plt.show()
+```
+This yields a plot like:
+
+![Homicide Linear Regression Plot][homicide_fit]
+
+# Concluding Remarks
+
+Through following this post you have learned two main concepts. First, you learned the *general form of supervised machine learning workflows*:
+1. Get your data set
+2. Define your model (the mechanism for how outputs will be predicted from inputs)
+3. Define your loss function
+4. Minimize your loss function (usually with a variant of gradient descent)
+5. Once your loss function is minimized, use your trained model to do cool stuff
+
+Second, you learned how to implement linear regression (following the above workflow) using TensorFlow. Let's briefly discuss the above 5 steps, and where to go to improve on them.
+
+## 1. The Data Set
+
+This one is pretty simple: we need data sets that contain both input and output data. However, we need a data set that is large enough to properly train our model. With linear regression this is fairly easy: this data set only had 33 data points, and the results were pretty good. With larger and more complex models that we will look at later, this becomes much more of a challenge.
+
+## 2. Defining the model
+
+For single variable linear regression we used the model \\(y' = ax + b\\). Geometrically, this means that the model can only guess lines. Since the homicide data is roughly in the shape of a line, it worked well for this problem. But there are very few problems that are so simple, so soon we will look at more complex models. One other limitation of the current model is it only accepts one input variable. But if our data set had both age and ethnicity, for example, perhaps we could more accurately predict homicide death rate. Also very soon we will discuss a more complex model that handles multiple input variables.
+
+## 3. Defining the loss function
+
+For single variable regression, the loss function we used, \\(L = \\sum (y' - y)^2\\), is the standard. However, there are a few considerations: first, this loss functions is suitable for this simple model, but with more advanced models this loss function isn't good enough. We will see why soon. Second, the optimization algorithm converged pretty slowly, needing about \\(10000\\) iterations. The cause is that the surface of the loss function is almost flat in a certain direction (you can see this in the 3D plot of it). Though this isn't a problem with the formula for the loss function, the problem surfaces in the loss function. We will also see how to address this problem soon, and converge muster faster.
+
+## 4. Minimizing the loss functions
+
+Recall that we created and used the optimizer like so:
+```python
+optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
+for t in range(10000):
+    # Run one step of optimizer
+```
+You might be wondering what the magic numbers of `learning_rate=0.2` (\\( \\alpha \\)) and `10000` are.  Let's start with the learning rate. In each iteration, gradient descent (and variants of it) take one small step that is determined by the derivative of the loss function. The learning rate is just the relative size of the step. So to take larger steps, we can use a larger learning rate. A larger learning rate can help us to converge more quickly, since we cover more distance in each iteration. But a learning rate too large can cause gradient descent to diverge that is, it won't reliably find the minimum.
+
+So, once you have chosen a learning rate, then you need to run the optimizer for enough iterations so it actually converges to the minimum. The easiest way to make sure it runs long enough is just to monitor the value of the loss function, as we did in this tutorial.
+
+Lastly, we didn't use normal gradient descent for optimization in this tutorial. Instead we used `tf.train.AdamOptimizer`. With small scale problems like this, there isn't much of a qualitative difference to intuit. In general the [Adam optimizer](https://medium.com/@nishantnikhil/adam-optimizer-notes-ddac4fd7218) is faster, smarter, and more reliable than vanilla gradient descent, but this comes into play a lot more with harder problems.
+
+## 5. Use the trained model
+
+Technically, using the trained model is the easiest part of machine learning: with the best parameters \\(a\\) and \\(b\\), you can simply plug new age values into \\(x\\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this book we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model. 
+
+One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don't have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn't impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don't have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \\(1\\) year old homicides is even close to 980.
+
+While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and [it quickly learned to say fairly horrible and racist things](https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist). More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, according to [an article by The Conversation](http://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640):
+
+> Our recent study, by Human Rights Data Analysis Group’s Kristian Lum and William Isaac, found that predictive policing vendor PredPol’s purportedly race-neutral algorithm targeted black neighborhoods at roughly twice the rate of white neighborhoods when trained on historical drug crime data from Oakland, California. 
+> [...] 
+> But estimates – created from public health surveys and population models – suggest illicit drug use in Oakland is roughly equal across racial and income groups. If the algorithm were truly race-neutral, it would spread drug-fighting police attention evenly across the city.
+
+With examples like these, we quickly move from a technical discussion about machine learning to a discussion about ethics. While the study of machine learning is traditionally heavily theoretical, I strongly believe that to effectively and *fairly* apply machine learning in society, we must spend significant effort evaluating the ethics of machine learning models.
+
+This is an open question, and one that I certainly don't have an answer to right now. For the short term we can focus on the problem of not trusting a simple linear regression model to properly predict data outside of what it has been trained on, while in the long term keeping in mind that "with great power comes great responsibility."
+
+# Exercises
+
+Feel free to complete as many of these as you wish, to get more practice with single variable linear regression. Note that for different problems you might have to adjust the learning rate and / or the number of training iterations.
+
+1. Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \\(x\\) value you could create an artificial \\(y\\) value like so: \\(y = ax + b + \\epsilon \\), where \\(\\epsilon\\) is a random number that isn't too big, and \\(a\\) and \\(b\\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \\(a\\) and \\(b\\).
+2. Run single variable linear regression on a data set of your choice. You can look at [my list of regression data sets](http://donaldpinckney.com/ml.html#regression) for ideas, you can search [Kaggle](https://www.kaggle.com/datasets), or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.
+
+# Complete Code
+
+The [complete example code is available on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/single_var_reg.py), as well as directly here:
+
+```python
+import numpy as np
+import tensorflow as tf
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the data, and convert to 1x30 vectors
+D = pd.read_csv("homicide.csv")
+x_data = np.matrix(D.age.values)
+y_data = np.matrix(D.num_homicide_deaths.values)
+
+# Plot the data
+plt.plot(x_data.T, y_data.T, 'x')
+plt.xlabel('Age')
+plt.ylabel('US Homicide Deaths in 2015')
+plt.title('Relationship between age and homicide deaths in the US')
+plt.show()
+
+
+
+### Model definition ###
+
+# Define x (input data) placeholder
+x = tf.placeholder(tf.float32, shape=(1, None))
+
+# Define the trainable variables
+a = tf.get_variable("a", shape=(1))
+b = tf.get_variable("b", shape=(1))
+
+# Define the prediction model
+y_predicted = a*x + b
+
+
+### Loss function definition ###
+
+# Define y (correct data) placeholder
+y = tf.placeholder(tf.float32, shape=(1, None))
+
+# Define the loss function
+L = tf.reduce_sum((y_predicted - y)**2)
+
+
+### Training the model ###
+
+# Define optimizer object
+optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
+
+# Create a session and initialize variables
+session = tf.Session()
+session.run(tf.global_variables_initializer())
+
+# Main optimization loop
+for t in range(10000):
+    _, current_loss, current_a, current_b = session.run([optimizer, L, a, b], feed_dict={
+        x: x_data,
+        y: y_data
+    })
+    print("t = %g, loss = %g, a = %g, b = %g" % (t, current_loss, current_a, current_b))
+
+
+### Using the trained model to make predictions ###
+
+# x_test_data has values similar to [20.0, 20.1, 20.2, ..., 79.9, 80.0]
+x_test_data = np.matrix(np.linspace(20, 55))
+
+# Predict the homicide rate for each age in x_test_data
+y_test_data = session.run(y_predicted, feed_dict={
+    x: x_test_data
+})
+
+# Plot the original data and the prediction line
+plt.plot(x_data.T, y_data.T, 'x')
+plt.plot(x_test_data.T, y_test_data.T)
+plt.xlabel('Age')
+plt.ylabel('US Homicide Deaths in 2015')
+plt.title('Age and homicide death linear regression')
+plt.show()
+``` 
 
 
 [^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.
 
-[homicide]: /books/tensorflow/book/ch2-linreg/homicide.png
-[homicide_fit]: /books/tensorflow/book/ch2-linreg/homicide_fit.png
-[minimum]: /books/tensorflow/book/ch2-linreg/minimum.png
+[homicide]: /books/tensorflow/book/ch2-linreg/assets/homicide.png
+[homicide_fit]: /books/tensorflow/book/ch2-linreg/assets/homicide_fit.png
+[minimum]: /books/tensorflow/book/ch2-linreg/assets/minimum.png
 [data]: /books/tensorflow/book/ch2-linreg/code/homicide.csv
