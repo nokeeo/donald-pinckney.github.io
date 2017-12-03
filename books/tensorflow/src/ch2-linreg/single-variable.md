@@ -432,8 +432,9 @@ plt.title('Age and homicide death linear regression')
 plt.show()
 ``` 
 
+# References
 
-[^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at http://wonder.cdc.gov/ucd-icd10.html on Nov 22, 2017 2:18:46 PM.
+[^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at [http://wonder.cdc.gov/ucd-icd10.html](http://wonder.cdc.gov/ucd-icd10.html) on Nov 22, 2017 2:18:46 PM.
 
 [homicide]: /books/tensorflow/book/ch2-linreg/assets/homicide.png
 [homicide_fit]: /books/tensorflow/book/ch2-linreg/assets/homicide_fit.png
