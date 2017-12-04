@@ -4,13 +4,456 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2017-12-03T16:04:43-08:00</updated>
+ <updated>2017-12-03T16:26:49-08:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
    <email>djpinckney@ucdavis.edu</email>
  </author>
 
+ 
+ <entry>
+   <title>Single Variable Linear Regression</title>
+   <link href="http://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html"/>
+   <updated>2017-12-03T00:00:00-08:00</updated>
+   <id>http://donaldpinckney.com/tensorflow/2017/12/03/single-variable</id>
+   <content type="html">&lt;h1 id=&quot;single-variable-regression&quot;&gt;Single Variable Regression&lt;/h1&gt;
+
+&lt;p&gt;Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow &lt;a href=&quot;#implementation&quot;&gt;implementation&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
+
+&lt;p&gt;Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age&lt;sup id=&quot;fnref:fn1&quot;&gt;&lt;a href=&quot;#fn:fn1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, and the line of best fit next to it.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Original data&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Result of single variable linear regression&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/homicide.png&quot; alt=&quot;Homicide Plot&quot; /&gt;&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/homicide_fit.png&quot; alt=&quot;Homicide Regression Plot&quot; /&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Visually, it appears that this data is approximated pretty well by a “line of best fit”. Single variable linear regression is precisely the tool to find this line. The line of best fit can then be used to guess how many homicide deaths there would be for ages we don’t have data on. By the end of this tutorial you can run linear regression on this homicide data, and in fact solve any single variable regression problem.&lt;/p&gt;
+
+&lt;h2 id=&quot;theory&quot;&gt;Theory&lt;/h2&gt;
+
+&lt;p&gt;Since we don’t have any theory yet to understand linear regression, first we need to develop the theory necessary to program it.&lt;/p&gt;
+
+&lt;h3 id=&quot;data-set-format&quot;&gt;Data set format&lt;/h3&gt;
+
+&lt;p&gt;For regression problems, the goal is to predict a continuous variable output, given some input variables (usually also continuous). For single variable regression, we only have one input variable, called \(x\), and our &lt;em&gt;desired&lt;/em&gt; output \(y\). Our data set \(D\) then consists of many examples of \(x\) and \(y\), so:
+\[
+    D = \{ (x_1, y_1), (x_2, y_2), \cdots, (x_m, y_m) \}
+\]
+where \(m\) is the number of examples in the data set. For a concrete example, the homicide data set plotted above looks like:
+\[
+    D = \{ (21, 652), (22, 633), \cdots, (50, 197) \}
+\]
+We will write code to load data sets from files later.&lt;/p&gt;
+
+&lt;h3 id=&quot;model-concept&quot;&gt;Model concept&lt;/h3&gt;
+
+&lt;p&gt;So, how can we mathematically model single linear regression? Since the goal is to find the perfect line, let’s start by defining the &lt;strong&gt;model&lt;/strong&gt; (the mathematical description of how predictions will be created) as a line:
+\[
+    y’(x, a, b) = ax + b
+\]
+where \(x\) is an input, \(a, b\) are constants, and \(y’\) is the prediction for the input \(x\). Note that although this is an equation for a line with \(x\) as the variable, the values of \(a\) and \(b\) determine what specific line it is. To find the best line, we just need to find the best values for \(a\) (the slope) and \(b\) (the y-intercept). For example, the line of best fit for the homicide data above has a slope of about \(a \approx -17.69\) and a y-intercept of \(b \approx 1000\). How we find the magic best values for \(a\) and \(b\) we don’t know yet, but once we find them, prediction is easy, since we just use the formula above.&lt;/p&gt;
+
+&lt;p&gt;How then, how do we find the correct values of \(a\) and \(b\)? First, we need a way to define what the “best line” is exactly. To do so, we define a &lt;strong&gt;loss function&lt;/strong&gt; (also called a cost function), which measures how bad a particular choice of \(a\) and \(b\) are. Values of \(a\) and \(b\) that seem poor (a line that does not fit the data set) should result in a large value of the loss function, whereas good values of \(a\) and \(b\) (a line that fits the data set well) should result in small values of the loss function. In other words, the loss function should measure how far the predicted line is from each of the data points, and add this value up for all data points. We can write this as:
+\[
+    L(a, b) = \sum_{i=1}^m (y’(x_i, a, b) - y_i)^2
+\]
+Recall that there are \(m\) examples in the data set, \(x_i\) is the i’th input, and \(y_i\) is the i’th desired output. So, \((y’(x_i, a, b) - y_i)^2\) measures how far the i’th prediction is from the i’th desired output. For example, if the prediction \(y’\) is 7, and the correct output \(y\) is 10, then we would get \((7 - 10)^2 = 9.\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Note: The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;optimizing-the-model&quot;&gt;Optimizing the model&lt;/h3&gt;
+
+&lt;p&gt;At this point, we have fully defined both our model:
+\[
+    y’(x, a, b) = ax + b
+\]
+and our loss function, into which we can substitute the model:
+\[
+    L(a, b) = \sum_{i=1}^m (y’(x_i, a, b) - y_i)^2 = \sum_{i=1}^m (a x_i + b - y_i)^2
+\]
+We crafted \(L(a, b)\) so that it is smallest exactly when \(a\) and \(b\) produce the line of best fit. Therefore, our goal is to find the values of \(a\) and \(b\) that minimize the function \(L(a, b)\). But what does \(L\) really look like? Well, it is essentially a 3D parabola which looks like:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/minimum.png&quot; alt=&quot;Minimum Plot&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The red dot marked on the plot of \(L\) shows where the desired minimum is. We need an algorithm to find this minimum. From calculus, we know that at the minimum \(L\) must be entirely flat, that is the derivatives are both \(0\):
+\[
+    \frac{\partial L}{\partial a} = \sum_{i=1}^m 2(ax_i + b - y_i)x_i = 0 \&lt;br /&gt;
+    \frac{\partial L}{\partial b} = \sum_{i=1}^m 2(ax_i + b - y_i) = 0 &lt;br /&gt;
+\]
+If you need to review this aspect of calculus, I would recommend &lt;a href=&quot;https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc&quot;&gt;Khan Academy videos&lt;/a&gt;. Now, for this problem it is possible to solve for \(a\) and \(b\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called &lt;em&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Gradient_descent&quot;&gt;gradient descent&lt;/a&gt;&lt;/em&gt; to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \(L\), and it will naturally roll downhill towards the flat valley of \(L\) and thus find the minimum. We know the direction of “downhill” at any location since we know the derivatives of \(L\): the derivatives are the direction of greatest upward slope, so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \((a, b)\), we can simulate it’s motion by moving it to location \((a’, b’)\) like so:
+\[
+    a’ = a - \alpha \frac{\partial L}{\partial a} \&lt;br /&gt;
+    b’ = b - \alpha \frac{\partial L}{\partial b} \&lt;br /&gt;
+\]
+where \(\alpha\) is a constant called the &lt;strong&gt;learning rate&lt;/strong&gt;, which we will talk about more later. If we repeat this process then the ball will continue to roll downhill into the minimum. An animation of this process looks like:&lt;/p&gt;
+
+&lt;video autoplay=&quot;&quot; loop=&quot;&quot; muted=&quot;&quot;&gt;
+&lt;source type=&quot;video/mp4&quot; src=&quot;/books/tensorflow/book/ch2-linreg/assets/descent_fast.mp4&quot; /&gt;
+&lt;/video&gt;
+
+&lt;p&gt;When we run the gradient descent algorithm for long enough, then it will find the optimal location for \((a, b)\). Once we have the optimal values of \(a\) and \(b\), then that’s it, we can just use them to predict a rate of homicide deaths given any age, using the model:
+\[
+    y’(x) = ax + b
+\]&lt;/p&gt;
+
+&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
+
+&lt;p&gt;Let’s quickly review what we did when defining the theory of linear regression:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Describe the data set&lt;/li&gt;
+  &lt;li&gt;Define the model&lt;/li&gt;
+  &lt;li&gt;Define the loss function&lt;/li&gt;
+  &lt;li&gt;Run the gradient descent optimization algorithm&lt;/li&gt;
+  &lt;li&gt;Use the optimal model to make predictions&lt;/li&gt;
+  &lt;li&gt;Profit!&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;When coding this we will follow the exact same steps. So, create a new file &lt;code class=&quot;highlighter-rouge&quot;&gt;single_var_reg.py&lt;/code&gt; in the text editor or IDE of your choice (or experiment in the Python REPL), and download the &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/code/homicide.csv&quot;&gt;homicide death rate data set&lt;/a&gt; into the same directory.&lt;/p&gt;
+
+&lt;h3 id=&quot;importing-the-data&quot;&gt;Importing the data&lt;/h3&gt;
+
+&lt;p&gt;First, we need to import all the modules we will need:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We use pandas to easily load the CSV homicide data:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;homicide.csv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num_homicide_deaths&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Note that &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;y_data&lt;/code&gt; are &lt;em&gt;not&lt;/em&gt; single numbers, but are actually &lt;a href=&quot;https://en.wikipedia.org/wiki/Vector_space&quot;&gt;vectors&lt;/a&gt;. The vectors are 30 numbers long, since there are 30 data points in the CSV file. So, &lt;code class=&quot;highlighter-rouge&quot;&gt;(x_data[0], y_data[0])&lt;/code&gt; would be \((x_1, y_1) = (21, 652)\). When we look at multi variable regression later, we will have to work much more with vectors, matrices and linear algebra, but for now you can think of &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;y_data&lt;/code&gt; just as lists of numbers. Also, we have to use &lt;code class=&quot;highlighter-rouge&quot;&gt;np.matrix(...)&lt;/code&gt; to convert the array of numbers &lt;code class=&quot;highlighter-rouge&quot;&gt;D.age.values&lt;/code&gt; to an actual numpy vector (likewise for &lt;code class=&quot;highlighter-rouge&quot;&gt;D.num_homicide_deaths.values&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Whenever possible, I would recommend plotting data, since this helps you verify that you loaded the data set correctly and gain visual intuition about the shape of the data. This is also pretty easy using matplotlib:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'x'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xlabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'US Homicide Deaths in 2015'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Relationship between age and homicide deaths in the US'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;When we converted the data to vectors using &lt;code class=&quot;highlighter-rouge&quot;&gt;np.matrix()&lt;/code&gt;, numpy created vectors with the shape 1 x 30. That is, &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; consists of only 1 row of numbers, and 30 columns. This is actually great for us when working with TensorFlow, but matplotlib wants vectors that have the shape 30 x 1 (30 rows and 1 column). Writing &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data.T&lt;/code&gt; calculates the &lt;a href=&quot;https://en.wikipedia.org/wiki/Transpose&quot;&gt;transpose&lt;/a&gt; of &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt;, which flips it from a 1 x 30 vector to a 30 x 1 vector. It’s fine if you don’t understand this now, as we will learn more linear algebra later. Anyways, the plot should look like this:
+&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/homicide.png&quot; alt=&quot;Homicide Plot&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You need to close the plot for your code to continue executing.&lt;/p&gt;
+
+&lt;h3 id=&quot;defining-the-model&quot;&gt;Defining the model&lt;/h3&gt;
+
+&lt;p&gt;We have our data prepared and plotted, so now we need to define our model. Recall that the model equation is:
+\[
+    y’ = ax + b
+\]
+Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \(x\) and \(y’\) are vectors, then we don’t need to change the equation, just our interpretation of it. Multiplying the vector \(x\) by the single number \(a\) just multiplies every number in \(x\) be \(a\), and likewise for adding \(b\). So, the above equation interpreted using vectors is the same thing as:
+\[
+    \begin{bmatrix}
+           y_{1}’, &amp;amp;
+           y_{2}’, &amp;amp;
+           \dots, &amp;amp;
+           y_{m}’,
+    \end{bmatrix} = \begin{bmatrix}
+           ax_{1} + b, &amp;amp;
+           ax_{2} + b, &amp;amp;
+           \dots, &amp;amp;
+           ax_{m} + b
+         \end{bmatrix}
+\]&lt;/p&gt;
+
+&lt;p&gt;Fortunately, TensorFlow does the work for us of interpreting the simple equation \(y’ = ax + b\) as the more complicated looking vector equation. We just have to tell TensorFlow which things are vectors (\(x\) and \(y’\)), and which are not vectors (\(a\) and \(b\)). First, we define \(x\):&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This says that we create a &lt;strong&gt;placeholder&lt;/strong&gt; that stores floating-point numbers, and has a &lt;strong&gt;shape&lt;/strong&gt; of 1 x None. The shape of 1 x None tells TensorFlow that \(x\) is a vector with 1 row, and some unspecified number of columns. Although we don’t tell TensorFlow the number of columns, this is enough to tell TensorFlow that \(x\) is a vector.&lt;/p&gt;
+
+&lt;p&gt;Secondly, note that we create a &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.placeholder&lt;/code&gt;: &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; does not have a numerical value right now. Instead, we will later feed the values of &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; into &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;. In short, use a &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.placeholder&lt;/code&gt; whenever there are values you wish to fill in later (usually data).&lt;/p&gt;
+
+&lt;p&gt;Now, we define \(a\) and \(b\):&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;b&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Unlike &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;, we create &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; to be a &lt;strong&gt;variable&lt;/strong&gt;, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is &lt;strong&gt;trainable&lt;/strong&gt;, that is, something whose optimal value will be found by gradient descent.  Since the goal of linear regression is to find the best values of \(a\) and \(b\), the (only) TensorFlow variables in our model are &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.&lt;/p&gt;
+
+&lt;p&gt;The parameters &lt;code class=&quot;highlighter-rouge&quot;&gt;(&quot;a&quot;, shape=(1))&lt;/code&gt; indicate the name of the variable, and that &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; is a single number, &lt;em&gt;not&lt;/em&gt; a vector. In comparison to &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;, note that a shape of &lt;code class=&quot;highlighter-rouge&quot;&gt;(1, None)&lt;/code&gt; indicates a vector, while a shape of &lt;code class=&quot;highlighter-rouge&quot;&gt;(1)&lt;/code&gt; indicates a single number.&lt;/p&gt;
+
+&lt;p&gt;With &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and  &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; defined, we can define \(y’\):&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And that’s it to define the model!&lt;/p&gt;
+
+&lt;h3 id=&quot;defining-the-loss-function&quot;&gt;Defining the loss function&lt;/h3&gt;
+
+&lt;p&gt;We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \(a\) and \(b\).  Since the loss function compares the linear regression output to the correct output, we need to define \(y\), which are the actual output values from the data set. Since \(y\) consists of outside data (and we don’t need to train it), we create it as a &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.placeholder&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Like &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt; is also a vector, since after all &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt; must store the correct output for each value stored in &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now, we are ready to setup the loss function. Recall that the loss function is:
+\[
+    L(a, b) = \sum_{i=1}^m (y’(x_i, a, b) - y_i)^2
+\]&lt;/p&gt;
+
+&lt;p&gt;However, \(y’\) and \(y\) are now being interpreted as vectors. We can rewrite the loss function as:
+\[
+    L(a, b) = \mathrm{sum}((y’ - y)^2)
+\]
+Note that since \(y’\) and \(y\) are vectors, \(y’ - y\) is also a vector that just contains every number stored in \(y\) subtracted from every corresponding number in \(y’\). Likewise, \((y’ - y)^2\) is also a vector, with every number individually squared.  Then, the \(\mathrm{sum}\) function (I just made it up) adds up every number stored in the vector \((y’ - y)^2\). This is the same as the original loss function, but is a vector interpretation of it instead. We can code this directly:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduce_sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.reduce_sum&lt;/code&gt; function is an operation which adds up all the numbers stored in a vector. It is called “reduce” since it reduces a large vector down to a single number (the sum). The word “reduce” here has nothing to do with the fact that we will minimize the loss function.&lt;/p&gt;
+
+&lt;p&gt;With just these two lines of code we have defined our loss function&lt;/p&gt;
+
+&lt;h3 id=&quot;minimizing-the-loss-function-with-gradient-descent&quot;&gt;Minimizing the loss function with gradient descent&lt;/h3&gt;
+
+&lt;p&gt;With our model and loss function defined, we are now ready to use the gradient descent algorithm to minimize the loss function, and thus find the optimal \(a\) and \(b\). Fortunately, TensorFlow as already implemented the gradient descent algorithm for us, we just need to use it. The algorithm simulates a ball rolling downhill into the minimum of the function, but it does so in discrete time steps. TensorFlow does not handle this aspect, we need to be responsible for performing each time step of gradient descent. So, roughly we want to do this:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Pseudo-code for gradient descent training.&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# Tell TensorFlow to do 1 time step of gradient descent&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;We can’t do this yet, since we don’t yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\(\alpha)\) of \(0.1\):&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AdamOptimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.train.AdamOptimizer&lt;/code&gt; knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this &lt;em&gt;does not yet minimize \(L\)&lt;/em&gt;. This code only create an optimizer object which we will use later to minimize \(L\). For an explanation of the &lt;code class=&quot;highlighter-rouge&quot;&gt;learning_rate=0.2&lt;/code&gt; parameter (and the &lt;code class=&quot;highlighter-rouge&quot;&gt;10000&lt;/code&gt; loop iterations), see the end of this tutorial.&lt;/p&gt;
+
+&lt;p&gt;The second problem we have is we don’t know how to make TensorFlow run actual computations. Everything so far has been only &lt;em&gt;defining&lt;/em&gt; things for TensorFlow, not computing things with concrete numbers. To do so, we also need to create a &lt;strong&gt;session&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;A TensorFlow session is how we always have to perform actual computations with TensorFlow. We actually need to perform a computation right now, before doing gradient descent. Previously, we defined the variables &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, but they don’t have any numeric value right now. They need to have some initial value so gradient descent can work. To solve this, we have TensorFlow initialize &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; with random values:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;global_variables_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;session.run&lt;/code&gt; function is how we always have to run computations with TensorFlow: the parameter is what computation we want to perform.&lt;/p&gt;
+
+&lt;p&gt;Finally, we are ready to run the optimization loop pseudo-code that we originally wanted. Using &lt;code class=&quot;highlighter-rouge&quot;&gt;session.run&lt;/code&gt; it looks like:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;feed_dict&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;t = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, loss = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, a = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, b = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Let’s break this down. We use &lt;code class=&quot;highlighter-rouge&quot;&gt;session.run&lt;/code&gt;, but we pass it an array of computations that we want to perform. Specifically, we want to perform 4 computations: &lt;code class=&quot;highlighter-rouge&quot;&gt;optimizer&lt;/code&gt; (this is 1 time step of gradient descent), &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt; (this returns the current value of the loss function), &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; (this returns the current value of &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;), and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; (likewise returns the current value of &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;). Of these computations, only the &lt;code class=&quot;highlighter-rouge&quot;&gt;optimizer&lt;/code&gt; does not return a value. So, &lt;code class=&quot;highlighter-rouge&quot;&gt;session.run&lt;/code&gt; will return 3 values for us, which we store into variables using the syntax:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Ok, but what is all of this &lt;code class=&quot;highlighter-rouge&quot;&gt;feed_dict&lt;/code&gt; stuff? Recall that &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt; are placeholders, and have no actual numerical value on their own. To perform 1 time step of gradient descent, we need to “feed” our actual data (&lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;y_data&lt;/code&gt;) into the &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt; placeholders. So, we use the &lt;code class=&quot;highlighter-rouge&quot;&gt;feed_dict&lt;/code&gt; parameter of &lt;code class=&quot;highlighter-rouge&quot;&gt;session.run&lt;/code&gt; to feed &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; into &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;y_data&lt;/code&gt; into &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Finally, the last line of the loop prints out the current values of &lt;code class=&quot;highlighter-rouge&quot;&gt;t&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;. We don’t need to print these values out, but it is helpful to observe how the training is progressing.&lt;/p&gt;
+
+&lt;p&gt;What we want to see from the print statements is that the gradient descent algorithm &lt;strong&gt;converged&lt;/strong&gt;, which means that the algorithm stopped making significant progress because it found the minimum location of the loss function. When the last few print outputs look like:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;t = 9992, loss = 39295.8, a = -17.271, b = 997.281
+t = 9993, loss = 39295.8, a = -17.271, b = 997.282
+t = 9994, loss = 39295.9, a = -17.271, b = 997.282
+t = 9995, loss = 39295.9, a = -17.271, b = 997.283
+t = 9996, loss = 39295.8, a = -17.2711, b = 997.283
+t = 9997, loss = 39295.8, a = -17.2711, b = 997.284
+t = 9998, loss = 39295.9, a = -17.2711, b = 997.284
+t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;then we can tell that we have achieved convergence, and therefore found the best values of \(a\) and \(b\).&lt;/p&gt;
+
+&lt;h3 id=&quot;using-the-trained-model-to-make-predictions&quot;&gt;Using the trained model to make predictions&lt;/h3&gt;
+
+&lt;p&gt;At this point we have a fully trained model, and know the best values of \(a\) and \(b\). In fact, the equation of the line of best fit is just:
+\[
+    y’ = -17.2711x + 997.285
+\]&lt;/p&gt;
+
+&lt;p&gt;The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use &lt;code class=&quot;highlighter-rouge&quot;&gt;x_data&lt;/code&gt; as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. We can use the numpy function &lt;code class=&quot;highlighter-rouge&quot;&gt;linspace&lt;/code&gt; to create a bunch of evenly spaced values:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_test_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linspace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;55&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Then, we can feed &lt;code class=&quot;highlighter-rouge&quot;&gt;x_test_data&lt;/code&gt; into the &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; placeholder, and save the outputs of the prediction in &lt;code class=&quot;highlighter-rouge&quot;&gt;y_test_data&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;y_test_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;feed_dict&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test_data&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, we can plot the original data and the line together:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'x'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_test_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_test_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xlabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'US Homicide Deaths in 2015'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Age and homicide death linear regression'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This yields a plot like:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/homicide_fit.png&quot; alt=&quot;Homicide Linear Regression Plot&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;concluding-remarks&quot;&gt;Concluding Remarks&lt;/h1&gt;
+
+&lt;p&gt;Through following this post you have learned two main concepts. First, you learned the &lt;em&gt;general form of supervised machine learning workflows&lt;/em&gt;:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Get your data set&lt;/li&gt;
+  &lt;li&gt;Define your model (the mechanism for how outputs will be predicted from inputs)&lt;/li&gt;
+  &lt;li&gt;Define your loss function&lt;/li&gt;
+  &lt;li&gt;Minimize your loss function (usually with a variant of gradient descent)&lt;/li&gt;
+  &lt;li&gt;Once your loss function is minimized, use your trained model to do cool stuff&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Second, you learned how to implement linear regression (following the above workflow) using TensorFlow. Let’s briefly discuss the above 5 steps, and where to go to improve on them.&lt;/p&gt;
+
+&lt;h2 id=&quot;1-the-data-set&quot;&gt;1. The Data Set&lt;/h2&gt;
+
+&lt;p&gt;This one is pretty simple: we need data sets that contain both input and output data. However, we need a data set that is large enough to properly train our model. With linear regression this is fairly easy: this data set only had 33 data points, and the results were pretty good. With larger and more complex models that we will look at later, this becomes much more of a challenge.&lt;/p&gt;
+
+&lt;h2 id=&quot;2-defining-the-model&quot;&gt;2. Defining the model&lt;/h2&gt;
+
+&lt;p&gt;For single variable linear regression we used the model \(y’ = ax + b\). Geometrically, this means that the model can only guess lines. Since the homicide data is roughly in the shape of a line, it worked well for this problem. But there are very few problems that are so simple, so soon we will look at more complex models. One other limitation of the current model is it only accepts one input variable. But if our data set had both age and ethnicity, for example, perhaps we could more accurately predict homicide death rate. Also very soon we will discuss a more complex model that handles multiple input variables.&lt;/p&gt;
+
+&lt;h2 id=&quot;3-defining-the-loss-function&quot;&gt;3. Defining the loss function&lt;/h2&gt;
+
+&lt;p&gt;For single variable regression, the loss function we used, \(L = \sum (y’ - y)^2\), is the standard. However, there are a few considerations: first, this loss functions is suitable for this simple model, but with more advanced models this loss function isn’t good enough. We will see why soon. Second, the optimization algorithm converged pretty slowly, needing about \(10000\) iterations. The cause is that the surface of the loss function is almost flat in a certain direction (you can see this in the 3D plot of it). Though this isn’t a problem with the formula for the loss function, the problem surfaces in the loss function. We will also see how to address this problem soon, and converge muster faster.&lt;/p&gt;
+
+&lt;h2 id=&quot;4-minimizing-the-loss-functions&quot;&gt;4. Minimizing the loss functions&lt;/h2&gt;
+
+&lt;p&gt;Recall that we created and used the optimizer like so:&lt;/p&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AdamOptimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;# Run one step of optimizer&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;You might be wondering what the magic numbers of &lt;code class=&quot;highlighter-rouge&quot;&gt;learning_rate=0.2&lt;/code&gt; (\( \alpha \)) and &lt;code class=&quot;highlighter-rouge&quot;&gt;10000&lt;/code&gt; are.  Let’s start with the learning rate. In each iteration, gradient descent (and variants of it) take one small step that is determined by the derivative of the loss function. The learning rate is just the relative size of the step. So to take larger steps, we can use a larger learning rate. A larger learning rate can help us to converge more quickly, since we cover more distance in each iteration. But a learning rate too large can cause gradient descent to diverge that is, it won’t reliably find the minimum.&lt;/p&gt;
+
+&lt;p&gt;So, once you have chosen a learning rate, then you need to run the optimizer for enough iterations so it actually converges to the minimum. The easiest way to make sure it runs long enough is just to monitor the value of the loss function, as we did in this tutorial.&lt;/p&gt;
+
+&lt;p&gt;Lastly, we didn’t use normal gradient descent for optimization in this tutorial. Instead we used &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.train.AdamOptimizer&lt;/code&gt;. With small scale problems like this, there isn’t much of a qualitative difference to intuit. In general the &lt;a href=&quot;https://medium.com/@nishantnikhil/adam-optimizer-notes-ddac4fd7218&quot;&gt;Adam optimizer&lt;/a&gt; is faster, smarter, and more reliable than vanilla gradient descent, but this comes into play a lot more with harder problems.&lt;/p&gt;
+
+&lt;h2 id=&quot;5-use-the-trained-model&quot;&gt;5. Use the trained model&lt;/h2&gt;
+
+&lt;p&gt;Technically, using the trained model is the easiest part of machine learning: with the best parameters \(a\) and \(b\), you can simply plug new age values into \(x\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this book we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model.&lt;/p&gt;
+
+&lt;p&gt;One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don’t have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn’t impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don’t have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \(1\) year old homicides is even close to 980.&lt;/p&gt;
+
+&lt;p&gt;While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and &lt;a href=&quot;https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist&quot;&gt;it quickly learned to say fairly horrible and racist things&lt;/a&gt;. More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, as shown in &lt;a href=&quot;http://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640&quot;&gt;an article by The Conversation&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Our recent study, by Human Rights Data Analysis Group’s Kristian Lum and William Isaac, found that predictive policing vendor PredPol’s purportedly race-neutral algorithm targeted black neighborhoods at roughly twice the rate of white neighborhoods when trained on historical drug crime data from Oakland, California. 
+[…] 
+But estimates – created from public health surveys and population models – suggest illicit drug use in Oakland is roughly equal across racial and income groups. If the algorithm were truly race-neutral, it would spread drug-fighting police attention evenly across the city.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;With examples like these, we quickly move from a technical discussion about machine learning to a discussion about ethics. While the study of machine learning is traditionally heavily theoretical, I strongly believe that to effectively and &lt;em&gt;fairly&lt;/em&gt; apply machine learning in society, we must spend significant effort evaluating the ethics of machine learning models.&lt;/p&gt;
+
+&lt;p&gt;This is an open question, and one that I certainly don’t have an answer to right now. For the short term we can focus on the problem of not trusting a simple linear regression model to properly predict data outside of what it has been trained on, while in the long term keeping in mind that “with great power comes great responsibility.”&lt;/p&gt;
+
+&lt;h1 id=&quot;exercises&quot;&gt;Exercises&lt;/h1&gt;
+
+&lt;p&gt;Feel free to complete as many of these as you wish, to get more practice with single variable linear regression. Note that for different problems you might have to adjust the learning rate and / or the number of training iterations.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \(x\) value you could create an artificial \(y\) value like so: \(y = ax + b + \epsilon \), where \(\epsilon\) is a random number that isn’t too big, and \(a\) and \(b\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \(a\) and \(b\).&lt;/li&gt;
+  &lt;li&gt;Run single variable linear regression on a data set of your choice. You can look at &lt;a href=&quot;http://donaldpinckney.com/ml.html#regression&quot;&gt;my list of regression data sets&lt;/a&gt; for ideas, you can search &lt;a href=&quot;https://www.kaggle.com/datasets&quot;&gt;Kaggle&lt;/a&gt;, or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&quot;complete-code&quot;&gt;Complete Code&lt;/h1&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/single_var_reg.py&quot;&gt;complete example code is available on GitHub&lt;/a&gt;, as well as directly here:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Load the data, and convert to 1x30 vectors&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;homicide.csv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num_homicide_deaths&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Plot the data&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'x'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xlabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'US Homicide Deaths in 2015'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Relationship between age and homicide deaths in the US'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+
+
+&lt;span class=&quot;c&quot;&gt;### Model definition ###&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define x (input data) placeholder&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define the trainable variables&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;b&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define the prediction model&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;### Loss function definition ###&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define y (correct data) placeholder&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define the loss function&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduce_sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;### Training the model ###&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define optimizer object&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AdamOptimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Create a session and initialize variables&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;global_variables_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Main optimization loop&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;feed_dict&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;t = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, loss = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, a = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, b = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;### Using the trained model to make predictions ###&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# x_test_data has values similar to [20.0, 20.1, 20.2, ..., 79.9, 80.0]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_test_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linspace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;55&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Predict the homicide rate for each age in x_test_data&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_test_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;feed_dict&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_test_data&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Plot the original data and the prediction line&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'x'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x_test_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_test_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xlabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ylabel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'US Homicide Deaths in 2015'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'Age and homicide death linear regression'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;show&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;references&quot;&gt;References&lt;/h1&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:fn1&quot;&gt;
+      &lt;p&gt;Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at &lt;a href=&quot;http://wonder.cdc.gov/ucd-icd10.html&quot;&gt;http://wonder.cdc.gov/ucd-icd10.html&lt;/a&gt; on Nov 22, 2017 2:18:46 PM.&amp;nbsp;&lt;a href=&quot;#fnref:fn1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</content>
+ </entry>
  
  <entry>
    <title>A Sneak Peek of What's to Come</title>
