@@ -273,7 +273,7 @@ The red dot marked on the plot of \\(L\\) shows where the desired minimum is. We
     \\frac{\\partial L}{\\partial a} = \\sum_{i=1}^m 2(ax_i + b - y_i)x_i = 0 \\\\
     \\frac{\\partial L}{\\partial b} = \\sum_{i=1}^m 2(ax_i + b - y_i) = 0 \\
 \\]
-If you need to review this aspect of calculus, I would recommend [Khan Academy videos](https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc). Now, for this problem it is possible to solve for \\(a\\) and \\(b\\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called *[gradient descent](https://en.wikipedia.org/wiki/Gradient_descent)* to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \\(L\\), and it will naturally roll downhill towards the flat valley of \\(L\\) and thus find the minimum. We know the direction of "downhill" at any location since we know the derivatives of \\(L\\): the derivatives are the direction of greatest upward slope, so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \\((a, b)\\), we can simulate it's motion by moving it to location \\((a', b')\\) like so:
+If you need to review this aspect of calculus, I would recommend [Khan Academy videos](https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc). Now, for this problem it is possible to solve for \\(a\\) and \\(b\\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called **[gradient descent](https://en.wikipedia.org/wiki/Gradient_descent)** to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \\(L\\), and it will naturally roll downhill towards the flat valley of \\(L\\) and thus find the minimum. We know the direction of "downhill" at any location since we know the derivatives of \\(L\\): the derivatives are the direction of greatest upward slope (this is known as the [gradient](https://en.wikipedia.org/wiki/Gradient)), so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \\((a, b)\\), we can simulate it's motion by moving it to location \\((a', b')\\) like so:
 \\[
     a' = a - \\alpha \\frac{\\partial L}{\\partial a} \\\\
     b' = b - \\alpha \\frac{\\partial L}{\\partial b} \\\\
@@ -411,7 +411,7 @@ With our model and loss function defined, we are now ready to use the gradient d
 for t in range(10000):
     # Tell TensorFlow to do 1 time step of gradient descent
 ```
-We can't do this yet, since we don't yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\\(\\alpha)\\) of \\(0.1\\):
+We can't do this yet, since we don't yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\\(\\alpha)\\) of \\(0.2\\):
 ```python
 optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
 ```

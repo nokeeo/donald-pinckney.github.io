@@ -101,6 +101,16 @@
 </tbody></table>
 <p>Most people would easily be able to differentiate the two breeds above, and accurately dogs of those breeds. But, can you explain <em>how</em> you came to this conclusion, in very specific steps? Perhaps, one might say that the hair of the Golden Retriever seems less curly, but then one would need to explain how to determine that the hair is less curly. There does not seem to exist a natural way to describe the curliness of hair in specific steps. Maybe, the shape of facial features such as nose shape are useful for determining dog breed, but it still seems nearly impossible to describe a precise algorithm that uses this data.</p>
 <p>Qualitatively, humans do not seem to comprehend the breed of a dog by performing some precise algorithm, and this suggests that a computer program to solve this problem should not either. By using machine learning, we can use data to help the computer learn to recognize a dog breed, objects in general, human speech, etc., without explicitly programming it.</p>
+<a class="header" href="print.html#so-what-can-machine-learning-accomplish" id="so-what-can-machine-learning-accomplish"><h2>So what can machine learning accomplish?</h2></a>
+<p>Lots! Machine learning is finding applications nearly everywhere, and it's still growing. By no means is this an exhaustive list, but machine learning is already being used in highly visible commercial applications, such as by Apple and Google:</p>
+<ol>
+<li><a href="https://machinelearning.apple.com/2017/09/12/handwriting.html">Real-Time Recognition of Handwritten Chinese Characters</a></li>
+<li><a href="https://machinelearning.apple.com/2017/08/01/cross-initialization.html">Siri Speech Recognition</a></li>
+<li><a href="https://arxiv.org/abs/1609.08144">Natural Language Translation</a>
+But machine learning is certainly not limited to current applications by Apple, Google, etc. Machine learning is full of constantly evolving research with new and exciting results, such as:</li>
+<li><a href="https://www.youtube.com/watch?v=3AIpPlzM_qs">Image Synthesis with Semantic Manipulation of Images</a></li>
+<li><a href="https://blog.deepsense.ai/using-deep-learning-for-single-image-super-resolution/">Magically Enhancing Image Resolution</a></li>
+</ol>
 <a class="header" href="print.html#so-what-is-tensorflow-and-why-do-we-need-it" id="so-what-is-tensorflow-and-why-do-we-need-it"><h2>So, what is TensorFlow, and why do we need it?</h2></a>
 <p>Without diving into the details of various machine learning methods, I'll generally state that there <em>could</em> be a fairly significant amount of math involved. Not necessarily super difficult math, but some pretty cumbersome math. Roughly, TensorFlow takes care of the calculus grunt work for us: instead of spending a ton of time finding messy derivatives and many lines of code to compute them, TensorFlow lets us focus on the fairly elegant work of defining our machine learning methods, and the more important math necessary to obtain intuition.</p>
 <p>So, without further ado, we can get started by installing Python, TensorFlow, and a few other useful tools. Just follow the appropriate directions for your operating system.</p>
@@ -108,10 +118,16 @@
 <p>Without a doubt, Python 3 is the future of Python, and thus we will use Python 3 with TensorFlow. While I summarize the instructions to install TensorFlow with Python 3 here, the <a href="https://www.tensorflow.org/install/install_mac">official TensorFlow documentation</a> should always provide up-to-date and comprehensive instructions for installation as well. If you run into any installation problems, please file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,TensorFlow">here</a>.</p>
 <a class="header" href="print.html#installing-python-3" id="installing-python-3"><h2>Installing Python 3</h2></a>
 <p>macOS does not come installed with Python 3 (only Python 2.7), so we need to install it ourselves. The first step is to open terminal (Terminal.app on your Mac), and install the <a href="https://brew.sh">Homebrew</a> package manager for macOS, if you haven't already installed it before. Just paste the appropriate command into terminal, and follow Homebrew's installation prompts:</p>
+<ul>
+<li>If you use <code>bash, ksh, zsh, csh</code>, etc.</li>
+</ul>
 <pre><code class="language-bash"># For bash, ksh, zsh, csh, and other shells:
 /usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
-# For fish shell:
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
+</code></pre>
+<ul>
+<li>If you are awesome and use <code>fish</code>:</li>
+</ul>
+<pre><code class="language-bash">curl -fsSL &quot;https://raw.githubusercontent.com/Homebrew/install/master/install&quot; | /usr/bin/ruby
 </code></pre>
 <p>Now that Homebrew is installed, we need to install Python 3:</p>
 <pre><code class="language-bash">brew install python3
@@ -123,20 +139,31 @@ Python 3.6.3 (default, Nov 20 2017, 14:17:35)
 Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
 &gt;&gt;&gt;
 </code></pre>
-<p>The Python version should be 3.x.y instead of 2.x.y.</p>
+<p>The Python version should be 3.x.y instead of 2.x.y. Once this is confirmed, quit Python by entering the code <code>exit()</code>.</p>
 <a class="header" href="print.html#installing-tensorflow-and-friends" id="installing-tensorflow-and-friends"><h2>Installing TensorFlow and friends</h2></a>
-<p>Installing Python 3 (<code>python3</code>) also installs the Python 3 package manager (<code>pip3</code>). We can use <code>pip3</code> to install a Python utility called <code>virtualenv</code>. Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. So, first we need to install <code>virtualenv</code>:</p>
+<p>Installing Python 3 (<code>python3</code>) also installs the Python 3 package manager (<code>pip3</code>). We can use <code>pip3</code> to install a Python utility called <code>virtualenv</code> (stands for virtual environment). Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. So, first we need to install <code>virtualenv</code>:</p>
 <pre><code class="language-bash">pip3 install --upgrade virtualenv
 </code></pre>
 <p>Now, create a new virtualenv:</p>
 <pre><code class="language-bash"># In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
-virtualenv --system-site-packages -p python3 ~/tensorflow
+python3 -m venv --system-site-packages ~/tensorflow
 </code></pre>
 <p>Then, we need to activate the virtualenv so we can install things inside it:</p>
-<pre><code class="language-bash">source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
-source ~/tensorflow/bin/activate.csh # If using csh or tcsh
-source ~/tensorflow/bin/activate.fish # If using fish
+<ul>
+<li>If you are using <code>bash, sh, ksh, zsh</code>:</li>
+</ul>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate
+</code></pre>
+<ul>
+<li>If you are using <code>csh, tcsh</code>:</li>
+</ul>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate.csh
+</code></pre>
+<ul>
+<li>If you are cool and use <code>fish</code>:</li>
+</ul>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate.fish
 </code></pre>
 <p>After activating the virtualenv, your command prompt should change to look like: <code>(tensorflow)$</code>. At this point, we are finally ready to install TensorFlow:</p>
 <pre><code class="language-bash">pip3 install --upgrade tensorflow 
@@ -146,9 +173,9 @@ source ~/tensorflow/bin/activate.fish # If using fish
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
 </code></pre>
-<p>Once everything is installed, you can exit the virtualenv using the command <code>deactivate</code>.</p>
+<p>Just so you know, you can always exit the virtualenv using the command <code>deactivate</code>. In the future, to use TensorFlow you need to activate the virtualenv first using the appropriate <code>source</code> command listed above.</p>
 <a class="header" href="print.html#testing-the-installation" id="testing-the-installation"><h2>Testing the installation</h2></a>
-<p>Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate activate command from above. Then, run the <code>python</code> command, and type the following code into Python:</p>
+<p>Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate <code>source</code> command from above. Then, run the <code>python</code> command, and type the following code into Python:</p>
 <pre><code class="language-python">import tensorflow as tf
 import numpy as np
 import pandas
@@ -277,7 +304,7 @@ We crafted \(L(a, b)\) so that it is smallest exactly when \(a\) and \(b\) produ
 \frac{\partial L}{\partial a} = \sum_{i=1}^m 2(ax_i + b - y_i)x_i = 0 \\
 \frac{\partial L}{\partial b} = \sum_{i=1}^m 2(ax_i + b - y_i) = 0 \
 \]
-If you need to review this aspect of calculus, I would recommend <a href="https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc">Khan Academy videos</a>. Now, for this problem it is possible to solve for \(a\) and \(b\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called <em><a href="https://en.wikipedia.org/wiki/Gradient_descent">gradient descent</a></em> to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \(L\), and it will naturally roll downhill towards the flat valley of \(L\) and thus find the minimum. We know the direction of &quot;downhill&quot; at any location since we know the derivatives of \(L\): the derivatives are the direction of greatest upward slope, so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \((a, b)\), we can simulate it's motion by moving it to location \((a', b')\) like so:
+If you need to review this aspect of calculus, I would recommend <a href="https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc">Khan Academy videos</a>. Now, for this problem it is possible to solve for \(a\) and \(b\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called <strong><a href="https://en.wikipedia.org/wiki/Gradient_descent">gradient descent</a></strong> to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \(L\), and it will naturally roll downhill towards the flat valley of \(L\) and thus find the minimum. We know the direction of &quot;downhill&quot; at any location since we know the derivatives of \(L\): the derivatives are the direction of greatest upward slope (this is known as the <a href="https://en.wikipedia.org/wiki/Gradient">gradient</a>), so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \((a, b)\), we can simulate it's motion by moving it to location \((a', b')\) like so:
 \[
 a' = a - \alpha \frac{\partial L}{\partial a} \\
 b' = b - \alpha \frac{\partial L}{\partial b} \\
@@ -382,7 +409,7 @@ Note that since \(y'\) and \(y\) are vectors, \(y' - y\) is also a vector that j
 for t in range(10000):
     # Tell TensorFlow to do 1 time step of gradient descent
 </code></pre>
-<p>We can't do this yet, since we don't yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\(\alpha)\) of \(0.1\):</p>
+<p>We can't do this yet, since we don't yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\(\alpha)\) of \(0.2\):</p>
 <pre><code class="language-python">optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
 </code></pre>
 <p>The <code>tf.train.AdamOptimizer</code> knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this <em>does not yet minimize \(L\)</em>. This code only create an optimizer object which we will use later to minimize \(L\). For an explanation of the <code>learning_rate=0.2</code> parameter (and the <code>10000</code> loop iterations), see the end of this tutorial.</p>
