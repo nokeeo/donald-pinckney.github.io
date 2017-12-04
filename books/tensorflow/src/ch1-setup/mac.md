@@ -15,11 +15,14 @@ Without a doubt, Python 3 is the future of Python, and thus we will use Python 3
 ## Installing Python 3
 
 macOS does not come installed with Python 3 (only Python 2.7), so we need to install it ourselves. The first step is to open terminal (Terminal.app on your Mac), and install the [Homebrew](https://brew.sh) package manager for macOS, if you haven't already installed it before. Just paste the appropriate command into terminal, and follow Homebrew's installation prompts:
+* If you use `bash, ksh, zsh, csh`, etc.
 ```bash
 # For bash, ksh, zsh, csh, and other shells:
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-# For fish shell:
-curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
+```
+* If you are awesome and use `fish`:
+```bash
+curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/master/install" | /usr/bin/ruby
 ```
 
 Now that Homebrew is installed, we need to install Python 3:
@@ -35,7 +38,7 @@ Python 3.6.3 (default, Nov 20 2017, 14:17:35)
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
-The Python version should be 3.x.y instead of 2.x.y. Once this is confirmed, you can quit Python by entering the code `exit()`.
+The Python version should be 3.x.y instead of 2.x.y. Once this is confirmed, quit Python by entering the code `exit()`.
 
 ## Installing TensorFlow and friends
 
@@ -54,15 +57,15 @@ python3 -m venv --system-site-packages ~/tensorflow
 Then, we need to activate the virtualenv so we can install things inside it:
 * If you are using `bash, sh, ksh, zsh`:
 ```bash
-source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
+source ~/tensorflow/bin/activate
 ```
 * If you are using `csh, tcsh`:
 ```bash
-source ~/tensorflow/bin/activate.csh # If using csh or tcsh
+source ~/tensorflow/bin/activate.csh
 ```
 * If you are cool and use `fish`:
 ```bash
-source ~/tensorflow/bin/activate.fish # If using fish
+source ~/tensorflow/bin/activate.fish
 ```
 
 After activating the virtualenv, your command prompt should change to look like: `(tensorflow)$`. At this point, we are finally ready to install TensorFlow:
@@ -77,11 +80,11 @@ pip3 install --upgrade matplotlib # Used for plotting data, which is very useful
 pip3 install --upgrade pandas # Used for loading data sets
 ```
 
-Once everything is installed, you can exit the virtualenv using the command `deactivate`.
+Just so you know, you can always exit the virtualenv using the command `deactivate`. In the future, to use TensorFlow you need to activate the virtualenv first using the appropriate `source` command listed above.
 
 ## Testing the installation
 
-Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate activate command from above. Then, run the `python` command, and type the following code into Python:
+Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate `source` command from above. Then, run the `python` command, and type the following code into Python:
 ```python
 import tensorflow as tf
 import numpy as np
