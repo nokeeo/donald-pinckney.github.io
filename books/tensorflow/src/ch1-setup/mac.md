@@ -19,7 +19,7 @@ macOS does not come installed with Python 3 (only Python 2.7), so we need to ins
 # For bash, ksh, zsh, csh, and other shells:
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 # For fish shell:
-/usr/bin/ruby -e "(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install | /usr/bin/ruby
 ```
 
 Now that Homebrew is installed, we need to install Python 3:
