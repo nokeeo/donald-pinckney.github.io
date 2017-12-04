@@ -35,11 +35,11 @@ Python 3.6.3 (default, Nov 20 2017, 14:17:35)
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
-The Python version should be 3.x.y instead of 2.x.y.
+The Python version should be 3.x.y instead of 2.x.y. Once this is confirmed, you can quit Python by entering the code `exit()`.
 
 ## Installing TensorFlow and friends
 
-Installing Python 3 (`python3`) also installs the Python 3 package manager (`pip3`). We can use `pip3` to install a Python utility called `virtualenv`. Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using `virtualenv`, since this ensures that the installation will be self-contained, and will not affect the rest of your system. So, first we need to install `virtualenv`:
+Installing Python 3 (`python3`) also installs the Python 3 package manager (`pip3`). We can use `pip3` to install a Python utility called `virtualenv` (stands for virtual environment). Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using `virtualenv`, since this ensures that the installation will be self-contained, and will not affect the rest of your system. So, first we need to install `virtualenv`:
 ```bash
 pip3 install --upgrade virtualenv
 ```
@@ -48,13 +48,20 @@ Now, create a new virtualenv:
 ```bash
 # In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
-virtualenv --system-site-packages -p python3 ~/tensorflow
+python3 -m venv --system-site-packages ~/tensorflow
 ```
 
 Then, we need to activate the virtualenv so we can install things inside it:
+* If you are using `bash, sh, ksh, zsh`:
 ```bash
 source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
+```
+* If you are using `csh, tcsh`:
+```bash
 source ~/tensorflow/bin/activate.csh # If using csh or tcsh
+```
+* If you are cool and use `fish`:
+```bash
 source ~/tensorflow/bin/activate.fish # If using fish
 ```
 
