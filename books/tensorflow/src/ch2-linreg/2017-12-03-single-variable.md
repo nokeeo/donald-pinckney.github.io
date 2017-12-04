@@ -1,10 +1,10 @@
 ---
 layout: bookpost
 title: Single Variable Linear Regression
-date: 2017-11-21
+date: 2017-12-03
 categories: TensorFlow
 isEditable: true
-editPath: books/tensorflow/src/ch2-linreg/single-variable.md
+editPath: books/tensorflow/src/ch2-linreg/2017-12-03-single-variable.md
 ---
 
 # Single Variable Regression
@@ -332,7 +332,7 @@ Technically, using the trained model is the easiest part of machine learning: wi
 
 One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don't have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn't impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don't have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \\(1\\) year old homicides is even close to 980.
 
-While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and [it quickly learned to say fairly horrible and racist things](https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist). More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, according to [an article by The Conversation](http://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640):
+While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and [it quickly learned to say fairly horrible and racist things](https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist). More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, as shown in [an article by The Conversation](http://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640):
 
 > Our recent study, by Human Rights Data Analysis Group’s Kristian Lum and William Isaac, found that predictive policing vendor PredPol’s purportedly race-neutral algorithm targeted black neighborhoods at roughly twice the rate of white neighborhoods when trained on historical drug crime data from Oakland, California. 
 > [...] 

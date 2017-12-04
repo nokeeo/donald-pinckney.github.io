@@ -6,7 +6,7 @@
     - [Linux Setup](ch1-setup/linux.md)
     - [Windows Setup](ch1-setup/windows.md)
 - [Linear Regression](ch2-linreg/intro.md)
-    - [Single Variable Regression](ch2-linreg/single-variable.md)
+    - [Single Variable Regression](ch2-linreg/2017-12-03-single-variable.md)
     - [Multi Variable Regression]()
 ---
 [By Donald Pinckney](http://index)

@@ -20,7 +20,8 @@ title: Home
       {% assign BREAK_SIZE = 50 %}
 
       {% assign con = post.content | strip_html | lstrip %}
-      {% assign pars = con | newline_to_br | split: "<br />" %}
+      {{ con | markdownify | truncatewords: BREAK_SIZE }}
+      <!-- {% assign pars = con | newline_to_br | split: "<br />" %}
       {% assign firstP = pars.first %}
       {% assign shortFirst = firstP | truncatewords: BREAK_SIZE %}
 
@@ -28,7 +29,7 @@ title: Home
         {{ con | markdownify | truncatewords: BREAK_SIZE }}
       {% else %}
         {{ firstP }}
-      {% endif %}
+      {% endif %} -->
     {% endif %}
 
   </div>
