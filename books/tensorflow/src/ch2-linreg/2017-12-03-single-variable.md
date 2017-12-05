@@ -79,9 +79,7 @@ If you need to review this aspect of calculus, I would recommend [Khan Academy v
 \\]
 where \\(\\alpha\\) is a constant called the **learning rate**, which we will talk about more later. If we repeat this process then the ball will continue to roll downhill into the minimum. An animation of this process looks like:
 
-<video autoplay loop muted>
-<source type="video/mp4" src="/books/tensorflow/book/ch2-linreg/assets/descent_fast.mp4">
-</video>
+![Gradient Descent Animation][descent_fast]
 
 When we run the gradient descent algorithm for long enough, then it will find the optimal location for \\((a, b)\\). Once we have the optimal values of \\(a\\) and \\(b\\), then that's it, we can just use them to predict a rate of homicide deaths given any age, using the model:
 \\[
@@ -440,3 +438,4 @@ plt.show()
 [homicide_fit]: /books/tensorflow/book/ch2-linreg/assets/homicide_fit.png
 [minimum]: /books/tensorflow/book/ch2-linreg/assets/minimum.png
 [data]: /books/tensorflow/book/ch2-linreg/code/homicide.csv
+[descent_fast]: /books/tensorflow/book/ch2-linreg/assets/descent_fast.gif
