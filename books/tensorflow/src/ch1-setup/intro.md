@@ -35,6 +35,8 @@ But machine learning is certainly not limited to current applications by Apple, 
 1. [Image Synthesis with Semantic Manipulation of Images](https://www.youtube.com/watch?v=3AIpPlzM_qs)
 2. [Magically Enhancing Image Resolution](https://blog.deepsense.ai/using-deep-learning-for-single-image-super-resolution/)
 
+For more, there is no shortage of inspiration and useful information on [Reddit](https://www.reddit.com/r/MachineLearning/)
+
 ## So, what is TensorFlow, and why do we need it?
 
 Without diving into the details of various machine learning methods, I'll generally state that there *could* be a fairly significant amount of math involved. Not necessarily super difficult math, but some pretty cumbersome math. Roughly, TensorFlow takes care of the calculus grunt work for us: instead of spending a ton of time finding messy derivatives and many lines of code to compute them, TensorFlow lets us focus on the fairly elegant work of defining our machine learning methods, and the more important math necessary to obtain intuition.
