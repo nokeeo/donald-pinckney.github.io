@@ -7,6 +7,9 @@
     - [Windows Setup](ch1-setup/windows.md)
 - [Linear Regression](ch2-linreg/intro.md)
     - [Single Variable Regression](ch2-linreg/2017-12-03-single-variable.md)
+    - [Optimization Algorithms & Learning Rates (optional)]()
     - [Multi Variable Regression]()
+    - [Nonlinear Regression]()
+    - [Regularization]()
 ---
 [By Donald Pinckney](http://index)

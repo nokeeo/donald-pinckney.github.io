@@ -304,11 +304,11 @@ This one is pretty simple: we need data sets that contain both input and output 
 
 ## 2. Defining the model
 
-For single variable linear regression we used the model \\(y' = ax + b\\). Geometrically, this means that the model can only guess lines. Since the homicide data is roughly in the shape of a line, it worked well for this problem. But there are very few problems that are so simple, so soon we will look at more complex models. One other limitation of the current model is it only accepts one input variable. But if our data set had both age and ethnicity, for example, perhaps we could more accurately predict homicide death rate. Also very soon we will discuss a more complex model that handles multiple input variables.
+For single variable linear regression we used the model \\(y' = ax + b\\). Geometrically, this means that the model can only guess lines. Since the homicide data is roughly in the shape of a line, it worked well for this problem. But there are very few problems that are so simple, so soon we will look at more complex models. One other limitation of the current model is it only accepts one input variable. But if our data set had both age and ethnicity, for example, perhaps we could more accurately predict homicide death rate. We will also discuss soon a more complex model that handles multiple input variables.
 
 ## 3. Defining the loss function
 
-For single variable regression, the loss function we used, \\(L = \\sum (y' - y)^2\\), is the standard. However, there are a few considerations: first, this loss functions is suitable for this simple model, but with more advanced models this loss function isn't good enough. We will see why soon. Second, the optimization algorithm converged pretty slowly, needing about \\(10000\\) iterations. The cause is that the surface of the loss function is almost flat in a certain direction (you can see this in the 3D plot of it). Though this isn't a problem with the formula for the loss function, the problem surfaces in the loss function. We will also see how to address this problem soon, and converge muster faster.
+For single variable regression, the loss function we used, \\(L = \\sum (y' - y)^2\\), is the standard. However, there are a few considerations: first, this loss functions is suitable for this simple model, but with more advanced models this loss function isn't good enough. We will see why soon. Second, the optimization algorithm converged pretty slowly, needing about \\(10000\\) iterations. One cause is that the surface of the loss function is almost flat in a certain direction (you can see this in the 3D plot of it). Though this isn't inherently a problem with the formula for the loss function, the problem surfaces in the loss function. We will also see how to address this problem soon, and converge muster faster.
 
 ## 4. Minimizing the loss functions
 
@@ -346,6 +346,7 @@ Feel free to complete as many of these as you wish, to get more practice with si
 
 1. Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \\(x\\) value you could create an artificial \\(y\\) value like so: \\(y = ax + b + \\epsilon \\), where \\(\\epsilon\\) is a random number that isn't too big, and \\(a\\) and \\(b\\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \\(a\\) and \\(b\\).
 2. Run single variable linear regression on a data set of your choice. You can look at [my list of regression data sets](http://donaldpinckney.com/ml.html#regression) for ideas, you can search [Kaggle](https://www.kaggle.com/datasets), or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.
+3. Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \\((y' - y)^2\\) to \\(|y' - y|\\) (use `tf.abs(...)`), or really anything you can think of.
 
 # Complete Code
 
