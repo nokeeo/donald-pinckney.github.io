@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2017-12-04T16:28:11-08:00</updated>
+ <updated>2017-12-04T17:14:52-08:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -313,11 +313,11 @@ t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 
 &lt;h2 id=&quot;2-defining-the-model&quot;&gt;2. Defining the model&lt;/h2&gt;
 
-&lt;p&gt;For single variable linear regression we used the model \(y’ = ax + b\). Geometrically, this means that the model can only guess lines. Since the homicide data is roughly in the shape of a line, it worked well for this problem. But there are very few problems that are so simple, so soon we will look at more complex models. One other limitation of the current model is it only accepts one input variable. But if our data set had both age and ethnicity, for example, perhaps we could more accurately predict homicide death rate. Also very soon we will discuss a more complex model that handles multiple input variables.&lt;/p&gt;
+&lt;p&gt;For single variable linear regression we used the model \(y’ = ax + b\). Geometrically, this means that the model can only guess lines. Since the homicide data is roughly in the shape of a line, it worked well for this problem. But there are very few problems that are so simple, so soon we will look at more complex models. One other limitation of the current model is it only accepts one input variable. But if our data set had both age and ethnicity, for example, perhaps we could more accurately predict homicide death rate. We will also discuss soon a more complex model that handles multiple input variables.&lt;/p&gt;
 
 &lt;h2 id=&quot;3-defining-the-loss-function&quot;&gt;3. Defining the loss function&lt;/h2&gt;
 
-&lt;p&gt;For single variable regression, the loss function we used, \(L = \sum (y’ - y)^2\), is the standard. However, there are a few considerations: first, this loss functions is suitable for this simple model, but with more advanced models this loss function isn’t good enough. We will see why soon. Second, the optimization algorithm converged pretty slowly, needing about \(10000\) iterations. The cause is that the surface of the loss function is almost flat in a certain direction (you can see this in the 3D plot of it). Though this isn’t a problem with the formula for the loss function, the problem surfaces in the loss function. We will also see how to address this problem soon, and converge muster faster.&lt;/p&gt;
+&lt;p&gt;For single variable regression, the loss function we used, \(L = \sum (y’ - y)^2\), is the standard. However, there are a few considerations: first, this loss functions is suitable for this simple model, but with more advanced models this loss function isn’t good enough. We will see why soon. Second, the optimization algorithm converged pretty slowly, needing about \(10000\) iterations. One cause is that the surface of the loss function is almost flat in a certain direction (you can see this in the 3D plot of it). Though this isn’t inherently a problem with the formula for the loss function, the problem surfaces in the loss function. We will also see how to address this problem soon, and converge muster faster.&lt;/p&gt;
 
 &lt;h2 id=&quot;4-minimizing-the-loss-functions&quot;&gt;4. Minimizing the loss functions&lt;/h2&gt;
 
@@ -357,6 +357,17 @@ But estimates – created from public health surveys and population models – s
 &lt;ol&gt;
   &lt;li&gt;Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \(x\) value you could create an artificial \(y\) value like so: \(y = ax + b + \epsilon \), where \(\epsilon\) is a random number that isn’t too big, and \(a\) and \(b\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \(a\) and \(b\).&lt;/li&gt;
   &lt;li&gt;Run single variable linear regression on a data set of your choice. You can look at &lt;a href=&quot;http://donaldpinckney.com/ml.html#regression&quot;&gt;my list of regression data sets&lt;/a&gt; for ideas, you can search &lt;a href=&quot;https://www.kaggle.com/datasets&quot;&gt;Kaggle&lt;/a&gt;, or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;table&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \((y’ - y)^2\) to \(&lt;/td&gt;
+          &lt;td&gt;y’ - y&lt;/td&gt;
+          &lt;td&gt;\) (use &lt;code class=&quot;highlighter-rouge&quot;&gt;tf.abs(...)&lt;/code&gt;), or really anything you can think of.&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h1 id=&quot;complete-code&quot;&gt;Complete Code&lt;/h1&gt;
