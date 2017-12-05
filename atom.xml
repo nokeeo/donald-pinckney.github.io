@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2017-12-04T15:31:53-08:00</updated>
+ <updated>2017-12-04T16:28:11-08:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -102,9 +102,7 @@ If you need to review this aspect of calculus, I would recommend &lt;a href=&quo
 \]
 where \(\alpha\) is a constant called the &lt;strong&gt;learning rate&lt;/strong&gt;, which we will talk about more later. If we repeat this process then the ball will continue to roll downhill into the minimum. An animation of this process looks like:&lt;/p&gt;
 
-&lt;video autoplay=&quot;&quot; loop=&quot;&quot; muted=&quot;&quot;&gt;
-&lt;source type=&quot;video/mp4&quot; src=&quot;/books/tensorflow/book/ch2-linreg/assets/descent_fast.mp4&quot; /&gt;
-&lt;/video&gt;
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/descent_fast.gif&quot; alt=&quot;Gradient Descent Animation&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;When we run the gradient descent algorithm for long enough, then it will find the optimal location for \((a, b)\). Once we have the optimal values of \(a\) and \(b\), then that’s it, we can just use them to predict a rate of homicide deaths given any age, using the model:
 \[
