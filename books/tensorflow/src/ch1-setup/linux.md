@@ -29,14 +29,21 @@ Virtualenv is an extremely easy and convenient way to install Python packages in
 ```bash
 # In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
-virtualenv --system-site-packages -p python3 ~/tensorflow
+python3 -m venv --system-site-packages ~/tensorflow
 ```
 
 Then, we need to activate the virtualenv so we can install things inside it:
+* If you are using `bash, sh, ksh, zsh`:
 ```bash
-source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
-source ~/tensorflow/bin/activate.csh # If using csh or tcsh
-source ~/tensorflow/bin/activate.fish # If using fish
+source ~/tensorflow/bin/activate
+```
+* If you are using `csh, tcsh`:
+```bash
+source ~/tensorflow/bin/activate.csh
+```
+* If you are cool and use `fish`:
+```bash
+source ~/tensorflow/bin/activate.fish
 ```
 
 After activating the virtualenv, your command prompt should change to look like: `(tensorflow)$`. At this point, we are finally ready to install TensorFlow:

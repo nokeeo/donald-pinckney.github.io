@@ -27,13 +27,12 @@ Qualitatively, humans do not seem to comprehend the breed of a dog by performing
 
 ## So what can machine learning accomplish?
 
-Lots! Machine learning is finding applications nearly everywhere, and it's still growing. By no means is this an exhaustive list, but machine learning is already being used in highly visible commercial applications, such as by Apple and Google:
-1. [Real-Time Recognition of Handwritten Chinese Characters](https://machinelearning.apple.com/2017/09/12/handwriting.html)
-2. [Siri Speech Recognition](https://machinelearning.apple.com/2017/08/01/cross-initialization.html)
-3. [Natural Language Translation](https://arxiv.org/abs/1609.08144)
-But machine learning is certainly not limited to current applications by Apple, Google, etc. Machine learning is full of constantly evolving research with new and exciting results, such as:
+Lots! Machine learning is finding applications nearly everywhere, and it's still growing. Machine learning is full of constantly evolving research with new and exciting results, such as:
 1. [Image Synthesis with Semantic Manipulation of Images](https://www.youtube.com/watch?v=3AIpPlzM_qs)
-2. [Magically Enhancing Image Resolution](https://blog.deepsense.ai/using-deep-learning-for-single-image-super-resolution/)
+2. [Natural Language Translation](https://research.googleblog.com/2016/09/a-neural-network-for-machine.html)
+3. [Magically Enhancing Image Resolution](https://blog.deepsense.ai/using-deep-learning-for-single-image-super-resolution/)
+
+<!-- TODO: Embed cool examples directly -->
 
 For more, there is no shortage of inspiration and useful information on [Reddit](https://www.reddit.com/r/MachineLearning/)
 

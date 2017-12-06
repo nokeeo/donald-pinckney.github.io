@@ -8,6 +8,8 @@ editPath: books/tensorflow/src/ch2-linreg/intro.md
 published: false
 ---
 
+<!-- TODO: Embed graphics -->
+
 # Linear Regression
 
 Roughly, there are two categories of machine learning:
