@@ -53,6 +53,8 @@ Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th in
 
 > Note: The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.
 
+Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.
+
 ### Optimizing the model
 
 At this point, we have fully defined both our model:
