@@ -15,11 +15,11 @@ I've consolidated the machine learning resources I am familiar with, both from s
 ## Regression
 * Predict food truck profit from city population. Download: [population_profit.csv](public/files/ml_data/population_profit.csv). Dataset from Andrew Ng's Coursera course. Models I used: linear regression.
 
-* Predict house prices. Download: [area_bedrooms_price.csv](public/files/ml_data/area_bedrooms_price.csv). Dataset from Andrew Ng's Coursera course. Models I used: linear regression.
+* Predict house prices from area and number of bedrooms. Download: [area_bedrooms_price.csv](public/files/ml_data/area_bedrooms_price.csv). Dataset from Andrew Ng's Coursera course. Models I used: linear regression.
 
 * Predict car MPG from 7 variables. Download: [auto_data.csv](public/files/ml_data/auto_data.csv). Dataset from [UCI repository](https://archive.ics.uci.edu/ml/datasets/Auto+MPG){:target="_blank"}. Models I used: linear regression.
 
-* Predict E. coli bacterial growth rate. For this, use only the gene expressions as attributes. Download: [ecoli_data.zip](public/files/ml_data/ecoli_data.zip). Dataset from [Ilias Tagkopoulos](https://faculty.engineering.ucdavis.edu/tagkopoulos/){:target="_blank"} at UC Davis. Models I used: linear regression with regularization.
+* Predict E. coli bacterial growth rate from many factors. For this, use only the gene expressions as attributes. Download: [ecoli_data.zip](public/files/ml_data/ecoli_data.zip). Dataset from [Ilias Tagkopoulos](https://faculty.engineering.ucdavis.edu/tagkopoulos/){:target="_blank"} at UC Davis. Models I used: linear regression with regularization.
 
 
 ## Classification

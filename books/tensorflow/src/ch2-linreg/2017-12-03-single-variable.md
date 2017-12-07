@@ -49,7 +49,7 @@ So, how do we find the correct values of \\(a\\) and \\(b\\)? First, we need a w
 \\[
     L(a, b) = \\sum_{i=1}^m (y'(x_i, a, b) - y_i)^2
 \\]
-Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th input, and \\(y_i\\) is the i'th desired output. So, \\((y'(x_i, a, b) - y_i)^2\\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \\(y'\\) is 7, and the correct output \\(y\\) is 10, then we would get \\((7 - 10)^2 = 9.\\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \\(a\\) and \\(b\\)) occurs exactly at the smallest value of \\(L(a, b)\\).
+Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th input, and \\(y_i\\) is the i'th desired output. So, \\((y'(x_i, a, b) - y_i)^2\\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \\(y'\\) is 7, and the correct output \\(y\\) is 10, then we would get \\((7 - 10)^2 = 9.\\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \\(a\\) and \\(b\\)) occurs exactly at the smallest value of \\(L(a, b)\\). For this reason, the model is also called [least squares regression](https://en.wikipedia.org/wiki/Least_squares).
 
 > Note: The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.
 
@@ -177,8 +177,7 @@ And that's it to define the model!
 
 ### Defining the loss function
 
-<!-- TODO: Reword this, a bit confusing -->
-We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \\(a\\) and \\(b\\).  Since the loss function compares the linear regression output to the correct output, we need to define \\(y\\), which are the actual output values from the data set. Since \\(y\\) consists of outside data (and we don't need to train it), we create it as a `tf.placeholder`:
+We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \\(a\\) and \\(b\\).  Since the loss function compares the model's output \\(y'\\) to the correct output \\(y\\) from the data set, we need to define \\(y\\) in TensorFlow. Since \\(y\\) consists of outside data (and we don't need to train it), we create it as a `tf.placeholder`:
 ```python
 y = tf.placeholder(tf.float32, shape=(1, None))
 ```
@@ -268,8 +267,7 @@ At this point we have a fully trained model, and know the best values of \\(a\\)
     y' = -17.2711x + 997.285
 \\]
 
-<!-- TODO: Clarify that this should be outside of the loop -->
-The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use `x_data` as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. We can use the numpy function `linspace` to create a bunch of evenly spaced values between 20 and 55:
+The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use `x_data` as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. Outside of the training `for` loop, we can use the numpy function `linspace` to create a bunch of evenly spaced values between 20 and 55:
 ```python
 # x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]
 x_test_data = np.matrix(np.linspace(20, 55))

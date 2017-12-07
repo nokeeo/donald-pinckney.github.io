@@ -4,7 +4,7 @@ title: About Me
 sortBelow: true
 ---
 
-I'm a 3rd year undergraduate student at UC Davis, studying Math and Computer Science. In particular, I enjoy studying machine learning, computer vision, programming languages, and abstract algebra.
+I'm a 4th year undergraduate student at UC Davis, studying Math and Computer Science. In particular, I enjoy studying machine learning, computer vision, programming languages, and abstract algebra.
 
 Outside of school I enjoy practicing martial arts (in particular Tai Chi, Wing Chun, and Taekwondo), playing music, and of course coding.
 
