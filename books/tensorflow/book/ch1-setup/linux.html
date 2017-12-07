@@ -103,12 +103,23 @@
 <p>Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. Now, we need to create a new virtualenv:</p>
 <pre><code class="language-bash"># In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
-virtualenv --system-site-packages -p python3 ~/tensorflow
+python3 -m venv --system-site-packages ~/tensorflow
 </code></pre>
 <p>Then, we need to activate the virtualenv so we can install things inside it:</p>
-<pre><code class="language-bash">source ~/tensorflow/bin/activate # If using bash, sh, ksh, zsh
-source ~/tensorflow/bin/activate.csh # If using csh or tcsh
-source ~/tensorflow/bin/activate.fish # If using fish
+<ul>
+<li>If you are using <code>bash, sh, ksh, zsh</code>:</li>
+</ul>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate
+</code></pre>
+<ul>
+<li>If you are using <code>csh, tcsh</code>:</li>
+</ul>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate.csh
+</code></pre>
+<ul>
+<li>If you are cool and use <code>fish</code>:</li>
+</ul>
+<pre><code class="language-bash">source ~/tensorflow/bin/activate.fish
 </code></pre>
 <p>After activating the virtualenv, your command prompt should change to look like: <code>(tensorflow)$</code>. At this point, we are finally ready to install TensorFlow:</p>
 <pre><code class="language-bash">pip3 install --upgrade tensorflow # If installing WITHOUT GPU support
