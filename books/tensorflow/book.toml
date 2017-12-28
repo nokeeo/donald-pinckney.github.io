@@ -1,3 +1,4 @@
+[book]
 title = "Machine Learning with TensorFlow"
 description = "An introductory look at implementing machine learning algorithms using TensorFlow in Python."
 author = "Donald Pinckney"
