@@ -23,8 +23,8 @@ plt.show()
 x = tf.placeholder(tf.float32, shape=(1, None))
 
 # Define the trainable variables
-a = tf.get_variable("a", shape=(1))
-b = tf.get_variable("b", shape=(1))
+a = tf.get_variable("a", shape=())
+b = tf.get_variable("b", shape=())
 
 # Define the prediction model
 y_predicted = a*x + b
