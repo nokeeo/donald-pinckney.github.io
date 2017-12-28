@@ -286,7 +286,9 @@
 
 <p>Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically log the training progress of <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>. Then TensorBoard will read these logs and plot them. Since we need to setup TensorFlow to log <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>, but before we actually start training, insert this code after <code class="highlighter-rouge">L</code> is defined, but before we start training the model:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">### Summary setup ###</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ... above this is where L is defined</span>
+
+<span class="c">### Summary setup ###</span>
 
 <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="s">'a'</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="s">'b'</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
@@ -296,6 +298,8 @@
 <span class="n">log_name</span> <span class="o">=</span> <span class="s">"</span><span class="si">%</span><span class="s">g, </span><span class="si">%</span><span class="s">s"</span> <span class="o">%</span> <span class="p">(</span><span class="n">LEARNING_RATE</span><span class="p">,</span> <span class="n">OPTIMIZER_CONSTRUCTOR</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
 <span class="n">summary_writer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">FileWriter</span><span class="p">(</span><span class="s">'/tmp/tensorflow/single_var_reg/'</span> <span class="o">+</span> <span class="n">log_name</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s">"Open /tmp/tensorflow/single_var_reg/ with tensorboard"</span><span class="p">)</span>
+
+<span class="c"># ... below this is where we create the optimizer and session</span>
 </code></pre></div></div>
 
 <p>The first thing this code does is setup summaries for <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>, and then merge these 3 summaries into a single TensorFlow node, <code class="highlighter-rouge">summary_node</code>.  Later we will need to run <code class="highlighter-rouge">summary_node</code> with our TensorFlow session.</p>

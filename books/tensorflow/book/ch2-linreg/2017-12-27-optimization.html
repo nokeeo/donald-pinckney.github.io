@@ -141,7 +141,9 @@ OPTIMIZER_CONSTRUCTOR = tf.train.GradientDescentOptimizer # This is the simplest
 </code></pre>
 <a class="header" href="ch2-linreg/2017-12-27-optimization.html#setting-up-tensorboard" id="setting-up-tensorboard"><h3>Setting up TensorBoard</h3></a>
 <p>Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically log the training progress of <code>a</code>, <code>b</code>, and <code>L</code>. Then TensorBoard will read these logs and plot them. Since we need to setup TensorFlow to log <code>a</code>, <code>b</code>, and <code>L</code>, but before we actually start training, insert this code after <code>L</code> is defined, but before we start training the model:</p>
-<pre><code class="language-python">### Summary setup ###
+<pre><code class="language-python"># ... above this is where L is defined
+
+### Summary setup ###
 
 tf.summary.scalar('a', a)
 tf.summary.scalar('b', b)
@@ -151,6 +153,8 @@ summary_node = tf.summary.merge_all()
 log_name = &quot;%g, %s&quot; % (LEARNING_RATE, OPTIMIZER_CONSTRUCTOR.__name__)
 summary_writer = tf.summary.FileWriter('/tmp/tensorflow/single_var_reg/' + log_name)
 print(&quot;Open /tmp/tensorflow/single_var_reg/ with tensorboard&quot;)
+
+# ... below this is where we create the optimizer and session
 </code></pre>
 <p>The first thing this code does is setup summaries for <code>a</code>, <code>b</code>, and <code>L</code>, and then merge these 3 summaries into a single TensorFlow node, <code>summary_node</code>.  Later we will need to run <code>summary_node</code> with our TensorFlow session.</p>
 <p>The second thing this code does is setup where TensorFlow will write the logs to. We create a log name by combining <code>LEARNING_RATE</code> and <code>OPTIMIZER_CONSTRUCTOR</code> (<code>__name__</code> gets the name of the Python class), so that we can later compare logs that used different hyperparameters. Then, we create a <code>tf.summary.FileWriter</code> using the path <code>/tmp/tensorflow/single_var_reg/</code> concatenated with the log name. This <code>summary_writer</code> is what we will use to write the <code>summary_node</code> to log files. Finally we print out a useful message so we remember where the logs are.</p>

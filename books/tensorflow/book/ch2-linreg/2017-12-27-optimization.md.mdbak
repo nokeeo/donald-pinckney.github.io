@@ -285,6 +285,8 @@ OPTIMIZER_CONSTRUCTOR = tf.train.GradientDescentOptimizer # This is the simplest
 Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically log the training progress of `a`, `b`, and `L`. Then TensorBoard will read these logs and plot them. Since we need to setup TensorFlow to log `a`, `b`, and `L`, but before we actually start training, insert this code after `L` is defined, but before we start training the model:
 
 ```python
+# ... above this is where L is defined
+
 ### Summary setup ###
 
 tf.summary.scalar('a', a)
@@ -295,6 +297,8 @@ summary_node = tf.summary.merge_all()
 log_name = "%g, %s" % (LEARNING_RATE, OPTIMIZER_CONSTRUCTOR.__name__)
 summary_writer = tf.summary.FileWriter('/tmp/tensorflow/single_var_reg/' + log_name)
 print("Open /tmp/tensorflow/single_var_reg/ with tensorboard")
+
+# ... below this is where we create the optimizer and session
 ```
 
 The first thing this code does is setup summaries for `a`, `b`, and `L`, and then merge these 3 summaries into a single TensorFlow node, `summary_node`.  Later we will need to run `summary_node` with our TensorFlow session.

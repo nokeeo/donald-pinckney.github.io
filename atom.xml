@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2017-12-27T17:45:19-08:00</updated>
+ <updated>2017-12-27T18:11:48-08:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -83,7 +83,9 @@
 
 &lt;p&gt;Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically log the training progress of &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt;. Then TensorBoard will read these logs and plot them. Since we need to setup TensorFlow to log &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt;, but before we actually start training, insert this code after &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt; is defined, but before we start training the model:&lt;/p&gt;
 
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;### Summary setup ###&lt;/span&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# ... above this is where L is defined&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;### Summary setup ###&lt;/span&gt;
 
 &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;summary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'a'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;summary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'b'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -93,6 +95,8 @@
 &lt;span class=&quot;n&quot;&gt;log_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;LEARNING_RATE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OPTIMIZER_CONSTRUCTOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;__name__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;summary_writer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;summary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FileWriter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'/tmp/tensorflow/single_var_reg/'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;log_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Open /tmp/tensorflow/single_var_reg/ with tensorboard&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# ... below this is where we create the optimizer and session&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;The first thing this code does is setup summaries for &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt;, and then merge these 3 summaries into a single TensorFlow node, &lt;code class=&quot;highlighter-rouge&quot;&gt;summary_node&lt;/code&gt;.  Later we will need to run &lt;code class=&quot;highlighter-rouge&quot;&gt;summary_node&lt;/code&gt; with our TensorFlow session.&lt;/p&gt;
