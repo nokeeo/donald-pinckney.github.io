@@ -66,7 +66,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li><a href="ch1-setup/intro.html"><strong>1.</strong> Introduction and Setup</a></li><li><ul class="section"><li><a href="ch1-setup/mac.html"><strong>1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html"><strong>1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong>1.3.</strong> Windows Setup</a></li></ul></li><li><a href="ch2-linreg/intro.html"><strong>2.</strong> Linear Regression</a></li><li><ul class="section"><li><a href="ch2-linreg/2017-12-03-single-variable.html" class="active"><strong>2.1.</strong> Single Variable Regression</a></li><li><strong>2.2.</strong> Optimization Convergence (bonus)</li><li><strong>2.3.</strong> Multi Variable Regression</li><li><strong>2.4.</strong> Nonlinear Regression</li><li><strong>2.5.</strong> Regularization</li><li class="spacer"></li></ul></li><li><a href="http:/index.html">By Donald Pinckney</a></li></ul>
+            <ul class="chapter"><li><a href="ch1-setup/intro.html"><strong>1.</strong> Introduction and Setup</a></li><li><ul class="section"><li><a href="ch1-setup/mac.html"><strong>1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html"><strong>1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong>1.3.</strong> Windows Setup</a></li></ul></li><li><a href="ch2-linreg/intro.html"><strong>2.</strong> Linear Regression</a></li><li><ul class="section"><li><a href="ch2-linreg/2017-12-03-single-variable.html" class="active"><strong>2.1.</strong> Single Variable Regression</a></li><li><a href="ch2-linreg/2017-12-27-optimization.html"><strong>2.2.</strong> Optimization Convergence (bonus)</a></li><li><strong>2.3.</strong> Multi Variable Regression</li><li><strong>2.4.</strong> Feature Scaling (bonus)</li><li><strong>2.5.</strong> Nonlinear Regression</li><li><strong>2.6.</strong> Regularization</li><li class="spacer"></li></ul></li><li><a href="http:/index.html">By Donald Pinckney</a></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -121,7 +121,7 @@ L(a, b) = \sum_{i=1}^m (y'(x_i, a, b) - y_i)^2
 \]
 Recall that there are \(m\) examples in the data set, \(x_i\) is the i'th input, and \(y_i\) is the i'th desired output. So, \((y'(x_i, a, b) - y_i)^2\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \(y'\) is 7, and the correct output \(y\) is 10, then we would get \((7 - 10)^2 = 9.\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \(a\) and \(b\)) occurs exactly at the smallest value of \(L(a, b)\). For this reason, the model is also called <a href="https://en.wikipedia.org/wiki/Least_squares">least squares regression</a>.</p>
 <blockquote>
-<p>Note: The choice to square \(y'(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.</p>
+<p>Note: The choice to square \(y'(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.</p>
 </blockquote>
 <p>Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.</p>
 <a class="header" href="ch2-linreg/2017-12-03-single-variable.html#optimizing-the-model" id="optimizing-the-model"><h3>Optimizing the model</h3></a>
@@ -210,14 +210,15 @@ ax_{m} + b
 <p>This says that we create a <strong>placeholder</strong> that stores floating-point numbers, and has a <strong>shape</strong> of 1 x None. The shape of 1 x None tells TensorFlow that \(x\) is a vector with 1 row, and some unspecified number of columns. Although we don't tell TensorFlow the number of columns, this is enough to tell TensorFlow that \(x\) is a vector.</p>
 <p>Secondly, note that we create a <code>tf.placeholder</code>: <code>x</code> does not have a numerical value right now. Instead, we will later feed the values of <code>x_data</code> into <code>x</code>. In short, use a <code>tf.placeholder</code> whenever there are values you wish to fill in later (usually data).</p>
 <p>Now, we define \(a\) and \(b\):</p>
-<pre><code class="language-python">a = tf.get_variable(&quot;a&quot;, shape=(1))
-b = tf.get_variable(&quot;b&quot;, shape=(1))
+<pre><code class="language-python">a = tf.get_variable(&quot;a&quot;, shape=())
+b = tf.get_variable(&quot;b&quot;, shape=())
 </code></pre>
 <p>Unlike <code>x</code>, we create <code>a</code> and <code>b</code> to be a <strong>variable</strong>, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is <strong>trainable</strong>, that is, something whose optimal value will be found by an algorithm such as gradient descent.  Since the goal of linear regression is to find the best values of \(a\) and \(b\), the (only) TensorFlow variables in our model are <code>a</code> and <code>b</code>. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.</p>
-<p>The parameters <code>(&quot;a&quot;, shape=(1))</code> indicate the name of the variable, and that <code>a</code> is a single number, <em>not</em> a vector. In comparison to <code>x</code>, note that a shape of <code>(1, None)</code> indicates a vector, while a shape of <code>(1)</code> indicates a single number.</p>
+<p>The parameters <code>(&quot;a&quot;, shape=())</code> indicate the name of the variable, and that <code>a</code> is a single number, <em>not</em> a vector. In comparison to <code>x</code>, note that a shape of <code>(1, None)</code> indicates a vector, while a shape of <code>()</code> indicates a single number.</p>
 <p>With <code>x</code>, <code>a</code> and  <code>b</code> defined, we can define \(y'\):</p>
 <pre><code class="language-python">y_predicted = a*x + b
 </code></pre>
+<p>Now, <code>y_predicted</code> is not a TensorFlow variable, since it is not directly trainable, nor is it a TensorFlow placeholder, since we will not directly feed values into it. More generically, we call <code>y_predicted</code> a TensorFlow <strong>node</strong>.</p>
 <p>And that's it to define the model!</p>
 <a class="header" href="ch2-linreg/2017-12-03-single-variable.html#defining-the-loss-function" id="defining-the-loss-function"><h3>Defining the loss function</h3></a>
 <p>We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \(a\) and \(b\).  Since the loss function compares the model's output \(y'\) to the correct output \(y\) from the data set, we need to define \(y\) in TensorFlow. Since \(y\) consists of outside data (and we don't need to train it), we create it as a <code>tf.placeholder</code>:</p>
@@ -378,8 +379,8 @@ plt.show()
 x = tf.placeholder(tf.float32, shape=(1, None))
 
 # Define the trainable variables
-a = tf.get_variable(&quot;a&quot;, shape=(1))
-b = tf.get_variable(&quot;b&quot;, shape=(1))
+a = tf.get_variable(&quot;a&quot;, shape=())
+b = tf.get_variable(&quot;b&quot;, shape=())
 
 # Define the prediction model
 y_predicted = a*x + b
@@ -445,7 +446,7 @@ plt.show()
                 
 
                 
-                    <a rel="next" href="http:/index.html" class="mobile-nav-chapters next" title="Next chapter">
+                    <a rel="next" href="ch2-linreg/2017-12-27-optimization.html" class="mobile-nav-chapters next" title="Next chapter">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -459,7 +460,7 @@ plt.show()
             
 
             
-                <a href="http:/index.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                <a href="ch2-linreg/2017-12-27-optimization.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
                     <i class="fa fa-angle-right"></i>
                 </a>
             

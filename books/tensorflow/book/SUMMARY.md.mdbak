@@ -7,8 +7,9 @@
     - [Windows Setup](ch1-setup/windows.md)
 - [Linear Regression](ch2-linreg/intro.md)
     - [Single Variable Regression](ch2-linreg/2017-12-03-single-variable.md)
-    - [Optimization Convergence (bonus)]()
+    - [Optimization Convergence (bonus)](ch2-linreg/2017-12-27-optimization.md)
     - [Multi Variable Regression]()
+    - [Feature Scaling (bonus)]()
     - [Nonlinear Regression]()
     - [Regularization]()
 ---

@@ -83,6 +83,14 @@
           
         
           
+            
+          
+        
+          
+            
+          
+        
+          
         
           
         
@@ -126,6 +134,10 @@
       <hr />
 
       <div class="horizontal-block">
+        
+          
+        
+          
         
           
         
@@ -252,7 +264,7 @@ So, how do we find the correct values of \\(a\\) and \\(b\\)? First, we need a w
 \\]
 Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th input, and \\(y_i\\) is the i'th desired output. So, \\((y'(x_i, a, b) - y_i)^2\\) measures how far the i'th prediction is from the i'th desired output. For example, if the prediction \\(y'\\) is 7, and the correct output \\(y\\) is 10, then we would get \\((7 - 10)^2 = 9.\\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \\(a\\) and \\(b\\)) occurs exactly at the smallest value of \\(L(a, b)\\). For this reason, the model is also called [least squares regression](https://en.wikipedia.org/wiki/Least_squares).
 
-> Note: The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.
+> Note: The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.
 
 Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.
 
@@ -364,17 +376,19 @@ Secondly, note that we create a `tf.placeholder`: `x` does not have a numerical 
 
 Now, we define \\(a\\) and \\(b\\):
 ```python
-a = tf.get_variable("a", shape=(1))
-b = tf.get_variable("b", shape=(1))
+a = tf.get_variable("a", shape=())
+b = tf.get_variable("b", shape=())
 ```
 Unlike `x`, we create `a` and `b` to be a **variable**, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is **trainable**, that is, something whose optimal value will be found by an algorithm such as gradient descent.  Since the goal of linear regression is to find the best values of \\(a\\) and \\(b\\), the (only) TensorFlow variables in our model are `a` and `b`. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.
 
-The parameters `("a", shape=(1))` indicate the name of the variable, and that `a` is a single number, *not* a vector. In comparison to `x`, note that a shape of `(1, None)` indicates a vector, while a shape of `(1)` indicates a single number.
+The parameters `("a", shape=())` indicate the name of the variable, and that `a` is a single number, *not* a vector. In comparison to `x`, note that a shape of `(1, None)` indicates a vector, while a shape of `()` indicates a single number.
 
 With `x`, `a` and  `b` defined, we can define \\(y'\\):
 ```python
 y_predicted = a*x + b
 ```
+
+Now, `y_predicted` is not a TensorFlow variable, since it is not directly trainable, nor is it a TensorFlow placeholder, since we will not directly feed values into it. More generically, we call `y_predicted` a TensorFlow **node**.
 
 And that's it to define the model!
 
@@ -586,8 +600,8 @@ plt.show()
 x = tf.placeholder(tf.float32, shape=(1, None))
 
 # Define the trainable variables
-a = tf.get_variable("a", shape=(1))
-b = tf.get_variable("b", shape=(1))
+a = tf.get_variable("a", shape=())
+b = tf.get_variable("b", shape=())
 
 # Define the prediction model
 y_predicted = a*x + b

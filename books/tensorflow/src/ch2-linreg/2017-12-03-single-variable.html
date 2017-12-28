@@ -83,6 +83,14 @@
           
         
           
+            
+          
+        
+          
+            
+          
+        
+          
         
           
         
@@ -126,6 +134,10 @@
       <hr />
 
       <div class="horizontal-block">
+        
+          
+        
+          
         
           
         
@@ -264,7 +276,7 @@ where \(x\) is an input, \(a, b\) are constants, and \(y’\) is the prediction 
 Recall that there are \(m\) examples in the data set, \(x_i\) is the i’th input, and \(y_i\) is the i’th desired output. So, \((y’(x_i, a, b) - y_i)^2\) measures how far the i’th prediction is from the i’th desired output. For example, if the prediction \(y’\) is 7, and the correct output \(y\) is 10, then we would get \((7 - 10)^2 = 9.\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \(a\) and \(b\)) occurs exactly at the smallest value of \(L(a, b)\). For this reason, the model is also called <a href="https://en.wikipedia.org/wiki/Least_squares">least squares regression</a>.</p>
 
 <blockquote>
-  <p>Note: The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later section.</p>
+  <p>Note: The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.</p>
 </blockquote>
 
 <p>Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.</p>
@@ -374,16 +386,18 @@ Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loa
 <p>Secondly, note that we create a <code class="highlighter-rouge">tf.placeholder</code>: <code class="highlighter-rouge">x</code> does not have a numerical value right now. Instead, we will later feed the values of <code class="highlighter-rouge">x_data</code> into <code class="highlighter-rouge">x</code>. In short, use a <code class="highlighter-rouge">tf.placeholder</code> whenever there are values you wish to fill in later (usually data).</p>
 
 <p>Now, we define \(a\) and \(b\):</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
 </code></pre></div></div>
 <p>Unlike <code class="highlighter-rouge">x</code>, we create <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> to be a <strong>variable</strong>, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is <strong>trainable</strong>, that is, something whose optimal value will be found by an algorithm such as gradient descent.  Since the goal of linear regression is to find the best values of \(a\) and \(b\), the (only) TensorFlow variables in our model are <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.</p>
 
-<p>The parameters <code class="highlighter-rouge">("a", shape=(1))</code> indicate the name of the variable, and that <code class="highlighter-rouge">a</code> is a single number, <em>not</em> a vector. In comparison to <code class="highlighter-rouge">x</code>, note that a shape of <code class="highlighter-rouge">(1, None)</code> indicates a vector, while a shape of <code class="highlighter-rouge">(1)</code> indicates a single number.</p>
+<p>The parameters <code class="highlighter-rouge">("a", shape=())</code> indicate the name of the variable, and that <code class="highlighter-rouge">a</code> is a single number, <em>not</em> a vector. In comparison to <code class="highlighter-rouge">x</code>, note that a shape of <code class="highlighter-rouge">(1, None)</code> indicates a vector, while a shape of <code class="highlighter-rouge">()</code> indicates a single number.</p>
 
 <p>With <code class="highlighter-rouge">x</code>, <code class="highlighter-rouge">a</code> and  <code class="highlighter-rouge">b</code> defined, we can define \(y’\):</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y_predicted</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
 </code></pre></div></div>
+
+<p>Now, <code class="highlighter-rouge">y_predicted</code> is not a TensorFlow variable, since it is not directly trainable, nor is it a TensorFlow placeholder, since we will not directly feed values into it. More generically, we call <code class="highlighter-rouge">y_predicted</code> a TensorFlow <strong>node</strong>.</p>
 
 <p>And that’s it to define the model!</p>
 
@@ -599,8 +613,8 @@ But estimates – created from public health surveys and population models – s
 <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 
 <span class="c"># Define the trainable variables</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
 
 <span class="c"># Define the prediction model</span>
 <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
