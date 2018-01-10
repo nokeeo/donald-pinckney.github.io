@@ -182,7 +182,7 @@
 
     <div class="sidebar-footnote">
       <p class="sidebar-footnote">
-        &copy; 2017 Donald Pinckney. All rights reserved.
+        &copy; 2018 Donald Pinckney. All rights reserved.
         <!-- <br />
         The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc. -->
       </p>
@@ -222,9 +222,9 @@
 
   # Exploring Optimization Convergence
 
-In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Note that getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model. However, reading this chapter isn't strictly necessary for understanding the rest of the chapters in this book, so you can skip it (or come back later) if you prefer.
+In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn't introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this book and just about any machine learning you do.
 
-To review, let's look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):
+To explore optimization we are going to exactly copy the code from the previous chapter, and experiment with it. To review, let's look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):
 
 ```python
 # Define optimizer object
@@ -245,12 +245,11 @@ for t in range(10000):
 ```
 
 The main unanswered questions to address are:
-1. Are there better ways to visualize the training progress, other than using `print(...)`?
-2. I said that the learning rate affects how large of steps the optimization algorithm takes in one unit of time. But how do we choose an appropriate value for the learning rate, such as `0.2`?
-3. What is this `AdamOptimizer` exactly, are there other choices for optimizers, and how do they differ?
-4. Currently this code runs for `10000` iterations, and that seems good enough to fully optimize `L`. But how do we choose this appropriate amount of time for training?
+1. I said that the learning rate affects how large of steps the optimization algorithm takes in one unit of time. But how do we choose an appropriate value for the learning rate, such as `0.2`?
+2. What is this `AdamOptimizer` exactly, are there other choices for optimizers, and how do they differ?
+3. Currently this code runs for `10000` iterations, and that seems good enough to fully optimize `L`. But how do we choose this appropriate amount of time for training?
 
-Let's start with the first question, since this will help us address the other questions.
+There aren't exact or easy answers to the above questions, but answering these questions is made even harder by the fact that we can not effectively visualize the training progress with the code we have.  Currently we have some `print(...)` statements, which is good enough to see that the training error is decreasing, but not much more than that. Let's start with learning how to visualize training, since this will help us address the other questions and give us a deeper intuition about optimization.
 
 ## How to visualize training progress?
 
@@ -282,7 +281,7 @@ OPTIMIZER_CONSTRUCTOR = tf.train.GradientDescentOptimizer # This is the simplest
 
 ### Setting up TensorBoard
 
-Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically log the training progress of `a`, `b`, and `L`. Then TensorBoard will read these logs and plot them. Since we need to setup TensorFlow to log `a`, `b`, and `L`, but before we actually start training, insert this code after `L` is defined, but before we start training the model:
+Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically keep track of the training progress of `a`, `b`, and `L` by using a `tf.summary.scalar`. Since we need to setup summaries for `a`, `b`, and `L`, but before we actually start training, insert this code after `L` is defined, but before we start training the model:
 
 ```python
 # ... above this is where L is defined
@@ -301,9 +300,9 @@ print("Open /tmp/tensorflow/single_var_reg/ with tensorboard")
 # ... below this is where we create the optimizer and session
 ```
 
-The first thing this code does is setup summaries for `a`, `b`, and `L`, and then merge these 3 summaries into a single TensorFlow node, `summary_node`.  Later we will need to run `summary_node` with our TensorFlow session.
+The first thing this code does is setup `tf.summary.scalar` nodes for `a`, `b`, and `L`, and then merge these 3 summaries into a single TensorFlow node, `summary_node`.  Later we will need to run `summary_node` with our TensorFlow session.
 
-The second thing this code does is setup where TensorFlow will write the logs to. We create a log name by combining `LEARNING_RATE` and `OPTIMIZER_CONSTRUCTOR` (`__name__` gets the name of the Python class), so that we can later compare logs that used different hyperparameters. Then, we create a `tf.summary.FileWriter` using the path `/tmp/tensorflow/single_var_reg/` concatenated with the log name. This `summary_writer` is what we will use to write the `summary_node` to log files. Finally we print out a useful message so we remember where the logs are.
+The second thing this code does is setup where TensorFlow will write the logs to. We create a pretty log name by combining `LEARNING_RATE` and `OPTIMIZER_CONSTRUCTOR` (`__name__` gets the name of the Python class), so that we can later compare logs that used different hyperparameters. Then, we create a `tf.summary.FileWriter` using the path `/tmp/tensorflow/single_var_reg/` concatenated with the log name. This `summary_writer` is what we will use to write the `summary_node` to log files. Finally we print out a useful message so we remember where the logs are.
 
 The last thing we need to do is make TensorFlow actually write the summary (`summary_node`) to the log (using `summary_writer`) as training progresses. In our training code before we had a `print` statement that showed how training was going, but now we can replace it (or keep it, you choose):
 
@@ -320,7 +319,7 @@ for t in range(NUM_ITERS):
     summary_writer.add_summary(summary, t)
 ```
 
-And as a final touch, we can also delete or comment out the code that plots the data set, since it reduces the amount of clicking we have to do when trying different hyperparameters ;). The complete modified code should look something like this:
+And as a final touch, we can also delete or comment out the code that plots the data set, since it reduces the amount of clicking we have to do when trying different hyperparameters. The complete modified code should look something like this:
 
 ```python
 import numpy as np
@@ -393,7 +392,7 @@ for t in range(NUM_ITERS):
 
 ### Using TensorBoard
 
-With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to `/tmp/tensorflow/single_var_reg/{log_name}`. Now, we can open this up with TensorBoard, by running this command in Terminal:
+With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to `/tmp/tensorflow/single_var_reg/{log_name}`. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):
 
 ```bash
 tensorboard --logdir=/tmp/tensorflow/single_var_reg/
@@ -426,7 +425,7 @@ At this point there isn't a lot more that we can do by just tweaking the learnin
 
 So far we have been using `tf.train.GradientDescentOptimizer`. It is the simplest, classic way to iteratively train machine learning models. As discussed in the previous chapter, it is like moving a ball downhill, according to the current slope (aka the derivative). Generally, gradient descent is part of a class of optimization algorithms called **first-order methods**, since it uses only information from the first derivative of the loss function, and not higher-order derivatives. First-order methods are currently the dominant way to train most machine learning models.
 
-In fact, there are many first order methods, other than simple gradient descent. Most of them are designed to offer an advantage over other first-order methods via speed to find convergence, reliability, ease of use, etc. For a fairly in-depth exploration, see [this blog post](http://ruder.io/optimizing-gradient-descent/index.html). To see the different optimization algorithms that are built-in to TensorFlow, see [the documentation here](https://www.tensorflow.org/api_guides/python/train#Optimizers). In this list, you can see the `tf.train.AdamOptimizer` that we used before.
+In fact, there are many first order methods, other than simple gradient descent. Most of them are designed to offer an advantage over other first-order methods via speed to find convergence, reliability, ease of use, etc. For a fairly in-depth exploration, see [this blog post](http://ruder.io/optimizing-gradient-descent/index.html). To see the different optimization algorithms that are built-in to TensorFlow, see [the documentation here](https://www.tensorflow.org/api_guides/python/train#Optimizers). In this list, you can see the `tf.train.AdamOptimizer` that we used before, and the classic `tf.train.GradientDescentOptimizer`.
 
 We can experiment with any number of these. Here, I''ll demonstrate experimenting with `tf.train.AdagradOptimizer`, but feel free to play around with any of them. To use `tf.train.AdagradOptimizer` we just need to change `OPTIMIZER_CONSTRUCTOR`, and set `LEARNING_RATE` back to `0.000001` for good measure:
 
@@ -458,7 +457,7 @@ By trying learning rates of 10 and 50, we finally achieve convergence:
 
 Qualitatively, this looks like convergence (with a learning rate of 10, and certainly with a learning rate of 50) since the progress that Adagrad is making on decreasing `L` (and adjusting `a` and `b`) has hit a brick wall: no matter how long we run Adagrad, we can't seem to get a loss function value lower than about \\(3.9296 \\cdot 10^4 \\), and similarly for the values of `a` and `b`. We've finally trained our model completely.
 
-Unfortunately, I don't know of an easy way to intuitively understand the differences between Adagrad, Adam, and other first-order methods. [This blog post](http://ruder.io/optimizing-gradient-descent/index.html) does give some mathematical analysis that explains what each algorithm tries to improve upon, but it can be tricky to apply this to real problems. In general, you can always start with the simplest algorithm (gradient descent), and if it isn't converging quickly enough for you, then you can switch to a more sophisticated algorithm, such as Adagrad, Adam, or others. 
+Unfortunately, I don't know of an easy way to intuitively understand the differences between Adagrad, Adam, and other first-order methods. [This blog post](http://ruder.io/optimizing-gradient-descent/index.html) does give some mathematical analysis that explains what each algorithm tries to improve upon, and some reasoning for choosing an algorithm, but it can be tricky to apply to real problems. In general, you can always start with the simplest algorithm (gradient descent), and if it isn't converging quickly enough for you, then you can switch to a more sophisticated algorithm, such as Adagrad, Adam, or others. 
 
 # Concluding Remarks
 
@@ -468,11 +467,11 @@ The experimental nature of this chapter should illustrate the practicalities of 
 3. Recognizing the symptoms of too small of a learning rate
 4. Recognizing the symptoms of too large of a learning rate
 
-In future chapters I won't include the code specifically for TensorBoard (unless it is important to that chapter) since I don't want it to get in the way of actual models, but I would *highly* encourage you to insert your own TensorBoard summary code, and monitor plots of convergence in TensorBoard, since it is useful both educationally and practically.
+In future chapters I won't include the code specifically for TensorBoard (unless it is important to that chapter) since I don't want it to get in the way of actual models, but *I would highly encourage you to insert your own TensorBoard summary code*, and monitor plots of convergence in TensorBoard, since it is useful both educationally and practically.
 
 # Exercises
 
-1. Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates.
+1. Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates. If you prefer a more focused goal, try to beat my configuration of an Adagrad optimizer with a learning rate of 50, and converge faster. Also note that some optimization algorithms have additional hyperparameters other than the learning rate. See the TensorFlow documentation for information about these.
 2. One other cause of slow convergence for the homicide rate linear regression is the somewhat extreme scaling of the problem. The \\(y\\) variable is a whole order of magnitude greater than the \\(x\\) variable, and this affects optimization. We will actually look at this problem specifically in chapter 2.4, but for now you can experiment on your own with one solution: instead of using the \\(x\\) and \\(y\\) data directly from the data set, modify them first to rescale them. A quick, hacky way is to modify the code that loads the data, so that \\(x\\) and \\(y\\) vary between 0 and 1:
 ```python
 # Load the data, and convert to 1x30 vectors
@@ -482,7 +481,7 @@ x_data = (np.matrix(D.age.values) - 21.0) / (50.0 - 21.0)
 # 196 and 653 are the min and max of y_data
 y_data = (np.matrix(D.num_homicide_deaths.values) - 196.0) / (653.0 - 196.0)
 ```
-On your own, add this code and see if you can achieve convergence using only gradient descent.
+On your own, add this code and see if you can achieve convergence using only gradient descent. You can also see how quickly you can achieve convergence using a more advanced algorithm such as Adam.
 
 # Complete Code
 

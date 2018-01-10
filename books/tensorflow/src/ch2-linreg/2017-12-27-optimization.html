@@ -182,7 +182,7 @@
 
     <div class="sidebar-footnote">
       <p class="sidebar-footnote">
-        &copy; 2017 Donald Pinckney. All rights reserved.
+        &copy; 2018 Donald Pinckney. All rights reserved.
         <!-- <br />
         The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc. -->
       </p>
@@ -222,9 +222,9 @@
 
   <h1 id="exploring-optimization-convergence">Exploring Optimization Convergence</h1>
 
-<p>In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Note that getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model. However, reading this chapter isn’t strictly necessary for understanding the rest of the chapters in this book, so you can skip it (or come back later) if you prefer.</p>
+<p>In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn’t introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this book and just about any machine learning you do.</p>
 
-<p>To review, let’s look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):</p>
+<p>To explore optimization we are going to exactly copy the code from the previous chapter, and experiment with it. To review, let’s look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Define optimizer object</span>
 <span class="c"># L is what we want to minimize</span>
@@ -245,13 +245,12 @@
 
 <p>The main unanswered questions to address are:</p>
 <ol>
-  <li>Are there better ways to visualize the training progress, other than using <code class="highlighter-rouge">print(...)</code>?</li>
   <li>I said that the learning rate affects how large of steps the optimization algorithm takes in one unit of time. But how do we choose an appropriate value for the learning rate, such as <code class="highlighter-rouge">0.2</code>?</li>
   <li>What is this <code class="highlighter-rouge">AdamOptimizer</code> exactly, are there other choices for optimizers, and how do they differ?</li>
   <li>Currently this code runs for <code class="highlighter-rouge">10000</code> iterations, and that seems good enough to fully optimize <code class="highlighter-rouge">L</code>. But how do we choose this appropriate amount of time for training?</li>
 </ol>
 
-<p>Let’s start with the first question, since this will help us address the other questions.</p>
+<p>There aren’t exact or easy answers to the above questions, but answering these questions is made even harder by the fact that we can not effectively visualize the training progress with the code we have.  Currently we have some <code class="highlighter-rouge">print(...)</code> statements, which is good enough to see that the training error is decreasing, but not much more than that. Let’s start with learning how to visualize training, since this will help us address the other questions and give us a deeper intuition about optimization.</p>
 
 <h2 id="how-to-visualize-training-progress">How to visualize training progress?</h2>
 
@@ -284,7 +283,7 @@
 
 <h3 id="setting-up-tensorboard">Setting up TensorBoard</h3>
 
-<p>Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically log the training progress of <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>. Then TensorBoard will read these logs and plot them. Since we need to setup TensorFlow to log <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>, but before we actually start training, insert this code after <code class="highlighter-rouge">L</code> is defined, but before we start training the model:</p>
+<p>Now, we need to add some code to configure TensorBoard for our model. We can setup TensorFlow to automatically keep track of the training progress of <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code> by using a <code class="highlighter-rouge">tf.summary.scalar</code>. Since we need to setup summaries for <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>, but before we actually start training, insert this code after <code class="highlighter-rouge">L</code> is defined, but before we start training the model:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># ... above this is where L is defined</span>
 
@@ -302,9 +301,9 @@
 <span class="c"># ... below this is where we create the optimizer and session</span>
 </code></pre></div></div>
 
-<p>The first thing this code does is setup summaries for <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>, and then merge these 3 summaries into a single TensorFlow node, <code class="highlighter-rouge">summary_node</code>.  Later we will need to run <code class="highlighter-rouge">summary_node</code> with our TensorFlow session.</p>
+<p>The first thing this code does is setup <code class="highlighter-rouge">tf.summary.scalar</code> nodes for <code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and <code class="highlighter-rouge">L</code>, and then merge these 3 summaries into a single TensorFlow node, <code class="highlighter-rouge">summary_node</code>.  Later we will need to run <code class="highlighter-rouge">summary_node</code> with our TensorFlow session.</p>
 
-<p>The second thing this code does is setup where TensorFlow will write the logs to. We create a log name by combining <code class="highlighter-rouge">LEARNING_RATE</code> and <code class="highlighter-rouge">OPTIMIZER_CONSTRUCTOR</code> (<code class="highlighter-rouge">__name__</code> gets the name of the Python class), so that we can later compare logs that used different hyperparameters. Then, we create a <code class="highlighter-rouge">tf.summary.FileWriter</code> using the path <code class="highlighter-rouge">/tmp/tensorflow/single_var_reg/</code> concatenated with the log name. This <code class="highlighter-rouge">summary_writer</code> is what we will use to write the <code class="highlighter-rouge">summary_node</code> to log files. Finally we print out a useful message so we remember where the logs are.</p>
+<p>The second thing this code does is setup where TensorFlow will write the logs to. We create a pretty log name by combining <code class="highlighter-rouge">LEARNING_RATE</code> and <code class="highlighter-rouge">OPTIMIZER_CONSTRUCTOR</code> (<code class="highlighter-rouge">__name__</code> gets the name of the Python class), so that we can later compare logs that used different hyperparameters. Then, we create a <code class="highlighter-rouge">tf.summary.FileWriter</code> using the path <code class="highlighter-rouge">/tmp/tensorflow/single_var_reg/</code> concatenated with the log name. This <code class="highlighter-rouge">summary_writer</code> is what we will use to write the <code class="highlighter-rouge">summary_node</code> to log files. Finally we print out a useful message so we remember where the logs are.</p>
 
 <p>The last thing we need to do is make TensorFlow actually write the summary (<code class="highlighter-rouge">summary_node</code>) to the log (using <code class="highlighter-rouge">summary_writer</code>) as training progresses. In our training code before we had a <code class="highlighter-rouge">print</code> statement that showed how training was going, but now we can replace it (or keep it, you choose):</p>
 
@@ -320,7 +319,7 @@
     <span class="n">summary_writer</span><span class="o">.</span><span class="n">add_summary</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>And as a final touch, we can also delete or comment out the code that plots the data set, since it reduces the amount of clicking we have to do when trying different hyperparameters ;). The complete modified code should look something like this:</p>
+<p>And as a final touch, we can also delete or comment out the code that plots the data set, since it reduces the amount of clicking we have to do when trying different hyperparameters. The complete modified code should look something like this:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
@@ -392,7 +391,7 @@
 
 <h3 id="using-tensorboard">Using TensorBoard</h3>
 
-<p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code class="highlighter-rouge">/tmp/tensorflow/single_var_reg/{log_name}</code>. Now, we can open this up with TensorBoard, by running this command in Terminal:</p>
+<p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code class="highlighter-rouge">/tmp/tensorflow/single_var_reg/{log_name}</code>. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tensorboard <span class="nt">--logdir</span><span class="o">=</span>/tmp/tensorflow/single_var_reg/
 </code></pre></div></div>
@@ -424,7 +423,7 @@
 
 <p>So far we have been using <code class="highlighter-rouge">tf.train.GradientDescentOptimizer</code>. It is the simplest, classic way to iteratively train machine learning models. As discussed in the previous chapter, it is like moving a ball downhill, according to the current slope (aka the derivative). Generally, gradient descent is part of a class of optimization algorithms called <strong>first-order methods</strong>, since it uses only information from the first derivative of the loss function, and not higher-order derivatives. First-order methods are currently the dominant way to train most machine learning models.</p>
 
-<p>In fact, there are many first order methods, other than simple gradient descent. Most of them are designed to offer an advantage over other first-order methods via speed to find convergence, reliability, ease of use, etc. For a fairly in-depth exploration, see <a href="http://ruder.io/optimizing-gradient-descent/index.html">this blog post</a>. To see the different optimization algorithms that are built-in to TensorFlow, see <a href="https://www.tensorflow.org/api_guides/python/train#Optimizers">the documentation here</a>. In this list, you can see the <code class="highlighter-rouge">tf.train.AdamOptimizer</code> that we used before.</p>
+<p>In fact, there are many first order methods, other than simple gradient descent. Most of them are designed to offer an advantage over other first-order methods via speed to find convergence, reliability, ease of use, etc. For a fairly in-depth exploration, see <a href="http://ruder.io/optimizing-gradient-descent/index.html">this blog post</a>. To see the different optimization algorithms that are built-in to TensorFlow, see <a href="https://www.tensorflow.org/api_guides/python/train#Optimizers">the documentation here</a>. In this list, you can see the <code class="highlighter-rouge">tf.train.AdamOptimizer</code> that we used before, and the classic <code class="highlighter-rouge">tf.train.GradientDescentOptimizer</code>.</p>
 
 <p>We can experiment with any number of these. Here, I’‘ll demonstrate experimenting with <code class="highlighter-rouge">tf.train.AdagradOptimizer</code>, but feel free to play around with any of them. To use <code class="highlighter-rouge">tf.train.AdagradOptimizer</code> we just need to change <code class="highlighter-rouge">OPTIMIZER_CONSTRUCTOR</code>, and set <code class="highlighter-rouge">LEARNING_RATE</code> back to <code class="highlighter-rouge">0.000001</code> for good measure:</p>
 
@@ -454,7 +453,7 @@ rm <span class="nt">-rf</span> /tmp/tensorflow/single_var_reg/5e-05,<span class=
 
 <p>Qualitatively, this looks like convergence (with a learning rate of 10, and certainly with a learning rate of 50) since the progress that Adagrad is making on decreasing <code class="highlighter-rouge">L</code> (and adjusting <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>) has hit a brick wall: no matter how long we run Adagrad, we can’t seem to get a loss function value lower than about \(3.9296 \cdot 10^4 \), and similarly for the values of <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code>. We’ve finally trained our model completely.</p>
 
-<p>Unfortunately, I don’t know of an easy way to intuitively understand the differences between Adagrad, Adam, and other first-order methods. <a href="http://ruder.io/optimizing-gradient-descent/index.html">This blog post</a> does give some mathematical analysis that explains what each algorithm tries to improve upon, but it can be tricky to apply this to real problems. In general, you can always start with the simplest algorithm (gradient descent), and if it isn’t converging quickly enough for you, then you can switch to a more sophisticated algorithm, such as Adagrad, Adam, or others.</p>
+<p>Unfortunately, I don’t know of an easy way to intuitively understand the differences between Adagrad, Adam, and other first-order methods. <a href="http://ruder.io/optimizing-gradient-descent/index.html">This blog post</a> does give some mathematical analysis that explains what each algorithm tries to improve upon, and some reasoning for choosing an algorithm, but it can be tricky to apply to real problems. In general, you can always start with the simplest algorithm (gradient descent), and if it isn’t converging quickly enough for you, then you can switch to a more sophisticated algorithm, such as Adagrad, Adam, or others.</p>
 
 <h1 id="concluding-remarks">Concluding Remarks</h1>
 
@@ -466,12 +465,12 @@ rm <span class="nt">-rf</span> /tmp/tensorflow/single_var_reg/5e-05,<span class=
   <li>Recognizing the symptoms of too large of a learning rate</li>
 </ol>
 
-<p>In future chapters I won’t include the code specifically for TensorBoard (unless it is important to that chapter) since I don’t want it to get in the way of actual models, but I would <em>highly</em> encourage you to insert your own TensorBoard summary code, and monitor plots of convergence in TensorBoard, since it is useful both educationally and practically.</p>
+<p>In future chapters I won’t include the code specifically for TensorBoard (unless it is important to that chapter) since I don’t want it to get in the way of actual models, but <em>I would highly encourage you to insert your own TensorBoard summary code</em>, and monitor plots of convergence in TensorBoard, since it is useful both educationally and practically.</p>
 
 <h1 id="exercises">Exercises</h1>
 
 <ol>
-  <li>Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates.</li>
+  <li>Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates. If you prefer a more focused goal, try to beat my configuration of an Adagrad optimizer with a learning rate of 50, and converge faster. Also note that some optimization algorithms have additional hyperparameters other than the learning rate. See the TensorFlow documentation for information about these.</li>
   <li>One other cause of slow convergence for the homicide rate linear regression is the somewhat extreme scaling of the problem. The \(y\) variable is a whole order of magnitude greater than the \(x\) variable, and this affects optimization. We will actually look at this problem specifically in chapter 2.4, but for now you can experiment on your own with one solution: instead of using the \(x\) and \(y\) data directly from the data set, modify them first to rescale them. A quick, hacky way is to modify the code that loads the data, so that \(x\) and \(y\) vary between 0 and 1:
     <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Load the data, and convert to 1x30 vectors</span>
 <span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
@@ -480,7 +479,7 @@ rm <span class="nt">-rf</span> /tmp/tensorflow/single_var_reg/5e-05,<span class=
 <span class="c"># 196 and 653 are the min and max of y_data</span>
 <span class="n">y_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">653.0</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span>
 </code></pre></div>    </div>
-    <p>On your own, add this code and see if you can achieve convergence using only gradient descent.</p>
+    <p>On your own, add this code and see if you can achieve convergence using only gradient descent. You can also see how quickly you can achieve convergence using a more advanced algorithm such as Adam.</p>
   </li>
 </ol>
 
