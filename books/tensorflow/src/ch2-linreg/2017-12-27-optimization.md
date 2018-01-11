@@ -182,7 +182,7 @@ for t in range(NUM_ITERS):
 With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to `/tmp/tensorflow/single_var_reg/{log_name}`. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):
 
 ```bash
-tensorboard --logdir=/tmp/tensorflow/single_var_reg/
+python ~/tensorflow/bin/tensorboard --logdir=/tmp/tensorflow/single_var_reg/
 ```
 Once you run that command, go to [http://localhost:6006](http://localhost:6006) in your web browser, and you should see plots of `L`, `a`, and `b` as the training progressed. With the hyperparameter choices from above, the plots should look like:
 
