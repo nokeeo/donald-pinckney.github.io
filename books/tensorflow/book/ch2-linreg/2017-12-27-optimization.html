@@ -239,7 +239,7 @@ for t in range(NUM_ITERS):
 </code></pre>
 <a class="header" href="ch2-linreg/2017-12-27-optimization.html#using-tensorboard" id="using-tensorboard"><h3>Using TensorBoard</h3></a>
 <p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code>/tmp/tensorflow/single_var_reg/{log_name}</code>. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):</p>
-<pre><code class="language-bash">tensorboard --logdir=/tmp/tensorflow/single_var_reg/
+<pre><code class="language-bash">python ~/tensorflow/bin/tensorboard --logdir=/tmp/tensorflow/single_var_reg/
 </code></pre>
 <p>Once you run that command, go to <a href="http://localhost:6006">http://localhost:6006</a> in your web browser, and you should see plots of <code>L</code>, <code>a</code>, and <code>b</code> as the training progressed. With the hyperparameter choices from above, the plots should look like:</p>
 <p><img src="/books/tensorflow/book/ch2-linreg/assets/tensorboard_1.png" alt="TensorBoard 1" /></p>

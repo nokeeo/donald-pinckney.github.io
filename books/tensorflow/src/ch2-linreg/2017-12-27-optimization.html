@@ -393,7 +393,7 @@
 
 <p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code class="highlighter-rouge">/tmp/tensorflow/single_var_reg/{log_name}</code>. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tensorboard <span class="nt">--logdir</span><span class="o">=</span>/tmp/tensorflow/single_var_reg/
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python ~/tensorflow/bin/tensorboard <span class="nt">--logdir</span><span class="o">=</span>/tmp/tensorflow/single_var_reg/
 </code></pre></div></div>
 <p>Once you run that command, go to <a href="http://localhost:6006">http://localhost:6006</a> in your web browser, and you should see plots of <code class="highlighter-rouge">L</code>, <code class="highlighter-rouge">a</code>, and <code class="highlighter-rouge">b</code> as the training progressed. With the hyperparameter choices from above, the plots should look like:</p>
 

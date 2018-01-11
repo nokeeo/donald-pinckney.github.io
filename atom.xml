@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2018-01-09T23:41:21-08:00</updated>
+ <updated>2018-01-11T14:11:41-08:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -190,7 +190,7 @@
 
 &lt;p&gt;With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to &lt;code class=&quot;highlighter-rouge&quot;&gt;/tmp/tensorflow/single_var_reg/{log_name}&lt;/code&gt;. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):&lt;/p&gt;
 
-&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tensorboard &lt;span class=&quot;nt&quot;&gt;--logdir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/tmp/tensorflow/single_var_reg/
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python ~/tensorflow/bin/tensorboard &lt;span class=&quot;nt&quot;&gt;--logdir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/tmp/tensorflow/single_var_reg/
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;Once you run that command, go to &lt;a href=&quot;http://localhost:6006&quot;&gt;http://localhost:6006&lt;/a&gt; in your web browser, and you should see plots of &lt;code class=&quot;highlighter-rouge&quot;&gt;L&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt; as the training progressed. With the hyperparameter choices from above, the plots should look like:&lt;/p&gt;
 

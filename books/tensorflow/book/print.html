@@ -168,6 +168,7 @@ python3 -m venv --system-site-packages ~/tensorflow
 <pre><code class="language-bash">pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
+pip3 install --upgrade tensorflow-tensorboard # Used for visualizing tensorflow training
 </code></pre>
 <p>Just so you know, you can always exit the virtualenv using the command <code>deactivate</code>. In the future, to use TensorFlow you need to activate the virtualenv first using the appropriate <code>source</code> command listed above.</p>
 <a class="header" href="print.html#testing-the-installation" id="testing-the-installation"><h2>Testing the installation</h2></a>
@@ -224,6 +225,7 @@ pip3 install --upgrade tensorflow-gpu # If installing WITH GPU support
 <pre><code class="language-bash">pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
+pip3 install --upgrade tensorflow-tensorboard # Used for visualizing tensorflow training
 </code></pre>
 <p>Once everything is installed, you can exit the virtualenv using the command <code>deactivate</code>.</p>
 <a class="header" href="print.html#testing-the-installation-1" id="testing-the-installation-1"><h2>Testing the installation</h2></a>
@@ -763,7 +765,7 @@ for t in range(NUM_ITERS):
 </code></pre>
 <a class="header" href="print.html#using-tensorboard" id="using-tensorboard"><h3>Using TensorBoard</h3></a>
 <p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code>/tmp/tensorflow/single_var_reg/{log_name}</code>. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):</p>
-<pre><code class="language-bash">tensorboard --logdir=/tmp/tensorflow/single_var_reg/
+<pre><code class="language-bash">python ~/tensorflow/bin/tensorboard --logdir=/tmp/tensorflow/single_var_reg/
 </code></pre>
 <p>Once you run that command, go to <a href="http://localhost:6006">http://localhost:6006</a> in your web browser, and you should see plots of <code>L</code>, <code>a</code>, and <code>b</code> as the training progressed. With the hyperparameter choices from above, the plots should look like:</p>
 <p><img src="/books/tensorflow/book/ch2-linreg/assets/tensorboard_1.png" alt="TensorBoard 1" /></p>
