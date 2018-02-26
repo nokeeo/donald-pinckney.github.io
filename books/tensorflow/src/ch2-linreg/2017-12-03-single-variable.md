@@ -138,13 +138,13 @@ We have our data prepared and plotted, so now we need to define our model. Recal
 \\[
     y' = ax + b
 \\]
-Before, we thought of \\(x\\) and \\(y'\\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \\(x\\) and \\(y'\\) are vectors, then we don't need to change the equation, just our interpretation of it. Multiplying the vector \\(x\\) by the single number \\(a\\) just multiplies every number in \\(x\\) be \\(a\\), and likewise for adding \\(b\\). So, the above equation interpreted using vectors is the same thing as:
+Before, we thought of \\(x\\) and \\(y'\\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \\(x\\) and \\(y'\\) are vectors, then we don't need to change the equation, just our interpretation of it. Multiplying the vector \\(x\\) by the single number \\(a\\) just multiplies every number in \\(x\\) by \\(a\\), and likewise for adding \\(b\\). So, the above equation interpreted using vectors is the same thing as:
 \\[
     \\begin{bmatrix}
            y_{1}', &
            y_{2}', &
            \\dots, &
-           y_{m}',
+           y_{m}'
     \\end{bmatrix} = \\begin{bmatrix}
            ax_{1} + b, &
            ax_{2} + b, &
