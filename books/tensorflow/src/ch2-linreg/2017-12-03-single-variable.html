@@ -83,14 +83,6 @@
           
         
           
-            
-          
-        
-          
-            
-          
-        
-          
         
           
         
@@ -110,11 +102,11 @@
         
           
             
+              <a class="horizontal-item sidebar-nav-item" href="/ml.html">ML Resources</a>
+            
           
         
           
-            
-              <a class="horizontal-item sidebar-nav-item" href="/ml.html">ML Resources</a>
             
           
         
@@ -134,10 +126,6 @@
       <hr />
 
       <div class="horizontal-block">
-        
-          
-        
-          
         
           
         
@@ -363,13 +351,13 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
 \[
     y’ = ax + b
 \]
-Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \(x\) and \(y’\) are vectors, then we don’t need to change the equation, just our interpretation of it. Multiplying the vector \(x\) by the single number \(a\) just multiplies every number in \(x\) be \(a\), and likewise for adding \(b\). So, the above equation interpreted using vectors is the same thing as:
+Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \(x\) and \(y’\) are vectors, then we don’t need to change the equation, just our interpretation of it. Multiplying the vector \(x\) by the single number \(a\) just multiplies every number in \(x\) by \(a\), and likewise for adding \(b\). So, the above equation interpreted using vectors is the same thing as:
 \[
     \begin{bmatrix}
            y_{1}’, &amp;
            y_{2}’, &amp;
            \dots, &amp;
-           y_{m}’,
+           y_{m}’
     \end{bmatrix} = \begin{bmatrix}
            ax_{1} + b, &amp;
            ax_{2} + b, &amp;
@@ -671,7 +659,7 @@ But estimates – created from public health surveys and population models – s
 <div class="footnotes">
   <ol>
     <li id="fn:fn1">
-      <p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="http://wonder.cdc.gov/ucd-icd10.html">http://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM.&nbsp;<a href="#fnref:fn1" class="reversefootnote">&#8617;</a></p>
+      <p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="http://wonder.cdc.gov/ucd-icd10.html">http://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM. <a href="#fnref:fn1" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>

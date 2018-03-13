@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2018-01-11T14:11:41-08:00</updated>
+ <updated>2018-03-12T22:42:42-07:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -504,13 +504,13 @@ where \(\alpha\) is a constant called the &lt;strong&gt;learning rate&lt;/strong
 \[
     y’ = ax + b
 \]
-Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \(x\) and \(y’\) are vectors, then we don’t need to change the equation, just our interpretation of it. Multiplying the vector \(x\) by the single number \(a\) just multiplies every number in \(x\) be \(a\), and likewise for adding \(b\). So, the above equation interpreted using vectors is the same thing as:
+Before, we thought of \(x\) and \(y’\) as single numbers. However, we just loaded our data set as vectors (lists of numbers), so it will be much more convenient to define our model using vectors instead of single numbers. If we use the convention that \(x\) and \(y’\) are vectors, then we don’t need to change the equation, just our interpretation of it. Multiplying the vector \(x\) by the single number \(a\) just multiplies every number in \(x\) by \(a\), and likewise for adding \(b\). So, the above equation interpreted using vectors is the same thing as:
 \[
     \begin{bmatrix}
            y_{1}’, &amp;amp;
            y_{2}’, &amp;amp;
            \dots, &amp;amp;
-           y_{m}’,
+           y_{m}’
     \end{bmatrix} = \begin{bmatrix}
            ax_{1} + b, &amp;amp;
            ax_{2} + b, &amp;amp;
@@ -812,7 +812,7 @@ But estimates – created from public health surveys and population models – s
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:fn1&quot;&gt;
-      &lt;p&gt;Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at &lt;a href=&quot;http://wonder.cdc.gov/ucd-icd10.html&quot;&gt;http://wonder.cdc.gov/ucd-icd10.html&lt;/a&gt; on Nov 22, 2017 2:18:46 PM.&amp;nbsp;&lt;a href=&quot;#fnref:fn1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at &lt;a href=&quot;http://wonder.cdc.gov/ucd-icd10.html&quot;&gt;http://wonder.cdc.gov/ucd-icd10.html&lt;/a&gt; on Nov 22, 2017 2:18:46 PM. &lt;a href=&quot;#fnref:fn1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;
