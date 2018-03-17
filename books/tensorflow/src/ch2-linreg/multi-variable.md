@@ -183,10 +183,12 @@ import matplotlib.pyplot as plt
 D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv").values)
 
 # We extract all rows and the first 2 columns into X_data
-X_data = D[:, 0:2]
+# Then we flip it
+X_data = D[:, 0:2].transpose()
 
 # We extract all rows and the last column into y_data
-y_data = D[:, 2]
+# Then we flip it
+y_data = D[:, 2].transpose()
 
 # And make a convenient variable to remember the number of input columns
 n = 2
@@ -196,9 +198,17 @@ The syntax `D[:, 0:2]` might be new, particularly if you haven't worked with Num
 
 The basic syntax for subscripting a matrix is: `D[3, 6]` (for example), which refers to the row at index 3 and the column at index 6 in the matrix `D`. Note that in `numpy` the row and column indices start at 0! This means that `D[0, 0]` refers to the top-left entry of matrix `D`. If you are coming from a pure math background, or have used MATLAB before, it is a common error to assume the indices start at 1.
 
-Now for slicing, the `:` character is used to indicate a range. If it is used by itself, it indicates the entire range of rows / columns. For example, `D[:, 42]` refers to all rows of `D`, and the column at index 42. If it is used with indices, then `i:j` indicates the range of rows / columns at indices `i`, `i+1`, ..., `j-1`, but **not** including `j`.
+Now for slicing, the `:` character is used to indicate a range. If it is used by itself, it indicates the entire range of rows / columns. For example, `D[:, 42]` refers to all rows of `D`, and the column at index 42. If it is used with indices, then `i:j` indicates the range of rows / columns at indices `i`, `i+1`, ..., `j-1`, but *not* including `j`.
 
-So, `X_data = D[:, 0:2]` means to read the values in `D` at all rows and at columns with index `0` and `1` (the entire first 2 columns, i.e. the input data columns). Then `y_data = D[:, 2]` means to read the values in `D` at all rows and at the column of index `2` (the entire last column, i.e. the output data column).
+So, `D[:, 0:2]` means to read the values in `D` at all rows and at columns with index `0` and `1` (the entire first 2 columns, i.e. the input data columns). Likewise, `D[:, 2]` means to read the values in `D` at all rows and at the column of index `2` (the entire last column, i.e. the output data column).
+
+This is almost what we want, but not quite. The problem is that `D[:, 0:2]`, which contains our \\(D_x\\) data, is a matrix of shape \\(m \\times n\\), but earlier we decided that we wanted \\(D_x\\) to be an \\(n \\times m\\) matrix, so we need to flip it. To do so, we use the [**transpose**](https://en.wikipedia.org/wiki/Transpose) of the matrix. Mathematically we write the transpose of a matrix \\(A\\) as \\(A^T\\), and in Python we can compute it using `A.transpose()`. Essentially, the transpose of a matrix simply flips it along the diagonal, as shown in this animation:
+
+<center>
+<p><a href="https://commons.wikimedia.org/wiki/File:Matrix_transpose.gif#/media/File:Matrix_transpose.gif"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Matrix_transpose.gif" alt="Matrix transpose.gif"></a><br>By <a href="//commons.wikimedia.org/wiki/User:LucasVB" title="User:LucasVB">LucasVB</a> - <span class="int-own-work" lang="en">Own work</span>, Public Domain, <a href="https://commons.wikimedia.org/w/index.php?curid=21897854">Link</a></p>
+</center>
+
+So, `D[:, 0:2].transpose()` is a matrix of shape \\(n \\times m\\), and is our correct data input matrix \\(D_x\\). We save this matrix to the variable `X_data`. Likewise, we also transpose `D[:, 2]` to correctly compute \\(D_y\\), and save it in `y_data`.
 
 At this point we have our \\(m \\times n\\) input data matrix `X_data` and our \\(m \\times 1\\) output vector `y_data` loaded. In addition, we conveniently have the number of columns stored in `n`, so now we can start defining our model.
 
@@ -223,7 +233,7 @@ A = tf.get_variable("A", shape=(1, n))
 b = tf.get_variable("b", shape=())
 
 # Define model output
-y_predicted = A*x + b
+y_predicted = tf.matmul(A, x) + b
 
 # Define the loss function
 L = tf.reduce_sum((y_predicted - y)**2)
@@ -235,24 +245,108 @@ At this point, we have a 1 dimensional output `y_predicted` which we compare aga
 
 ```python
 # Define optimizer object
-optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
+optimizer = tf.train.AdamOptimizer(learning_rate=0.1).minimize(L)
 
 # Create a session and initialize variables
 session = tf.Session()
 session.run(tf.global_variables_initializer())
 
 # Main optimization loop
-for t in range(10000):
+for t in range(2000):
     _, current_loss, current_A, current_b = session.run([optimizer, L, A, b], feed_dict={
         x: X_data,
         y: y_data
     })
-    print("t = %g, loss = %g, a = %s, b = %g" % (t, current_loss, str(current_A), current_b))
+    print("t = %g, loss = %g, A = %s, b = %g" % (t, current_loss, str(current_A), current_b))
 ```
 
-First, we have a different learning rate than the learning rate used in singlar variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter [Optimization Convergence](http://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html).
+First, we have a different learning rate than the learning rate used in single variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter [Optimization Convergence](http://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html).
 
-Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector `A`, rather than just a single number.
+Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector `A` (in addition to `b`), rather than just a single number. However, TensorFlow abstracts this away for us, and conceptually we just need to know that we are training the variable `A`.
 
+The final print statements should output something close to:
+```
+t = 1994, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1995, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1996, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1997, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1998, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+```
+
+At this point we have converged to our approximate solution of \\(A \\approx \\begin{bmatrix}
+            2.005, 
+            1.302 
+    \\end{bmatrix}, b \\approx 3.95\\). Note that this is not exactly the same as the expected answer of \\(A = \\begin{bmatrix}
+            2, 
+            1.3 
+    \\end{bmatrix}, b \\approx 4\\), primarily because some random noise was added to each point in the data set.
+
+The model is fully trained, so now given a new input \\(x\\) we could now predict the output \\(y' = Ax + b\\), using all the learned information from all input variables.
+
+# Concluding Remarks
+
+Linear regression with multiple variables is only slightly different in essence from single variable linear regression. The main difference is abstracting the linear operation \\(ax\\) where \\(a\\) and \\(x\\) are single numbers to the linear operation \\(Ax\\), where now \\(A\\) is a matrix, \\(x\\) is a vector. In addition, at the implementation level we also have to deal with loading data in a more sophisticated manner, but otherwise the code is mostly the same. In later chapters we will use this abstraction we have built to define even more powerful models.
+
+# Exercises
+
+So far this chapter has used a synthetic data set, `linreg-multi-synthetic-2.csv`, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data.
+
+1. 
+
+# Complete Code
+
+The [complete example code is available on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/multi_var_reg.py), as well as directly here:
+
+```python
+import numpy as np
+import tensorflow as tf
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# First we load the entire CSV file into an m x 3
+D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv").values)
+
+# We extract all rows and the first 2 columns into X_data
+# Then we flip it
+X_data = D[:, 0:2].transpose()
+
+# We extract all rows and the last column into y_data
+# Then we flip it
+y_data = D[:, 2].transpose()
+
+# And make a convenient variable to remember the number of input columns
+n = 2
+
+# Define data placeholders
+x = tf.placeholder(tf.float32, shape=(n, None))
+y = tf.placeholder(tf.float32, shape=(1, None))
+
+# Define trainable variables
+A = tf.get_variable("A", shape=(1, n))
+b = tf.get_variable("b", shape=())
+
+# Define model output
+y_predicted = tf.matmul(A, x) + b
+
+# Define the loss function
+L = tf.reduce_sum((y_predicted - y)**2)
+
+# Define optimizer object
+optimizer = tf.train.AdamOptimizer(learning_rate=0.1).minimize(L)
+
+# Create a session and initialize variables
+session = tf.Session()
+session.run(tf.global_variables_initializer())
+
+# Main optimization loop
+for t in range(2000):
+    _, current_loss, current_A, current_b = session.run([optimizer, L, A, b], feed_dict={
+        x: X_data,
+        y: y_data
+    })
+    print("t = %g, loss = %g, A = %s, b = %g" % (t, current_loss, str(current_A), current_b))
+
+```
 [synthetic-data]: /books/tensorflow/book/ch2-linreg/code/linreg-multi-synthetic-2.csv
 [scatter]: /books/tensorflow/book/ch2-linreg/assets/linreg-multi-synthetic-2.png
