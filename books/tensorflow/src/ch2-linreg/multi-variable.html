@@ -28,8 +28,9 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.3.0 -->
+  <!-- Begin Jekyll SEO tag v2.4.0 -->
 <title>Multi Variable Linear Regression | Donald Pinckney</title>
+<meta name="generator" content="Jekyll v3.6.2" />
 <meta property="og:title" content="Multi Variable Linear Regression" />
 <meta name="author" content="Donald Pinckney" />
 <meta property="og:locale" content="en_US" />
@@ -41,7 +42,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-02-25T00:00:00-08:00" />
 <script type="application/ld+json">
-{"name":null,"description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html","publisher":null,"image":null,"headline":"Multi Variable Linear Regression","dateModified":"2018-02-25T00:00:00-08:00","datePublished":"2018-02-25T00:00:00-08:00","sameAs":null,"mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html"},"@context":"http://schema.org"}</script>
+{"description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html","headline":"Multi Variable Linear Regression","dateModified":"2018-02-25T00:00:00-08:00","datePublished":"2018-02-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -510,10 +511,12 @@ So, each column of \(D_x\) represents a single input data example. We don’t ne
 <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-multi-synthetic-2.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
 <span class="c"># We extract all rows and the first 2 columns into X_data</span>
-<span class="n">X_data</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="c"># Then we flip it</span>
+<span class="n">X_data</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
 <span class="c"># We extract all rows and the last column into y_data</span>
-<span class="n">y_data</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="c"># Then we flip it</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
 <span class="c"># And make a convenient variable to remember the number of input columns</span>
 <span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
@@ -523,9 +526,17 @@ So, each column of \(D_x\) represents a single input data example. We don’t ne
 
 <p>The basic syntax for subscripting a matrix is: <code class="highlighter-rouge">D[3, 6]</code> (for example), which refers to the row at index 3 and the column at index 6 in the matrix <code class="highlighter-rouge">D</code>. Note that in <code class="highlighter-rouge">numpy</code> the row and column indices start at 0! This means that <code class="highlighter-rouge">D[0, 0]</code> refers to the top-left entry of matrix <code class="highlighter-rouge">D</code>. If you are coming from a pure math background, or have used MATLAB before, it is a common error to assume the indices start at 1.</p>
 
-<p>Now for slicing, the <code class="highlighter-rouge">:</code> character is used to indicate a range. If it is used by itself, it indicates the entire range of rows / columns. For example, <code class="highlighter-rouge">D[:, 42]</code> refers to all rows of <code class="highlighter-rouge">D</code>, and the column at index 42. If it is used with indices, then <code class="highlighter-rouge">i:j</code> indicates the range of rows / columns at indices <code class="highlighter-rouge">i</code>, <code class="highlighter-rouge">i+1</code>, …, <code class="highlighter-rouge">j-1</code>, but <strong>not</strong> including <code class="highlighter-rouge">j</code>.</p>
+<p>Now for slicing, the <code class="highlighter-rouge">:</code> character is used to indicate a range. If it is used by itself, it indicates the entire range of rows / columns. For example, <code class="highlighter-rouge">D[:, 42]</code> refers to all rows of <code class="highlighter-rouge">D</code>, and the column at index 42. If it is used with indices, then <code class="highlighter-rouge">i:j</code> indicates the range of rows / columns at indices <code class="highlighter-rouge">i</code>, <code class="highlighter-rouge">i+1</code>, …, <code class="highlighter-rouge">j-1</code>, but <em>not</em> including <code class="highlighter-rouge">j</code>.</p>
 
-<p>So, <code class="highlighter-rouge">X_data = D[:, 0:2]</code> means to read the values in <code class="highlighter-rouge">D</code> at all rows and at columns with index <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">1</code> (the entire first 2 columns, i.e. the input data columns). Then <code class="highlighter-rouge">y_data = D[:, 2]</code> means to read the values in <code class="highlighter-rouge">D</code> at all rows and at the column of index <code class="highlighter-rouge">2</code> (the entire last column, i.e. the output data column).</p>
+<p>So, <code class="highlighter-rouge">D[:, 0:2]</code> means to read the values in <code class="highlighter-rouge">D</code> at all rows and at columns with index <code class="highlighter-rouge">0</code> and <code class="highlighter-rouge">1</code> (the entire first 2 columns, i.e. the input data columns). Likewise, <code class="highlighter-rouge">D[:, 2]</code> means to read the values in <code class="highlighter-rouge">D</code> at all rows and at the column of index <code class="highlighter-rouge">2</code> (the entire last column, i.e. the output data column).</p>
+
+<p>This is almost what we want, but not quite. The problem is that <code class="highlighter-rouge">D[:, 0:2]</code>, which contains our \(D_x\) data, is a matrix of shape \(m \times n\), but earlier we decided that we wanted \(D_x\) to be an \(n \times m\) matrix, so we need to flip it. To do so, we use the <a href="https://en.wikipedia.org/wiki/Transpose"><strong>transpose</strong></a> of the matrix. Mathematically we write the transpose of a matrix \(A\) as \(A^T\), and in Python we can compute it using <code class="highlighter-rouge">A.transpose()</code>. Essentially, the transpose of a matrix simply flips it along the diagonal, as shown in this animation:</p>
+
+<center>
+<p><a href="https://commons.wikimedia.org/wiki/File:Matrix_transpose.gif#/media/File:Matrix_transpose.gif"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Matrix_transpose.gif" alt="Matrix transpose.gif" /></a><br />By <a href="//commons.wikimedia.org/wiki/User:LucasVB" title="User:LucasVB">LucasVB</a> - <span class="int-own-work" lang="en">Own work</span>, Public Domain, <a href="https://commons.wikimedia.org/w/index.php?curid=21897854">Link</a></p>
+</center>
+
+<p>So, <code class="highlighter-rouge">D[:, 0:2].transpose()</code> is a matrix of shape \(n \times m\), and is our correct data input matrix \(D_x\). We save this matrix to the variable <code class="highlighter-rouge">X_data</code>. Likewise, we also transpose <code class="highlighter-rouge">D[:, 2]</code> to correctly compute \(D_y\), and save it in <code class="highlighter-rouge">y_data</code>.</p>
 
 <p>At this point we have our \(m \times n\) input data matrix <code class="highlighter-rouge">X_data</code> and our \(m \times 1\) output vector <code class="highlighter-rouge">y_data</code> loaded. In addition, we conveniently have the number of columns stored in <code class="highlighter-rouge">n</code>, so now we can start defining our model.</p>
 
@@ -548,7 +559,7 @@ So, each column of \(D_x\) represents a single input data example. We don’t ne
 <span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
 
 <span class="c"># Define model output</span>
-<span class="n">y_predicted</span> <span class="o">=</span> <span class="n">A</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">y_predicted</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
 
 <span class="c"># Define the loss function</span>
 <span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -559,25 +570,109 @@ So, each column of \(D_x\) represents a single input data example. We don’t ne
 <p>At this point, we have a 1 dimensional output <code class="highlighter-rouge">y_predicted</code> which we compare against <code class="highlighter-rouge">y</code> using <code class="highlighter-rouge">L</code> to train the model, which is exactly the same situation as single variable linear regression. The remaining code to train the model is extremely similar, so I’ll simply display it here, and then explain the few differences:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Define optimizer object</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
 
 <span class="c"># Create a session and initialize variables</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
 <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
 
 <span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_A</span><span class="p">,</span> <span class="n">current_b</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">X_data</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">y_data</span>
     <span class="p">})</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">"t = </span><span class="si">%</span><span class="s">g, loss = </span><span class="si">%</span><span class="s">g, a = </span><span class="si">%</span><span class="s">s, b = </span><span class="si">%</span><span class="s">g"</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_A</span><span class="p">),</span> <span class="n">current_b</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"t = </span><span class="si">%</span><span class="s">g, loss = </span><span class="si">%</span><span class="s">g, A = </span><span class="si">%</span><span class="s">s, b = </span><span class="si">%</span><span class="s">g"</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_A</span><span class="p">),</span> <span class="n">current_b</span><span class="p">))</span>
 </code></pre></div></div>
 
-<p>First, we have a different learning rate than the learning rate used in singlar variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter <a href="http://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html">Optimization Convergence</a>.</p>
+<p>First, we have a different learning rate than the learning rate used in single variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter <a href="http://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html">Optimization Convergence</a>.</p>
 
-<p>Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector <code class="highlighter-rouge">A</code>, rather than just a single number.</p>
+<p>Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector <code class="highlighter-rouge">A</code> (in addition to <code class="highlighter-rouge">b</code>), rather than just a single number. However, TensorFlow abstracts this away for us, and conceptually we just need to know that we are training the variable <code class="highlighter-rouge">A</code>.</p>
 
+<p>The final print statements should output something close to:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>t = 1994, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1995, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1996, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1997, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1998, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
+</code></pre></div></div>
+
+<p>At this point we have converged to our approximate solution of \(A \approx \begin{bmatrix}
+            2.005, 
+            1.302 
+    \end{bmatrix}, b \approx 3.95\). Note that this is not exactly the same as the expected answer of \(A = \begin{bmatrix}
+            2, 
+            1.3 
+    \end{bmatrix}, b \approx 4\), primarily because some random noise was added to each point in the data set.</p>
+
+<p>The model is fully trained, so now given a new input \(x\) we could now predict the output \(y’ = Ax + b\), using all the learned information from all input variables.</p>
+
+<h1 id="concluding-remarks">Concluding Remarks</h1>
+
+<p>Linear regression with multiple variables is only slightly different in essence from single variable linear regression. The main difference is abstracting the linear operation \(ax\) where \(a\) and \(x\) are single numbers to the linear operation \(Ax\), where now \(A\) is a matrix, \(x\) is a vector. In addition, at the implementation level we also have to deal with loading data in a more sophisticated manner, but otherwise the code is mostly the same. In later chapters we will use this abstraction we have built to define even more powerful models.</p>
+
+<h1 id="exercises">Exercises</h1>
+
+<p>So far this chapter has used a synthetic data set, <code class="highlighter-rouge">linreg-multi-synthetic-2.csv</code>, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data.</p>
+
+<ol>
+  <li></li>
+</ol>
+
+<h1 id="complete-code">Complete Code</h1>
+
+<p>The <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/multi_var_reg.py">complete example code is available on GitHub</a>, as well as directly here:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c"># First we load the entire CSV file into an m x 3</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-multi-synthetic-2.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+<span class="c"># We extract all rows and the first 2 columns into X_data</span>
+<span class="c"># Then we flip it</span>
+<span class="n">X_data</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="c"># We extract all rows and the last column into y_data</span>
+<span class="c"># Then we flip it</span>
+<span class="n">y_data</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+<span class="c"># And make a convenient variable to remember the number of input columns</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c"># Define data placeholders</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+
+<span class="c"># Define trainable variables</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"A"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
+
+<span class="c"># Define model output</span>
+<span class="n">y_predicted</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="c"># Define the loss function</span>
+<span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c"># Define optimizer object</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+
+<span class="c"># Create a session and initialize variables</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+
+<span class="c"># Main optimization loop</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_A</span><span class="p">,</span> <span class="n">current_b</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">X_data</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="n">y_data</span>
+    <span class="p">})</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"t = </span><span class="si">%</span><span class="s">g, loss = </span><span class="si">%</span><span class="s">g, A = </span><span class="si">%</span><span class="s">s, b = </span><span class="si">%</span><span class="s">g"</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_A</span><span class="p">),</span> <span class="n">current_b</span><span class="p">))</span>
+
+</code></pre></div></div>
 
 </div>
 
