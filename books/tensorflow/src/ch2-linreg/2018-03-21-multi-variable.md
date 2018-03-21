@@ -180,7 +180,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # First we load the entire CSV file into an m x 3
-D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv").values)
+D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv", header=None).values)
 
 # We extract all rows and the first 2 columns into X_data
 # Then we flip it
@@ -290,9 +290,13 @@ Linear regression with multiple variables is only slightly different in essence 
 
 # Exercises
 
-So far this chapter has used a synthetic data set, `linreg-multi-synthetic-2.csv`, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data.
+So far this chapter has used a synthetic data set, `linreg-multi-synthetic-2.csv`, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data. Note that in real-world data not all columns are useful, and some might not have a linear relationship with the MPG. Including these unhelpful columns in your model might decrease the accuracy of your model. You should try plotting various columns vs. the output column to determine which seem most helpful in predicting the output, and then only include these useful columns as your input.
 
-1. 
+Note that we have not discussed how to rigorously evaluate how good a model is yet. For now you can use the value of the loss function, along with some intuition and creating plots. Evaluation will be discussed more in chapter 2.7.
+
+1. Download [this red wine quality data set](https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009), and try to predict the quality of the wine (last column) from the physicochemical input data (other columns).
+2. Download [this car MPG data set](https://archive.ics.uci.edu/ml/datasets/Auto+MPG), and try to predict the MPG (first column) based on some of the other columns.
+3. Download [this WHO life expectancy data set](https://www.kaggle.com/kumarajarshi/life-expectancy-who), and try to predict the life expectancy based on the various other societal factors.
 
 # Complete Code
 
@@ -305,7 +309,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # First we load the entire CSV file into an m x 3
-D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv").values)
+D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv", header=None).values)
 
 # We extract all rows and the first 2 columns into X_data
 # Then we flip it
