@@ -34,15 +34,15 @@
 <meta property="og:title" content="Multi Variable Linear Regression" />
 <meta name="author" content="Donald Pinckney" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="Who tinkers with math, CS, and random stuff." />
-<meta property="og:description" content="Who tinkers with math, CS, and random stuff." />
-<link rel="canonical" href="http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html" />
-<meta property="og:url" content="http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html" />
+<meta name="description" content="Multi Variable Regression" />
+<meta property="og:description" content="Multi Variable Regression" />
+<link rel="canonical" href="http://donaldpinckney.com/tensorflow/2018/02/25/multi-variable.html" />
+<meta property="og:url" content="http://donaldpinckney.com/tensorflow/2018/02/25/multi-variable.html" />
 <meta property="og:site_name" content="Donald Pinckney" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-02-25T00:00:00-08:00" />
 <script type="application/ld+json">
-{"description":"Who tinkers with math, CS, and random stuff.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html","headline":"Multi Variable Linear Regression","dateModified":"2018-02-25T00:00:00-08:00","datePublished":"2018-02-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/books/tensorflow/src/ch2-linreg/multi-variable.html"},"@context":"http://schema.org"}</script>
+{"description":"Multi Variable Regression","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"http://donaldpinckney.com/tensorflow/2018/02/25/multi-variable.html","headline":"Multi Variable Linear Regression","dateModified":"2018-02-25T00:00:00-08:00","datePublished":"2018-02-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://donaldpinckney.com/tensorflow/2018/02/25/multi-variable.html"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -70,6 +70,14 @@
         
 
         
+        
+          
+            
+          
+        
+          
+            
+          
         
           
             
@@ -120,14 +128,6 @@
           
         
           
-            
-          
-        
-          
-            
-          
-        
-          
         
           
         
@@ -155,13 +155,13 @@
           
         
           
+        
+          
+        
+          
             
               <a class="horizontal-item sidebar-nav-item" href="/about.html">About Me</a>
             
-          
-        
-          
-        
           
         
           
@@ -532,7 +532,7 @@ So, each column of \(D_x\) represents a single input data example. We don’t ne
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="c"># First we load the entire CSV file into an m x 3</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-multi-synthetic-2.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-multi-synthetic-2.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
 <span class="c"># We extract all rows and the first 2 columns into X_data</span>
 <span class="c"># Then we flip it</span>
@@ -638,10 +638,14 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 
 <h1 id="exercises">Exercises</h1>
 
-<p>So far this chapter has used a synthetic data set, <code class="highlighter-rouge">linreg-multi-synthetic-2.csv</code>, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data.</p>
+<p>So far this chapter has used a synthetic data set, <code class="highlighter-rouge">linreg-multi-synthetic-2.csv</code>, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data. Note that in real-world data not all columns are useful, and some might not have a linear relationship with the MPG. Including these unhelpful columns in your model might decrease the accuracy of your model. You should try plotting various columns vs. the output column to determine which seem most helpful in predicting the output, and then only include these useful columns as your input.</p>
+
+<p>Note that we have not discussed how to rigorously evaluate how good a model is yet. For now you can use the value of the loss function, along with some intuition and creating plots. Evaluation will be discussed more in chapter 2.7.</p>
 
 <ol>
-  <li></li>
+  <li>Download <a href="https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009">this red wine quality data set</a>, and try to predict the quality of the wine (last column) from the physicochemical input data (other columns).</li>
+  <li>Download <a href="https://archive.ics.uci.edu/ml/datasets/Auto+MPG">this car MPG data set</a>, and try to predict the MPG (first column) based on some of the other columns.</li>
+  <li>Download <a href="https://www.kaggle.com/kumarajarshi/life-expectancy-who">this WHO life expectancy data set</a>, and try to predict the life expectancy based on the various other societal factors.</li>
 </ol>
 
 <h1 id="complete-code">Complete Code</h1>
@@ -654,7 +658,7 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="c"># First we load the entire CSV file into an m x 3</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-multi-synthetic-2.csv"</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-multi-synthetic-2.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
 <span class="c"># We extract all rows and the first 2 columns into X_data</span>
 <span class="c"># Then we flip it</span>
@@ -705,6 +709,33 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/tensorflow/2017/12/27/optimization.html" class="titular">
+            Exploring Optimization Convergence
+            <small>27 Dec 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/tensorflow/2017/12/03/single-variable.html" class="titular">
+            Single Variable Linear Regression
+            <small>03 Dec 2017</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/2017/06/06/content-coming-soon.html" class="titular">
+            A Sneak Peek of What's to Come
+            <small>06 Jun 2017</small>
+          </a>
+        </h3>
+      </li>
     
   </ul>
 </div>

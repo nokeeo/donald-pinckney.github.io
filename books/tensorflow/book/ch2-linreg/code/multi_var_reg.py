@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # First we load the entire CSV file into an m x 3
-D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv").values)
+D = np.matrix(pd.read_csv("linreg-multi-synthetic-2.csv", header=None).values)
 
 # We extract all rows and the first 2 columns into X_data
 # Then we flip it
