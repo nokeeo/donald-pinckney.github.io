@@ -12,5 +12,6 @@
     - [Feature Scaling (bonus)]()
     - [Nonlinear Regression]()
     - [Regularization]()
+    - [Evaluation]()
 ---
 [By Donald Pinckney](http://index)
