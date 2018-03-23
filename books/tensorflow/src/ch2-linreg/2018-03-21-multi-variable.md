@@ -9,7 +9,7 @@ editPath: books/tensorflow/src/ch2-linreg/2017-02-25-multi-variable.md
 
 # Multi Variable Regression
 
-In the [first chapter](/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html) we learned the basics of TensorFlow by creating a single variable linear regression model. In this chapter we expand this model to handle multiple variables. Note that less time will be spent explaining the basics of TensorFlow: only new concepts will be explained, so feel free to refer to previous chapters as needed.
+In [chapter 2.1](/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html) we learned the basics of TensorFlow by creating a single variable linear regression model. In this chapter we expand this model to handle multiple variables. Note that less time will be spent explaining the basics of TensorFlow: only new concepts will be explained, so feel free to refer to previous chapters as needed.
 
 ## Motivation
 
@@ -165,7 +165,7 @@ With the more general linear algebra formulation of linear regression under our 
 
 As before, we need to: import data, define the model, define the loss function, run gradient descent, and finally make predictions. Many steps will be similar to the single variable case, but for completeness I will walk through them briefly. 
 
-For building and testing the implementation we will use a synthetic data set consisting of \\(n=2\\) input variables. You can download [the synthetic data set here][synthetic-data]. By synthetic, I mean that I purposefully created a very nicely behaved data set so that we can practice implementing multi variable linear regression, and verify that we converged to the right answer. In fact, the synthetic data is generated as \\(y = 2x_1 + 1.3x_2 + 4 + \\varepsilon \\) where \\(\\varepsilon\\) is random noise. If we implement multi variable linear regression correctly, then we should obtain approximately \\(A = \\begin{bmatrix} 2, 1.3 \\end{bmatrix}, b = 4\\). This plot illustrates what the data looks like in 3 dimensions:
+For building and testing the implementation we will use a synthetic data set consisting of \\(n=2\\) input variables. You can download [the synthetic data set here][synthetic-data]. By synthetic, I mean that I purposefully created a very nicely behaved data set so that we can practice implementing multi variable linear regression, and verify that we converged to the right answer. In fact, the synthetic data is generated as \\(y = 2x_1 + 1.3x_2 + 4 + \\varepsilon \\) where \\(\\varepsilon\\) is random noise. If we implement multi variable linear regression correctly, then we should obtain approximately \\(A = \\begin{bmatrix} 2, 1.3 \\end{bmatrix}, b = 4\\). This plot illustrates what the data looks like in 3 dimensions, essentially a plane in 3 dimensions with some random fluctuations:
 
 ![scatter][scatter]
 
@@ -194,18 +194,16 @@ y_data = D[:, 2].transpose()
 n = 2
 ```
 
-The syntax `D[:, 0:2]` might be new, particularly if you haven't worked with NumPy before. In the single variable implementation we used Panda's functionality to access the columns by column name. This is a great approach, but sometimes you might need to be more flexible in how you access columns of data, and thus I am showing matrix subscripting and slicing.
+The syntax `D[:, 0:2]` might be new, particularly if you haven't worked with NumPy before. In the single variable implementation we used Panda's functionality to access the columns by column name. This is a great approach, but sometimes you might need to be more flexible in how you access columns of data.
 
-The basic syntax for subscripting a matrix is: `D[3, 6]` (for example), which refers to the row at index 3 and the column at index 6 in the matrix `D`. Note that in `numpy` the row and column indices start at 0! This means that `D[0, 0]` refers to the top-left entry of matrix `D`. If you are coming from a pure math background, or have used MATLAB before, it is a common error to assume the indices start at 1.
+> **Note:** The basic syntax for subscripting a matrix is: `D[3, 6]` (for example), which refers to the row at index 3 and the column at index 6 in the matrix `D`. Note that in `numpy` the row and column indices start at 0! This means that `D[0, 0]` refers to the top-left entry of matrix `D`. If you are coming from a pure math background, or have used MATLAB before, it is a common error to assume the indices start at 1. <br /><br />
+> Now for slicing, the `:` character is used to indicate a range. If it is used by itself, it indicates the entire range of rows / columns. For example, `D[:, 42]` refers to all rows of `D`, and the column at index 42. If it is used with indices, then `i:j` indicates the range of rows / columns at indices `i`, `i+1`, ..., `j-1`, but *not* including `j`. <br /><br />
+> So, `D[:, 0:2]` means to read the values in `D` at all rows and at columns with index `0` and `1` (the entire first 2 columns, i.e. the input data columns). Likewise, `D[:, 2]` means to read the values in `D` at all rows and at the column of index `2` (the entire last column, i.e. the output data column).
 
-Now for slicing, the `:` character is used to indicate a range. If it is used by itself, it indicates the entire range of rows / columns. For example, `D[:, 42]` refers to all rows of `D`, and the column at index 42. If it is used with indices, then `i:j` indicates the range of rows / columns at indices `i`, `i+1`, ..., `j-1`, but *not* including `j`.
-
-So, `D[:, 0:2]` means to read the values in `D` at all rows and at columns with index `0` and `1` (the entire first 2 columns, i.e. the input data columns). Likewise, `D[:, 2]` means to read the values in `D` at all rows and at the column of index `2` (the entire last column, i.e. the output data column).
-
-This is almost what we want, but not quite. The problem is that `D[:, 0:2]`, which contains our \\(D_x\\) data, is a matrix of shape \\(m \\times n\\), but earlier we decided that we wanted \\(D_x\\) to be an \\(n \\times m\\) matrix, so we need to flip it. To do so, we use the [**transpose**](https://en.wikipedia.org/wiki/Transpose) of the matrix. Mathematically we write the transpose of a matrix \\(A\\) as \\(A^T\\), and in Python we can compute it using `A.transpose()`. Essentially, the transpose of a matrix simply flips it along the diagonal, as shown in this animation:
+This matrix subscripting and slicing is almost what we want, but not quite. The problem is that `D[:, 0:2]`, which contains our \\(D_x\\) data, is a matrix of shape \\(m \\times n\\), but earlier we decided that we wanted \\(D_x\\) to be an \\(n \\times m\\) matrix, so we need to flip it. To do so, we use the [**transpose**](https://en.wikipedia.org/wiki/Transpose) of the matrix. Mathematically we write the transpose of a matrix \\(A\\) as \\(A^T\\), and in Python we can compute it using `A.transpose()`. Essentially, the transpose of a matrix simply flips it along the diagonal, as shown in this animation:
 
 <center>
-<p><a href="https://commons.wikimedia.org/wiki/File:Matrix_transpose.gif#/media/File:Matrix_transpose.gif"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Matrix_transpose.gif" alt="Matrix transpose.gif"></a><br>By <a href="//commons.wikimedia.org/wiki/User:LucasVB" title="User:LucasVB">LucasVB</a> - <span class="int-own-work" lang="en">Own work</span>, Public Domain, <a href="https://commons.wikimedia.org/w/index.php?curid=21897854">Link</a></p>
+<p><a href="https://commons.wikimedia.org/wiki/File:Matrix_transpose.gif#/media/File:Matrix_transpose.gif"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Matrix_transpose.gif" alt="Matrix transpose.gif"></a><br>By <a href="//commons.wikimedia.org/wiki/User:LucasVB" title="User:LucasVB">LucasVB</a> - <a href="https://commons.wikimedia.org/w/index.php?curid=21897854">Link</a></p>
 </center>
 
 So, `D[:, 0:2].transpose()` is a matrix of shape \\(n \\times m\\), and is our correct data input matrix \\(D_x\\). We save this matrix to the variable `X_data`. Likewise, we also transpose `D[:, 2]` to correctly compute \\(D_y\\), and save it in `y_data`.
