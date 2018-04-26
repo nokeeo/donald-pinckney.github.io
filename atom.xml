@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="http://donaldpinckney.com/"/>
- <updated>2018-03-22T22:20:41-07:00</updated>
+ <updated>2018-04-25T18:10:14-07:00</updated>
  <id>http://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -29,144 +29,60 @@
   &lt;li&gt;There is a linear relationship between \(y\) and \(x\), that is, \(y \approx ax + b\)&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;In practice, the above conditions are very limiting: if you have a simple data set then by all means you should try using single variable linear regression, but in most cases we have significantly more complex data. For example, consider using the following (abbreviated) &lt;a href=&quot;https://www.kaggle.com/kumarajarshi/life-expectancy-who/version/1&quot;&gt;data from the World Health Organization&lt;/a&gt; to learn to predict life expectancy:&lt;/p&gt;
+&lt;p&gt;In practice, the above conditions are very limiting: if you have a simple data set then by all means you should try using single variable linear regression, but in most cases we have significantly more complex data. For example, consider using the following (abbreviated) &lt;a href=&quot;https://www.kaggle.com/camnugent/california-housing-prices&quot;&gt;data from the 1990 census&lt;/a&gt; to learn to predict housing prices. Note that each row represents a single housing district:&lt;/p&gt;
 
 &lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
-      &lt;th&gt;Country&lt;/th&gt;
-      &lt;th&gt;Year&lt;/th&gt;
-      &lt;th&gt;GDP&lt;/th&gt;
-      &lt;th&gt;Population&lt;/th&gt;
-      &lt;th&gt;Life expectancy&lt;/th&gt;
+      &lt;th&gt;House Median Age&lt;/th&gt;
+      &lt;th&gt;Total Rooms&lt;/th&gt;
+      &lt;th&gt;Total Bedrooms&lt;/th&gt;
+      &lt;th&gt;…&lt;/th&gt;
+      &lt;th&gt;Median House Value&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
-      &lt;td&gt;Afghanistan&lt;/td&gt;
-      &lt;td&gt;2005&lt;/td&gt;
-      &lt;td&gt;25.2941299&lt;/td&gt;
-      &lt;td&gt;257798&lt;/td&gt;
-      &lt;td&gt;57.3&lt;/td&gt;
+      &lt;td&gt;41.0&lt;/td&gt;
+      &lt;td&gt;880.0&lt;/td&gt;
+      &lt;td&gt;129.0&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;452600.0&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;Afghanistan&lt;/td&gt;
-      &lt;td&gt;2004&lt;/td&gt;
-      &lt;td&gt;219.1413528&lt;/td&gt;
-      &lt;td&gt;24118979&lt;/td&gt;
-      &lt;td&gt;57&lt;/td&gt;
+      &lt;td&gt;21.0&lt;/td&gt;
+      &lt;td&gt;7099.0&lt;/td&gt;
+      &lt;td&gt;1106.0&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;358500.0&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;Afghanistan&lt;/td&gt;
-      &lt;td&gt;2003&lt;/td&gt;
-      &lt;td&gt;198.7285436&lt;/td&gt;
-      &lt;td&gt;2364851&lt;/td&gt;
-      &lt;td&gt;56.7&lt;/td&gt;
+      &lt;td&gt;52.0&lt;/td&gt;
+      &lt;td&gt;1467.0&lt;/td&gt;
+      &lt;td&gt;190.0&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;352100.0&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;Afghanistan&lt;/td&gt;
-      &lt;td&gt;2002&lt;/td&gt;
-      &lt;td&gt;187.84595&lt;/td&gt;
-      &lt;td&gt;21979923&lt;/td&gt;
-      &lt;td&gt;56.2&lt;/td&gt;
+      &lt;td&gt;52.0&lt;/td&gt;
+      &lt;td&gt;1274.0&lt;/td&gt;
+      &lt;td&gt;235.0&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;341300.0&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;Afghanistan&lt;/td&gt;
-      &lt;td&gt;2001&lt;/td&gt;
-      &lt;td&gt;117.49698&lt;/td&gt;
-      &lt;td&gt;2966463&lt;/td&gt;
-      &lt;td&gt;55.3&lt;/td&gt;
+      &lt;td&gt;52.0&lt;/td&gt;
+      &lt;td&gt;1627.0&lt;/td&gt;
+      &lt;td&gt;280.0&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;342200.0&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;Afghanistan&lt;/td&gt;
-      &lt;td&gt;2000&lt;/td&gt;
-      &lt;td&gt;114.56&lt;/td&gt;
-      &lt;td&gt;293756&lt;/td&gt;
-      &lt;td&gt;54.8&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Albania&lt;/td&gt;
-      &lt;td&gt;2005&lt;/td&gt;
-      &lt;td&gt;279.142931&lt;/td&gt;
-      &lt;td&gt;311487&lt;/td&gt;
-      &lt;td&gt;73.5&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Albania&lt;/td&gt;
-      &lt;td&gt;2004&lt;/td&gt;
-      &lt;td&gt;2416.588235&lt;/td&gt;
-      &lt;td&gt;326939&lt;/td&gt;
-      &lt;td&gt;73&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Albania&lt;/td&gt;
-      &lt;td&gt;2003&lt;/td&gt;
-      &lt;td&gt;189.681557&lt;/td&gt;
-      &lt;td&gt;339616&lt;/td&gt;
-      &lt;td&gt;72.8&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Albania&lt;/td&gt;
-      &lt;td&gt;2002&lt;/td&gt;
-      &lt;td&gt;1453.642777&lt;/td&gt;
-      &lt;td&gt;3511&lt;/td&gt;
-      &lt;td&gt;73.3&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Albania&lt;/td&gt;
-      &lt;td&gt;2001&lt;/td&gt;
-      &lt;td&gt;1326.97339&lt;/td&gt;
-      &lt;td&gt;36173&lt;/td&gt;
-      &lt;td&gt;73.6&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Albania&lt;/td&gt;
-      &lt;td&gt;2000&lt;/td&gt;
-      &lt;td&gt;1175.788981&lt;/td&gt;
-      &lt;td&gt;38927&lt;/td&gt;
-      &lt;td&gt;72.6&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Algeria&lt;/td&gt;
-      &lt;td&gt;2005&lt;/td&gt;
-      &lt;td&gt;31.122378&lt;/td&gt;
-      &lt;td&gt;33288437&lt;/td&gt;
-      &lt;td&gt;72.9&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Algeria&lt;/td&gt;
-      &lt;td&gt;2004&lt;/td&gt;
-      &lt;td&gt;2598.9823&lt;/td&gt;
-      &lt;td&gt;3283196&lt;/td&gt;
-      &lt;td&gt;72.3&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Algeria&lt;/td&gt;
-      &lt;td&gt;2003&lt;/td&gt;
-      &lt;td&gt;294.33556&lt;/td&gt;
-      &lt;td&gt;3243514&lt;/td&gt;
-      &lt;td&gt;71.7&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Algeria&lt;/td&gt;
-      &lt;td&gt;2002&lt;/td&gt;
-      &lt;td&gt;1774.33673&lt;/td&gt;
-      &lt;td&gt;3199546&lt;/td&gt;
-      &lt;td&gt;71.6&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Algeria&lt;/td&gt;
-      &lt;td&gt;2001&lt;/td&gt;
-      &lt;td&gt;1732.857979&lt;/td&gt;
-      &lt;td&gt;31592153&lt;/td&gt;
-      &lt;td&gt;71.4&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Algeria&lt;/td&gt;
-      &lt;td&gt;2000&lt;/td&gt;
-      &lt;td&gt;1757.17797&lt;/td&gt;
-      &lt;td&gt;3118366&lt;/td&gt;
-      &lt;td&gt;71.3&lt;/td&gt;
+      &lt;td&gt;52.0&lt;/td&gt;
+      &lt;td&gt;919.0&lt;/td&gt;
+      &lt;td&gt;213.0&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;269700.0&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;…&lt;/td&gt;
@@ -178,7 +94,7 @@
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;To predict life expectancy, we have potentially 3 real-valued variables (Year, GDP, Population) that would be useful. To analyze this sort of complex, real-world data we need to learn to handle multiple input variables.&lt;/p&gt;
+&lt;p&gt;To predict the values of houses, we have at least 3 real-valued variables (age, number of rooms, number of dedrooms) that could potentially be useful. To analyze this sort of complex, real-world data we need to learn to handle multiple input variables.&lt;/p&gt;
 
 &lt;p&gt;One approach to handling multiple variables would be to reduce the number of input variables to only 1 variable, and then training a single variable linear regression model using that. In fact, an important area of research in machine learning (and one that will be covered later) called &lt;strong&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/dimensionality_reduction&quot;&gt;dimensionality reduction&lt;/a&gt;&lt;/strong&gt; deals with this problem of reducing the number of variables. However, it’s important to realize that the number of variables can only be reduced so far, and its extremely rare that you can reduce a data set to only 1 variable. For now you need to take this statement on faith, but in later chapters we will investigate it more thoroughly.&lt;/p&gt;
 
@@ -424,12 +340,14 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 
 &lt;p&gt;So far this chapter has used a synthetic data set, &lt;code class=&quot;highlighter-rouge&quot;&gt;linreg-multi-synthetic-2.csv&lt;/code&gt;, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data. Note that in real-world data not all columns are useful, and some might not have a linear relationship with the MPG. Including these unhelpful columns in your model might decrease the accuracy of your model. You should try plotting various columns vs. the output column to determine which seem most helpful in predicting the output, and then only include these useful columns as your input.&lt;/p&gt;
 
+&lt;p&gt;In addition, many data sets will have so called &lt;em&gt;messy data&lt;/em&gt;, which require you to do some manipulation in Python to make sure the data is imported cleanly and properly. For example, some rows might containg missing data: for these your code can not crash or incorrectly import the data. Instead, you need to adopt a strategy to still import the data as best as you can: for example, you can simply ignore any rows that have incomplete data.&lt;/p&gt;
+
 &lt;p&gt;Note that we have not discussed how to rigorously evaluate how good a model is yet. For now you can use the value of the loss function, along with some intuition and creating plots. Evaluation will be discussed more in chapter 2.7.&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Download &lt;a href=&quot;https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009&quot;&gt;this red wine quality data set&lt;/a&gt;, and try to predict the quality of the wine (last column) from the physicochemical input data (other columns).&lt;/li&gt;
   &lt;li&gt;Download &lt;a href=&quot;https://archive.ics.uci.edu/ml/datasets/Auto+MPG&quot;&gt;this car MPG data set&lt;/a&gt;, and try to predict the MPG (first column) based on some of the other columns.&lt;/li&gt;
-  &lt;li&gt;Download &lt;a href=&quot;https://www.kaggle.com/kumarajarshi/life-expectancy-who&quot;&gt;this WHO life expectancy data set&lt;/a&gt;, and try to predict the life expectancy based on the various other societal factors.&lt;/li&gt;
+  &lt;li&gt;Download &lt;a href=&quot;https://www.kaggle.com/camnugent/california-housing-prices&quot;&gt;this California 1990 Housing Value data set&lt;/a&gt;, and try to predict the house values based on various factors.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h1 id=&quot;complete-code&quot;&gt;Complete Code&lt;/h1&gt;

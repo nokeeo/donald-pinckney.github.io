@@ -30,7 +30,7 @@
 
   <!-- Begin Jekyll SEO tag v2.4.0 -->
 <title>Multi Variable Linear Regression | Donald Pinckney</title>
-<meta name="generator" content="Jekyll v3.6.2" />
+<meta name="generator" content="Jekyll v3.7.3" />
 <meta property="og:title" content="Multi Variable Linear Regression" />
 <meta name="author" content="Donald Pinckney" />
 <meta property="og:locale" content="en_US" />
@@ -243,31 +243,19 @@ Recall that a single variable linear regression model can learn to predict an ou
 1. There is only one input variable, \\(x\\)
 2. There is a linear relationship between \\(y\\) and \\(x\\), that is, \\(y \\approx ax + b\\)
 
-In practice, the above conditions are very limiting: if you have a simple data set then by all means you should try using single variable linear regression, but in most cases we have significantly more complex data. For example, consider using the following (abbreviated) [data from the World Health Organization](https://www.kaggle.com/kumarajarshi/life-expectancy-who/version/1) to learn to predict life expectancy:
+In practice, the above conditions are very limiting: if you have a simple data set then by all means you should try using single variable linear regression, but in most cases we have significantly more complex data. For example, consider using the following (abbreviated) [data from the 1990 census](https://www.kaggle.com/camnugent/california-housing-prices) to learn to predict housing prices. Note that each row represents a single housing district:
 
-| Country     | Year | GDP         | Population | Life expectancy |
+| House Median Age     | Total Rooms | Total Bedrooms | ... | Median House Value |
 |-------------|------|-------------|------------|-----------------|
-| Afghanistan | 2005 | 25.2941299  | 257798     | 57.3            |
-| Afghanistan | 2004 | 219.1413528 | 24118979   | 57              |
-| Afghanistan | 2003 | 198.7285436 | 2364851    | 56.7            |
-| Afghanistan | 2002 | 187.84595   | 21979923   | 56.2            |
-| Afghanistan | 2001 | 117.49698   | 2966463    | 55.3            |
-| Afghanistan | 2000 | 114.56      | 293756     | 54.8            |
-| Albania     | 2005 | 279.142931  | 311487     | 73.5            |
-| Albania     | 2004 | 2416.588235 | 326939     | 73              |
-| Albania     | 2003 | 189.681557  | 339616     | 72.8            |
-| Albania     | 2002 | 1453.642777 | 3511       | 73.3            |
-| Albania     | 2001 | 1326.97339  | 36173      | 73.6            |
-| Albania     | 2000 | 1175.788981 | 38927      | 72.6            |
-| Algeria     | 2005 | 31.122378   | 33288437   | 72.9            |
-| Algeria     | 2004 | 2598.9823   | 3283196    | 72.3            |
-| Algeria     | 2003 | 294.33556   | 3243514    | 71.7            |
-| Algeria     | 2002 | 1774.33673  | 3199546    | 71.6            |
-| Algeria     | 2001 | 1732.857979 | 31592153   | 71.4            |
-| Algeria     | 2000 | 1757.17797  | 3118366    | 71.3            |
-| ...     | ... | ...  | ...    | ...            |
+| 41.0 | 880.0  | 129.0  | ...     | 452600.0    |
+| 21.0 | 7099.0 | 1106.0 | ...     | 358500.0    |
+| 52.0 | 1467.0 | 190.0  | ...     | 352100.0    |
+| 52.0 | 1274.0 | 235.0  | ...     | 341300.0    |
+| 52.0 | 1627.0 | 280.0  | ...     | 342200.0    |
+| 52.0 | 919.0  | 213.0  | ...     | 269700.0    |
+| ...  | ...    | ...    | ...     | ...         |
 
-To predict life expectancy, we have potentially 3 real-valued variables (Year, GDP, Population) that would be useful. To analyze this sort of complex, real-world data we need to learn to handle multiple input variables.
+To predict the values of houses, we have at least 3 real-valued variables (age, number of rooms, number of dedrooms) that could potentially be useful. To analyze this sort of complex, real-world data we need to learn to handle multiple input variables.
 
 One approach to handling multiple variables would be to reduce the number of input variables to only 1 variable, and then training a single variable linear regression model using that. In fact, an important area of research in machine learning (and one that will be covered later) called **[dimensionality reduction](https://en.wikipedia.org/wiki/dimensionality_reduction)** deals with this problem of reducing the number of variables. However, it's important to realize that the number of variables can only be reduced so far, and its extremely rare that you can reduce a data set to only 1 variable. For now you need to take this statement on faith, but in later chapters we will investigate it more thoroughly.
 
@@ -516,11 +504,13 @@ Linear regression with multiple variables is only slightly different in essence 
 
 So far this chapter has used a synthetic data set, `linreg-multi-synthetic-2.csv`, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data. Note that in real-world data not all columns are useful, and some might not have a linear relationship with the MPG. Including these unhelpful columns in your model might decrease the accuracy of your model. You should try plotting various columns vs. the output column to determine which seem most helpful in predicting the output, and then only include these useful columns as your input.
 
+In addition, many data sets will have so called *messy data*, which require you to do some manipulation in Python to make sure the data is imported cleanly and properly. For example, some rows might containg missing data: for these your code can not crash or incorrectly import the data. Instead, you need to adopt a strategy to still import the data as best as you can: for example, you can simply ignore any rows that have incomplete data.
+
 Note that we have not discussed how to rigorously evaluate how good a model is yet. For now you can use the value of the loss function, along with some intuition and creating plots. Evaluation will be discussed more in chapter 2.7.
 
 1. Download [this red wine quality data set](https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009), and try to predict the quality of the wine (last column) from the physicochemical input data (other columns).
 2. Download [this car MPG data set](https://archive.ics.uci.edu/ml/datasets/Auto+MPG), and try to predict the MPG (first column) based on some of the other columns.
-3. Download [this WHO life expectancy data set](https://www.kaggle.com/kumarajarshi/life-expectancy-who), and try to predict the life expectancy based on the various other societal factors.
+3. Download [this California 1990 Housing Value data set](https://www.kaggle.com/camnugent/california-housing-prices), and try to predict the house values based on various factors.
 
 # Complete Code
 
