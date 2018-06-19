@@ -6,14 +6,14 @@ include:
 title:            Donald Pinckney
 tagline:          'Explorations in math and computer science.'
 description:      'Who tinkers with math, CS, and random stuff.'
-url:              http://donaldpinckney.com
+url:              https://donaldpinckney.com
 baseurl:          ""
 timezone:         America/Los_Angeles
 exclude:          [deploy]
 repo:             https://github.com/donald-pinckney/donald-pinckney.github.io
 author:
   name:           'Donald Pinckney'
-  email:          djpinckney@ucdavis.edu
+  email:          donald_pinckney@icloud.com
 
 paginate:         5
 

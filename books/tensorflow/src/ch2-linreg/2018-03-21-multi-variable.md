@@ -246,7 +246,7 @@ for t in range(2000):
     print("t = %g, loss = %g, A = %s, b = %g" % (t, current_loss, str(current_A), current_b))
 ```
 
-First, we have a different learning rate than the learning rate used in single variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter [Optimization Convergence](http://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html).
+First, we have a different learning rate than the learning rate used in single variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter [Optimization Convergence](https://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html).
 
 Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector `A` (in addition to `b`), rather than just a single number. However, TensorFlow abstracts this away for us, and conceptually we just need to know that we are training the variable `A`.
 

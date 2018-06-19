@@ -14,4 +14,4 @@
     - [Regularization](temp)
     - [Evaluation](temp)
 ---
-[By Donald Pinckney](http://index)
+[By Donald Pinckney](https://index)

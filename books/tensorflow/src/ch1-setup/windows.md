@@ -12,7 +12,7 @@ published: false
 
 To be blunt, I only use macOS and Linux, and I have no experience installing TensorFlow or even Python on Windows. Instead, I will simply direct you to the [official documentation for TensorFlow on Windows](https://www.tensorflow.org/install/install_windows).
 
-When installing Python, please ensure that you use Python 3, rather than Python 2. Also, install the Python packages [NumPy](http://www.numpy.org), [Pandas](http://pandas.pydata.org) and [matplotlib](https://matplotlib.org) in addition to TensorFlow.
+When installing Python, please ensure that you use Python 3, rather than Python 2. Also, install the Python packages [NumPy](https://www.numpy.org), [Pandas](https://pandas.pydata.org) and [matplotlib](https://matplotlib.org) in addition to TensorFlow.
 
 ## Optional: Installing an IDE
 
