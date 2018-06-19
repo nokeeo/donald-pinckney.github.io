@@ -5,7 +5,7 @@ include:
 # Setup
 title:            Donald Pinckney
 tagline:          'Explorations in math and computer science.'
-description:      'Who tinkers with math, CS, and random stuff.'
+description:      'Tinkering with math, CS, and other random stuff.'
 url:              https://donaldpinckney.com
 baseurl:          ""
 timezone:         America/Los_Angeles
