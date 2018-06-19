@@ -1,5 +1,5 @@
-#Introduction and Goals
+# Introduction and Goals
 
-#What is Metal?
+# What is Metal?
 
-#Basic Setup: Rendering a 2D Triangle
+# Basic Setup: Rendering a 2D Triangle
