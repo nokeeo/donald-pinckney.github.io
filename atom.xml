@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
+<feed xmlns="https://www.w3.org/2005/Atom">
 
  <title>Donald Pinckney</title>
- <link href="http://donaldpinckney.com/atom.xml" rel="self"/>
- <link href="http://donaldpinckney.com/"/>
- <updated>2018-04-25T18:10:14-07:00</updated>
- <id>http://donaldpinckney.com</id>
+ <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
+ <link href="https://donaldpinckney.com/"/>
+ <updated>2018-06-20T13:30:38-07:00</updated>
+ <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
-   <email>djpinckney@ucdavis.edu</email>
+   <email>donald_pinckney@icloud.com</email>
  </author>
 
  
  <entry>
    <title>Multi Variable Linear Regression</title>
-   <link href="http://donaldpinckney.com/tensorflow/2018/02/25/multi-variable.html"/>
+   <link href="https://donaldpinckney.com/tensorflow/2018/02/25/multi-variable.html"/>
    <updated>2018-02-25T00:00:00-08:00</updated>
-   <id>http://donaldpinckney.com/tensorflow/2018/02/25/multi-variable</id>
+   <id>https://donaldpinckney.com/tensorflow/2018/02/25/multi-variable</id>
    <content type="html">&lt;h1 id=&quot;multi-variable-regression&quot;&gt;Multi Variable Regression&lt;/h1&gt;
 
 &lt;p&gt;In &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html&quot;&gt;chapter 2.1&lt;/a&gt; we learned the basics of TensorFlow by creating a single variable linear regression model. In this chapter we expand this model to handle multiple variables. Note that less time will be spent explaining the basics of TensorFlow: only new concepts will be explained, so feel free to refer to previous chapters as needed.&lt;/p&gt;
@@ -309,7 +309,7 @@ So, &lt;code class=&quot;highlighter-rouge&quot;&gt;D[:, 0:2]&lt;/code&gt; means
     &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;t = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, loss = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, A = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s, b = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;current_A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;First, we have a different learning rate than the learning rate used in single variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter &lt;a href=&quot;http://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html&quot;&gt;Optimization Convergence&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;First, we have a different learning rate than the learning rate used in single variable regression. Even though the training algorithm is the same, since this is a different problem than single variable regression, we need find a good learning rate specific to this problem. A great way to do this for your own problems is using TensorBoard, as explained in the chapter &lt;a href=&quot;https://donaldpinckney.com/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html&quot;&gt;Optimization Convergence&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector &lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt; (in addition to &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;), rather than just a single number. However, TensorFlow abstracts this away for us, and conceptually we just need to know that we are training the variable &lt;code class=&quot;highlighter-rouge&quot;&gt;A&lt;/code&gt;.&lt;/p&gt;
 
@@ -408,9 +408,9 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
  
  <entry>
    <title>Exploring Optimization Convergence</title>
-   <link href="http://donaldpinckney.com/tensorflow/2017/12/27/optimization.html"/>
+   <link href="https://donaldpinckney.com/tensorflow/2017/12/27/optimization.html"/>
    <updated>2017-12-27T00:00:00-08:00</updated>
-   <id>http://donaldpinckney.com/tensorflow/2017/12/27/optimization</id>
+   <id>https://donaldpinckney.com/tensorflow/2017/12/27/optimization</id>
    <content type="html">&lt;h1 id=&quot;exploring-optimization-convergence&quot;&gt;Exploring Optimization Convergence&lt;/h1&gt;
 
 &lt;p&gt;In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn’t introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this book and just about any machine learning you do.&lt;/p&gt;
@@ -752,9 +752,9 @@ rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; /tmp/tensorflow/single_var_
  
  <entry>
    <title>Single Variable Linear Regression</title>
-   <link href="http://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html"/>
+   <link href="https://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html"/>
    <updated>2017-12-03T00:00:00-08:00</updated>
-   <id>http://donaldpinckney.com/tensorflow/2017/12/03/single-variable</id>
+   <id>https://donaldpinckney.com/tensorflow/2017/12/03/single-variable</id>
    <content type="html">&lt;h1 id=&quot;single-variable-regression&quot;&gt;Single Variable Regression&lt;/h1&gt;
 
 &lt;p&gt;Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow &lt;a href=&quot;#implementation&quot;&gt;implementation&lt;/a&gt;.&lt;/p&gt;
@@ -1087,7 +1087,7 @@ t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 
 &lt;p&gt;One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don’t have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn’t impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don’t have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \(1\) year old homicides is even close to 980.&lt;/p&gt;
 
-&lt;p&gt;While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and &lt;a href=&quot;https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist&quot;&gt;it quickly learned to say fairly horrible and racist things&lt;/a&gt;. More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, as shown in &lt;a href=&quot;http://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640&quot;&gt;an article by The Conversation&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and &lt;a href=&quot;https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist&quot;&gt;it quickly learned to say fairly horrible and racist things&lt;/a&gt;. More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, as shown in &lt;a href=&quot;https://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640&quot;&gt;an article by The Conversation&lt;/a&gt;:&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;Our recent study, by Human Rights Data Analysis Group’s Kristian Lum and William Isaac, found that predictive policing vendor PredPol’s purportedly race-neutral algorithm targeted black neighborhoods at roughly twice the rate of white neighborhoods when trained on historical drug crime data from Oakland, California. 
@@ -1105,7 +1105,7 @@ But estimates – created from public health surveys and population models – s
 
 &lt;ol&gt;
   &lt;li&gt;Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \(x\) value you could create an artificial \(y\) value like so: \(y = ax + b + \epsilon \), where \(\epsilon\) is a random number that isn’t too big, and \(a\) and \(b\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \(a\) and \(b\).&lt;/li&gt;
-  &lt;li&gt;Run single variable linear regression on a data set of your choice. You can look at &lt;a href=&quot;http://donaldpinckney.com/ml.html#regression&quot;&gt;my list of regression data sets&lt;/a&gt; for ideas, you can search &lt;a href=&quot;https://www.kaggle.com/datasets&quot;&gt;Kaggle&lt;/a&gt;, or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.&lt;/li&gt;
+  &lt;li&gt;Run single variable linear regression on a data set of your choice. You can look at &lt;a href=&quot;https://donaldpinckney.com/ml.html#regression&quot;&gt;my list of regression data sets&lt;/a&gt; for ideas, you can search &lt;a href=&quot;https://www.kaggle.com/datasets&quot;&gt;Kaggle&lt;/a&gt;, or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.&lt;/li&gt;
   &lt;li&gt;
     &lt;table&gt;
       &lt;tbody&gt;
@@ -1206,7 +1206,7 @@ But estimates – created from public health surveys and population models – s
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:fn1&quot;&gt;
-      &lt;p&gt;Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at &lt;a href=&quot;http://wonder.cdc.gov/ucd-icd10.html&quot;&gt;http://wonder.cdc.gov/ucd-icd10.html&lt;/a&gt; on Nov 22, 2017 2:18:46 PM. &lt;a href=&quot;#fnref:fn1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at &lt;a href=&quot;https://wonder.cdc.gov/ucd-icd10.html&quot;&gt;https://wonder.cdc.gov/ucd-icd10.html&lt;/a&gt; on Nov 22, 2017 2:18:46 PM. &lt;a href=&quot;#fnref:fn1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;
@@ -1215,9 +1215,9 @@ But estimates – created from public health surveys and population models – s
  
  <entry>
    <title>A Sneak Peek of What's to Come</title>
-   <link href="http://donaldpinckney.com/2017/06/06/content-coming-soon.html"/>
+   <link href="https://donaldpinckney.com/2017/06/06/content-coming-soon.html"/>
    <updated>2017-06-06T00:00:00-07:00</updated>
-   <id>http://donaldpinckney.com/2017/06/06/content-coming-soon</id>
+   <id>https://donaldpinckney.com/2017/06/06/content-coming-soon</id>
    <content type="html">&lt;p&gt;Welcome to Donald’s blog! Since I just made it a few days ago, there isn’t a lot of content here yet, but I’m planning to write some posts over the next few weeks.&lt;/p&gt;
 
 &lt;p&gt;To give you a sneak preview of what to expect, I’ll likely post about topics in these areas:&lt;/p&gt;

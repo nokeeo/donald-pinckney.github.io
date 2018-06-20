@@ -21,6 +21,12 @@ mdbook build
 # Delete buggy output of mdbook
 rm -rf src/http:/
 rm -rf book/http:/
+rm -rf src/https:/
+rm -rf book/https:/
+
+# Change FontAwesome directory name because Jekyll sucks
+mv book/_FontAwesome book/FontAwesome
+find ./ -type f -exec sed -i 's/_FontAwesome/FontAwesome/g' {} \;
 
 # Restore files with original front matter
 for f in $files; do
@@ -48,6 +54,3 @@ cp -R src/* "$srcDir/../_posts/$bookName/"
 
 rm "$srcDir/../_drafts/$bookName/SUMMARY.md"
 rm "$srcDir/../_posts/$bookName/SUMMARY.md"
-
-
-

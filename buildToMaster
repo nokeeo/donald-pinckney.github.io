@@ -6,7 +6,8 @@ git checkout -qf $TRAVIS_COMMIT
 
 # Make temporary dest dir, and clean up.
 dest=$(mktemp -d)
-trap "{ rm -rf $dest; }" EXIT SIGINT SIGTERM
+binTemp=$(mktemp -d)
+trap "{ rm -rf $dest; rm -rf $binTemp; }" EXIT SIGINT SIGTERM
 
 
 # Setup all the ssh stuff
@@ -25,6 +26,11 @@ ssh-add travis_rsa
 REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
+
+# Copy Build Cache to temp dir
+export PATH="$PATH:$binTemp"
+git checkout master
+cp .build_cache/* "$binTemp"
 
 # Commit to src branch if needed
 git checkout src
@@ -58,6 +64,13 @@ rm -rf *
 # Copy in built files
 cp -R $dest/* .
 
+# Copy in build cache
+mkdir -p .build_cache/
+cp "$(which mdbook)" .build_cache/mdbook
+chmod +x .build_cache/mdbook
+
+rm travis_rsa
+ 
 # Set git info
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
