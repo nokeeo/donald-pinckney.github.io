@@ -8,8 +8,8 @@ branches:
     - src
 
 cache:
-  cargo: true
-  bundler: false
+  cargo: false
+  bundler: true
 
 before_install:
   - # sudo apt-get -qq update

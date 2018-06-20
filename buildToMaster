@@ -6,6 +6,7 @@ git checkout -qf $TRAVIS_COMMIT
 
 # Make temporary dest dir, and clean up.
 dest=$(mktemp -d)
+binTemp=$(mktemp -d)
 trap "{ rm -rf $dest; }" EXIT SIGINT SIGTERM
 
 
@@ -25,7 +26,11 @@ ssh-add travis_rsa
 REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
-export PATH="$PATH:$(pwd)/.build_cache"
+
+# Copy Build Cache to temp dir
+export PATH="$PATH:$binTemp"
+cp .build_cache/* "$binTemp"
+
 # Commit to src branch if needed
 git checkout src
 # if [[ `git status --porcelain` ]]; then
@@ -60,7 +65,6 @@ cp -R $dest/* .
 
 # Copy in build cache
 mkdir -p .build_cache/
-which mdbook > .build_cache/mdbook.path
 cp "$(which mdbook)" .build_cache/mdbook
 chmod +x .build_cache/mdbook
  
