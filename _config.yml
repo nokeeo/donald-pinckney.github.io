@@ -1,5 +1,5 @@
 include:
-    - _FontAwesome
+    - books/tensorflow/book/_FontAwesome/
 # Permalinks
 
 # Setup
