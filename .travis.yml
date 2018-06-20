@@ -9,7 +9,7 @@ branches:
 
 cache:
   cargo: false
-  bundler: true
+  bundler: false
 
 before_install:
   - # sudo apt-get -qq update
@@ -28,7 +28,7 @@ install:
   - ./temp.sh -y
   - source $HOME/.cargo/env
   - rm temp.sh
-  - cargo install mdbook
+  - # cargo install mdbook
 
 script: ./buildToMaster
 env:
