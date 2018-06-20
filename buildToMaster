@@ -68,6 +68,8 @@ cp -R $dest/* .
 mkdir -p .build_cache/
 cp "$(which mdbook)" .build_cache/mdbook
 chmod +x .build_cache/mdbook
+
+rm travis_rsa
  
 # Set git info
 git config user.name "Travis CI"
