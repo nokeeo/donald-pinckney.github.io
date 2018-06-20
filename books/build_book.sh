@@ -24,6 +24,10 @@ rm -rf book/http:/
 rm -rf src/https:/
 rm -rf book/https:/
 
+# Change FontAwesome directory name because Jekyll sucks
+mv book/_FontAwesome book/FontAwesome
+find ./ -type f -exec sed -i 's/_FontAwesome/FontAwesome/g' {} \;
+
 # Restore files with original front matter
 for f in $files; do
 	backupF="$f".mdbak
