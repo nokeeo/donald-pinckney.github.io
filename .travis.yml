@@ -28,7 +28,7 @@ install:
   - ./temp.sh -y
   - source $HOME/.cargo/env
   - rm temp.sh
-  - cargo install mdbook
+  - # cargo install mdbook
 
 script: ./buildToMaster
 env:
