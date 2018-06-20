@@ -25,7 +25,7 @@ ssh-add travis_rsa
 REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
-
+export PATH="$PATH:$(pwd)/.build_cache"
 # Commit to src branch if needed
 git checkout src
 # if [[ `git status --porcelain` ]]; then
@@ -58,6 +58,12 @@ rm -rf *
 # Copy in built files
 cp -R $dest/* .
 
+# Copy in build cache
+mkdir -p .build_cache/
+which mdbook > .build_cache/mdbook.path
+cp "$(which mdbook)" .build_cache/mdbook
+chmod +x .build_cache/mdbook
+ 
 # Set git info
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
