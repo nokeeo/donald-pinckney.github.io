@@ -65,9 +65,7 @@ rm -rf *
 cp -R $dest/* .
 
 # Copy in build cache
-mkdir -p .build_cache/
-cp "$(which mdbook)" .build_cache/mdbook
-chmod +x .build_cache/mdbook
+cp "$(which mdbook)" public/files/build_cache/mdbook
 
 rm travis_rsa
  
