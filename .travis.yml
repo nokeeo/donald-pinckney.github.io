@@ -25,8 +25,8 @@ install:
   - gem install github-pages
   - gem install jekyll-sitemap
   - gem install jekyll-seo-tag
-  - wget -O /usr/local/bin/mdbook https://donaldpinckney.com/public/files/build_cache/mdbook
-  - chmod +x /usr/local/bin/mdbook
+  - wget -O "$HOME/bin/mdbook" https://donaldpinckney.com/public/files/build_cache/mdbook
+  - chmod +x "$HOME/bin/mdbook"
   - # To update mdbook, uncomment below!
   - # curl https://sh.rustup.rs > temp.sh
   - # chmod +x temp.sh
