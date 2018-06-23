@@ -9,7 +9,7 @@
     - [Single Variable Regression](ch2-linreg/2017-12-03-single-variable.md)
     - [Optimization Convergence (bonus)](ch2-linreg/2017-12-27-optimization.md)
     - [Multi Variable Regression](ch2-linreg/2018-03-21-multi-variable.md)
-    - [Feature Scaling (bonus)](temp)
+    - [Feature Scaling (bonus)](ch2-linreg/feature-scaling.md)
     - [Nonlinear Regression](temp)
     - [Regularization](temp)
     - [Evaluation](temp)
