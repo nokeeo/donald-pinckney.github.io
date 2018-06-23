@@ -17,6 +17,7 @@ before_install:
 
 install:
   - # bundle install --deployment
+  - echo $PATH
   - gem install jekyll
   - gem install jekyll-paginate
   - gem install jekyll-gist
