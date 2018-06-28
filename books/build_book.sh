@@ -26,7 +26,7 @@ rm -rf book/https:/
 
 # Change FontAwesome directory name because Jekyll sucks
 mv book/_FontAwesome book/FontAwesome
-find ./ -type f -exec sed -i 's/_FontAwesome/FontAwesome/g' {} \;
+find . -type f -name "*.html" -print -exec sed -e 's/_FontAwesome/FontAwesome/g' -i "" {} \;
 
 # Restore files with original front matter
 for f in $files; do
