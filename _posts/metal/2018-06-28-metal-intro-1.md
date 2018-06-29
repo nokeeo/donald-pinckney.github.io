@@ -21,11 +21,16 @@ Finally, a quick note about what this tutorial is and what it isn't: it is meant
 
 ![Basic GPU Pipeline][basic_pipeline]
 
-In short, a **pipeline** is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial, so without further ado let's get started!
+In short, a **pipeline** is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial, and as we go through the code we will break this abstract pipeline into detailed individual components.
 
 ## Hello, Triangle!
+
+Rendering a 2D multi-colored triangle is the hello world program for graphics, and is the goal for this post. We will develop specifically for macOS since it is most convenient, but the code will actually be cross-platform with iOS and tvOS. To visualize the end goal, a screenshot of it looks like this:
+
+![End Goal Screenshot][screen1]
 
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
 [unity website]: https://unity3d.com
 [basic_pipeline]: /public/post_assets/metal/metal-intro-1/basic_pipeline.png
+[screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
