@@ -36,8 +36,35 @@ Open Xcode (make sure to install the latest version of Xcode from the Mac App St
 
 Then, hit Next, and save it somewhere. If you run the app (&#8984;R) then a single blank window should appear. This blank window is where we want to display our 3D graphics. Before we can write actual Metal code, we need a way for the 3D graphics to even appear in our window.
 
-### Adding a MetalKit View
-Everything visual in `macOS` is represented by a *view*, which concretely is a subclass of `NSView`. We need a view in our window in which we can display the results of the Metal graphics rendering.
+### Setting Up a MetalKit View
+Everything visual in `macOS` is represented by a *view*, which concretely is a subclass of `NSView`. We need a view in our window in which we can display the results of the Metal graphics rendering. Apple provides a prebuilt view just for this purpose, `MTKView`, which we will take advantage of.
+
+First, we need to add a `MTKView` to the window by modifying the Storyboard file, and then we need to configure it via code. Open `Main.storyboard`, select the root view of the view controller, and in the inspector panel change the class from `NSView` to `MTKView`. 
+
+INSERT SCREENSHOT
+
+Now to configure the `MTKView` we need to write some initialization code in the view controller, so open `ViewController.swift`. We will need access to the Metal framework, and the auxiliary MetalKit framework, so add these imports at the top:
+
+```swift
+import Metal
+import MetalKit
+```
+ 
+First we want to save the `MTKView` in a convenient variable, so add the following instance variable to the view controller class:
+
+```Swift
+var mtkView: MTKView!
+```
+
+We will initialize this variable in the `viewDidLoad` function, so add this code to the `viewDidLoad` function, after the `super.viewDidLoad()` call:
+
+```Swift
+guard let mtkViewTemp = self.view as? MTKView else {
+print("View attached to ViewController is not an MTKView, so the Storyboard file is not correct")
+return
+}
+mtkView = mtkViewTemp
+```
 
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
