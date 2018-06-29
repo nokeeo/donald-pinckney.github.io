@@ -29,8 +29,20 @@ Rendering a 2D multi-colored triangle is the hello world program for graphics, a
 
 ![End Goal Screenshot][screen1]
 
+### Creating a one window macOS app
+Open Xcode (make sure to install the latest version of Xcode from the Mac App Store), make a new Xcode project, choose "Cocoa App" under "macOS", and hit next. Then, fill in whatever you want for the Product Name (I'll use `MetalIntro1`), choose Swift for the language, make sure Use Storyboards is checked, and Create Document-Based Application is *not* checked. My settings look like this:
+
+![Project Settings][xcode1]
+
+Then, hit Next, and save it somewhere. If you run the app (&#8984;R) then a single blank window should appear. This blank window is where we want to display our 3D graphics. Before we can write actual Metal code, we need a way for the 3D graphics to even appear in our window.
+
+### Adding a MetalKit View
+Everything visual in `macOS` is represented by a *view*, which concretely is a subclass of `NSView`. We need a view in our window in which we can display the results of the Metal graphics rendering.
+
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
 [unity website]: https://unity3d.com
 [basic_pipeline]: /public/post_assets/metal/metal-intro-1/basic_pipeline.png
+
 [screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
+[xcode1]: /public/post_assets/metal/metal-intro-1/xcode1.png
