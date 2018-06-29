@@ -21,7 +21,7 @@ Finally, a quick note about what this tutorial is and what it isn't: it is meant
 
 ![Basic GPU Pipeline][basic_pipeline]
 
-In short, a **pipeline** is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial.
+In short, a **pipeline** is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial, so without further ado let's get started!
 
 ## Hello, Triangle!
 
