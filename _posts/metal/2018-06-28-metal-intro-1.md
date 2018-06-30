@@ -56,7 +56,7 @@ First we want to save the `MTKView` in a convenient variable, so add the followi
 var mtkView: MTKView!
 ```
 
-We will initialize this variable in the `viewDidLoad` function, so add this code to the `viewDidLoad` function, after the `super.viewDidLoad()` call:
+To initialize this variable in the `viewDidLoad` function add this code to the `viewDidLoad` function, after the `super.viewDidLoad()` call:
 
 ```Swift
 guard let mtkViewTemp = self.view as? MTKView else {
@@ -64,6 +64,31 @@ print("View attached to ViewController is not an MTKView, so the Storyboard file
 return
 }
 mtkView = mtkViewTemp
+```
+
+Now we can configure `mtkView`. The two necessary properties to configure are the `device` and the `delegate`. The device is easiest, so we will do it first. The `device` (of type `MTLDevice`) represents the actual GPU hardware. We can retrieve the default GPU and save it to the `mtkView` like so:
+
+```swift
+guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
+print("Metal is not supported on this device")
+return
+}
+
+print("My GPU is: \(defaultDevice)")
+mtkView.device = defaultDevice
+```
+
+If you run the app now, it should print in the Xcode console what your GPU is, but nothing will be rendered inside the window, since we haven’t told Metal to do any rendering. To set this up we need to configure the `delegate` property of the `mtkView`. The `delegate`is an independent object which is responsible for performing our custom rendering, whenever the `mtkView` asks it to. The great thing about this approach is that it is easy to write platform independent code: our view controller code is specific to macOS, but it is very short; the meat of the code will live inside the object we assign to the `delegate`property.
+
+So we need to make a new `class` who’s responsibility is to render our custom graphics whenever `mtkView` asks it to. To do so it just needs to implement the `MTKViewDelegate` protocol. Let’s make a new Swift file called `Renderer.swift`, and add the code below to declare a new `Renderer` class (and import the needed frameworks):
+
+```swift
+import Metal
+import MetalKit
+
+class Renderer : MTKViewDelegate {
+
+}
 ```
 
 [metal website]: https://developer.apple.com/metal/
