@@ -39,9 +39,9 @@ Then, hit Next, and save it somewhere. If you run the app (&#8984;R) then a sing
 ### Setting Up a MetalKit View
 Everything visual in `macOS` is represented by a *view*, which concretely is a subclass of `NSView`. We need a view in our window in which we can display the results of the Metal graphics rendering. Apple provides a prebuilt view just for this purpose, `MTKView`, which we will take advantage of.
 
-First, we need to add a `MTKView` to the window by modifying the Storyboard file, and then we need to configure it via code. Open `Main.storyboard`, select the root view of the view controller, and in the inspector panel change the class from `NSView` to `MTKView`. 
+First, we need to add a `MTKView` to the window by modifying the Storyboard file, and then we need to configure it via code. Open `Main.storyboard`, select the root view of the view controller, and in the inspector panel change the class from `NSView` to `MTKView`, as shown below.
 
-INSERT SCREENSHOT
+![Modifying the Storyboard][xcode2]
 
 Now to configure the `MTKView` we need to write some initialization code in the view controller, so open `ViewController.swift`. We will need access to the Metal framework, and the auxiliary MetalKit framework, so add these imports at the top:
 
@@ -52,16 +52,16 @@ import MetalKit
  
 First we want to save the `MTKView` in a convenient variable, so add the following instance variable to the view controller class:
 
-```Swift
+```swift
 var mtkView: MTKView!
 ```
 
 To initialize this variable in the `viewDidLoad` function add this code to the `viewDidLoad` function, after the `super.viewDidLoad()` call:
 
-```Swift
+```swift
 guard let mtkViewTemp = self.view as? MTKView else {
-print("View attached to ViewController is not an MTKView, so the Storyboard file is not correct")
-return
+    print("View attached to ViewController is not an MTKView!")
+    return
 }
 mtkView = mtkViewTemp
 ```
@@ -70,8 +70,8 @@ Now we can configure `mtkView`. The two necessary properties to configure are th
 
 ```swift
 guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
-print("Metal is not supported on this device")
-return
+    print("Metal is not supported on this device")
+    return
 }
 
 print("My GPU is: \(defaultDevice)")
@@ -86,10 +86,92 @@ So we need to make a new `class` who’s responsibility is to render our custom 
 import Metal
 import MetalKit
 
-class Renderer : MTKViewDelegate {
+class Renderer : NSObject, MTKViewDelegate {
 
+    // This is the initializer for the Renderer class.
+    // We will need access to the mtkView later, so we add it as a parameter here.
+    init?(mtkView: MTKView) {
+
+    }
+
+    // mtkView will automatically call this function
+    // whenever it wants new content to be rendered.
+    func draw(in view: MTKView) {
+        
+    }
+
+    // mtkView will automatically call this function
+    // whenever the size of the view changes (such as resizing the window).
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        
+    }
 }
 ```
+
+This class includes an initializer (with an `MTKView` as a parameter), and the two required functions for implementing the `MTKViewDelegate` protocol. We will come back to filling in the `draw(in view: MTKView)` function later, but first we will finish writing all of the code for `ViewController.swift`. 
+
+Now that we have this skeleton class, we can create an instance in the `viewDidLoad` function and configure `mtkView` with it. First, we add an instance variable for it to the `ViewController` class:
+
+```swift
+var renderer: Renderer!
+```
+
+At the end of the `viewDidLoad` function we create an instance of the `Renderer` class, and configure the `delegate` property:
+
+```swift
+guard let tempRenderer = Renderer(mtkView: mtkView) else {
+    print("Renderer failed to initialize")
+    return
+}
+renderer = tempRenderer
+        
+mtkView.delegate = renderer
+```
+
+At this point we are completely done with the setup code, and now we can move on to actual Metal code. For reference, here is my final version of `ViewController.swift`:
+
+```swift
+import Cocoa
+import Metal
+import MetalKit
+
+class ViewController: NSViewController {
+
+    var mtkView: MTKView!
+    var renderer: Renderer!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // First we save the MTKView to a convenient instance variable
+        guard let mtkViewTemp = self.view as? MTKView else {
+            print("View attached to ViewController is not an MTKView!")
+            return
+        }
+        mtkView = mtkViewTemp
+        
+        // Then we create the default device, and configure mtkView with it
+        guard let defaultDevice = MTLCreateSystemDefaultDevice() else {
+            print("Metal is not supported on this device")
+            return
+        }
+        
+        print("My GPU is: \(defaultDevice)")
+        mtkView.device = defaultDevice
+        
+        // Lastly we create an instance of our Renderer object, and set it as the delegate of mtkView
+        guard let tempRenderer = Renderer(mtkView: mtkView) else {
+            print("Renderer failed to initialize")
+            return
+        }
+        renderer = tempRenderer
+                
+        mtkView.delegate = renderer
+    }
+}
+```
+
+### Creating a Pipeline
 
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
@@ -98,3 +180,4 @@ class Renderer : MTKViewDelegate {
 
 [screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
 [xcode1]: /public/post_assets/metal/metal-intro-1/xcode1.png
+[xcode2]: /public/post_assets/metal/metal-intro-1/xcode2.png

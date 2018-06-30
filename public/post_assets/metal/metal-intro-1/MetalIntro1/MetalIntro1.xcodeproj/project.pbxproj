@@ -13,6 +13,7 @@
 		500D23E420E6AE7A00AACF84 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 500D23E220E6AE7A00AACF84 /* Main.storyboard */; };
 		500D23F020E6AE7A00AACF84 /* MetalIntro1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500D23EF20E6AE7A00AACF84 /* MetalIntro1Tests.swift */; };
 		500D23FB20E6AE7A00AACF84 /* MetalIntro1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 500D23FA20E6AE7A00AACF84 /* MetalIntro1UITests.swift */; };
+		505ADFFC20E802B0007A2AAE /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505ADFFB20E802B0007A2AAE /* Renderer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		500D23F620E6AE7A00AACF84 /* MetalIntro1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetalIntro1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		500D23FA20E6AE7A00AACF84 /* MetalIntro1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalIntro1UITests.swift; sourceTree = "<group>"; };
 		500D23FC20E6AE7A00AACF84 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		505ADFFB20E802B0007A2AAE /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			children = (
 				500D23DC20E6AE7800AACF84 /* AppDelegate.swift */,
 				500D23DE20E6AE7800AACF84 /* ViewController.swift */,
+				505ADFFB20E802B0007A2AAE /* Renderer.swift */,
 				500D23E020E6AE7A00AACF84 /* Assets.xcassets */,
 				500D23E220E6AE7A00AACF84 /* Main.storyboard */,
 				500D23E520E6AE7A00AACF84 /* Info.plist */,
@@ -255,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				500D23DF20E6AE7800AACF84 /* ViewController.swift in Sources */,
+				505ADFFC20E802B0007A2AAE /* Renderer.swift in Sources */,
 				500D23DD20E6AE7800AACF84 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
