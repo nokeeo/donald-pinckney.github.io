@@ -159,7 +159,8 @@ class ViewController: NSViewController {
         print("My GPU is: \(defaultDevice)")
         mtkView.device = defaultDevice
         
-        // Lastly we create an instance of our Renderer object, and set it as the delegate of mtkView
+        // Lastly we create an instance of our Renderer object, 
+        // and set it as the delegate of mtkView
         guard let tempRenderer = Renderer(mtkView: mtkView) else {
             print("Renderer failed to initialize")
             return
