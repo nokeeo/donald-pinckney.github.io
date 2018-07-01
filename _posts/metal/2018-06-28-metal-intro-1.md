@@ -172,7 +172,150 @@ class ViewController: NSViewController {
 }
 ```
 
-### Creating a Pipeline
+### Clearing the Screen by Issuing GPU Commands
+
+We have everything setup for us to start writing graphics code in `Renderer.swift`. Before we draw a triangle, we will start with clearing the screen, which will involve issuing commands to GPU, and transferring the results back to the `mtkView`.
+
+Metal requires us to keep track of a queue (essentially a list) of commands that are waiting to be executed on the GPU. A Metal command queue is represented by the class `MTLCommandQueue`, and commands are represented by the class `MTLCommandBuffer`. This is an outline of what we need to do to have a full render pass working:
+
+1. At initialization time, create one `MTLCommandQueue` (call it `commandQueue`).
+2. At each draw cycle, create a `MTLCommandBuffer`, configure it to include the draw commands we want, and then add it to `commandQueue`
+3. Once the `MTLCommandBuffer` finishes executing on the GPU, we need to display the results in the `mtkView`.
+
+Let's start with the first task. We need to keep track of one `MTLCommandQueue` for the whole `Renderer` class. For convenience we also want to keep track of the `MTLDevice`, since we will use it a lot later. So, add the following instance variables to the `Renderer` class:
+
+```swift
+let device: MTLDevice
+let commandQueue: MTLCommandQueue
+```
+
+Now, inside the intializer (the `init?` function) add the following code to setup these variables:
+
+```swift
+device = mtkView.device!
+
+commandQueue = device.makeCommandQueue()!
+```
+
+Note that we have to use the `device` to create a new command queue: this means that a command queue is associated with a specific device, and can only be used with that device.
+
+We have now initialized a command queue, so now in the `draw(in view: MTKView)` we can create a `MTLCommandBuffer`, configure it, and add it to the queue. In the `draw(in view: MTKView)` function the first thing we do is create a new `MTLCommandBuffer`:
+
+```swift
+// Get an available command buffer
+guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
+```
+
+Now, we need to configure `commandBuffer` to perform drawing commands that we want. First, we use a `MTLRenderPassDescriptor` to configure some options about input and output. *When that is finalized*, we then use a `MTLRenderCommandEncoder` to configure what drawing operations the GPU will perform.
+
+There are a lot of options to configure for the `MTLRenderPassDescriptor`. Fortunately, the `MTKView` provides us with a pre-configured `MTLRenderPassDescriptor`, so we can just grab that and then change the default options:
+
+```swift
+// Get the default MTLRenderPassDescriptor from the MTKView argument
+guard let renderPassDescriptor = view.currentRenderPassDescriptor else { return }
+
+// Change default settings. For example, we change the clear color from black to red.
+renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1, 0, 0, 1)
+```
+
+More configure options on a `MTLRenderPassDescriptor` will be discussed in future posts, but for now the most important option is the `colorAttachments` array. The first (and for now only) item in the `colorAttachments` array describes the output destination of the rendering. In this case, setting the `clearColor` property to `(1, 0, 0, 1)` (these are RGBA values) tells Metal to clear the color attachment to a value of `(1, 0, 0, 1)` before rendering. Other notable properties that the `MTKView` set for us include `renderTargetWidth` and `renderTargetHeight`, which were automatically set to the size of the `MTKView`.
+
+This is all that we need to do to configure `renderPassDescriptor`. We now finalize it by converting it into a `MTLRenderCommandEncoder`:
+
+```swift
+// We compile renderPassDescriptor to a MTLRenderCommandEncoder.
+guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return }  
+```
+
+At this point we would use `renderEncoder` to encode various drawing commands to tell the GPU to draw triangles based on vertex data. For now we just want to clear the screen, so we don't need to encode any drawing commands.
+
+Since we are done encoding our drawing commands (none of them), we finish the encoding process:
+
+```swift
+// This finalizes the encoding of drawing commands.
+renderEncoder.endEncoding()
+```
+
+At this point, `commandBuffer` as been configured via `renderPassDescriptor` and `renderEncoder` to describe a bunch of GPU commands for an entire render pass. The `commandBuffer` includes rendering output information, such as output width and height, the clear color, and other properties, as well as a (currently empty) list of encoded drawing commands. However, *calling `endEncoding()` does NOT send this information to the GPU yet!* This gives us control about when to actually trigger expensive drawing commands on the GPU, vs. just finish encoding them.
+
+We are now ready to send the encoded commands to the GPU. However, it is crucial to understand that the CPU and GPU work asynchronously: so when we send the encoded commands to the GPU, it will work on completing them while the CPU code continues to run, and then finish the commands and obtain the color image result at some indeterminate point in the future. But, we need a way to know when the rendering finishes and at that time place the result into the `MTKView`. If we don't do this, the GPU will finish rendering, and then the result will simply disappear, since the CPU doesn't even know about the result.
+
+Setting up the callback to place it into the `MTKView` is very easy, since `MTKView` actually provides most of the implementation for us. We just need to tell the `commandBuffer` to present into the `MTKView`'s drawable:
+
+```swift
+// Tell Metal to send the rendering result to the MTKView when rendering completes
+commandBuffer.present(view.currentDrawable)
+```
+
+A drawable is simply a resource managed by the `MTKView` which Metal can write the result into.
+
+Now, we are finally ready to send the encoded command buffer to the GPU. This is just one of line code:
+
+```swift
+// Finally, send the encoded command buffer to the GPU.
+commandBuffer.commit()
+```
+
+> Note that `commandBuffer.commit()` is a bit more nuanced than just sending the command buffer to the GPU. Since `commandBuffer` is actually stored in `commandQueue`, writing `commandBuffer.commit()` will prepare it for execution on the GPU, at the back of the queue. So other command buffers that are ahead of it in line (that were committed first) will execute first.
+
+Running the code now should look like this:
+
+![Clear Red Screen][screen2]
+
+And for reference the current code in `Renderer.swift` is:
+
+```swift
+import Foundation
+import Metal
+import MetalKit
+
+class Renderer : NSObject, MTKViewDelegate {
+    
+    let device: MTLDevice
+    let commandQueue: MTLCommandQueue
+    
+    // This is the initializer for the Renderer class.
+    // We will need access to the mtkView later, so we add it as a parameter here.
+    init?(mtkView: MTKView) {
+        device = mtkView.device!
+        
+        commandQueue = device.makeCommandQueue()!
+    }
+    
+    // mtkView will automatically call this function
+    // whenever it wants new content to be rendered.
+    func draw(in view: MTKView) {
+        // Get an available command buffer
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
+        
+        // Get the default MTLRenderPassDescriptor from the MTKView argument
+        guard let renderPassDescriptor = view.currentRenderPassDescriptor else { return }
+        
+        // Change default settings. For example, we change the clear color from black to red.
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1, 0, 0, 1)
+        
+        // We compile renderPassDescriptor to a MTLRenderCommandEncoder.
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return }
+        
+        // TODO: Here is where we need to encode drawing commands!
+        
+        // This finalizes the encoding of drawing commands.
+        renderEncoder.endEncoding()
+        
+        // Tell Metal to send the rendering result to the MTKView when rendering completes
+        commandBuffer.present(view.currentDrawable!)
+        
+        // Finally, send the encoded command buffer to the GPU.
+        commandBuffer.commit()
+    }
+    
+    // mtkView will automatically call this function
+    // whenever the size of the view changes (such as resizing the window).
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        
+    }
+}
+```
 
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
@@ -180,5 +323,6 @@ class ViewController: NSViewController {
 [basic_pipeline]: /public/post_assets/metal/metal-intro-1/basic_pipeline.png
 
 [screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
+[screen2]: /public/post_assets/metal/metal-intro-1/screen2.png
 [xcode1]: /public/post_assets/metal/metal-intro-1/xcode1.png
 [xcode2]: /public/post_assets/metal/metal-intro-1/xcode2.png
