@@ -331,17 +331,34 @@ Sketched as picture, the interactions of these pieces look like:
 
 ![Metal Sketch][clear_sketch]
 
-### Configuring the Pipeline
+### Details of the Pipeline
 
 In the above diagram, we have written code to setup or configure pretty much all parts of it. The two pieces we have avoided so far are encoding drawing commands / vertex data, and configuring the pipeline itself. We have configured the `MTLRenderPassDescriptor`, which is the openings to the pipeline, how it connects to the rest, but we have not configured the internals of the pipeline.
 
-TODO: Rest goes here.
+Configuring the pipeline itself is really the whole point of graphics programming: this is the code which will render vertex data with any given effect we can code. And in Metal configuring a custom pipeline is *necessary* for being able to render vertices: otherwise the GPU has no way of knowing how to transform encoded drawing commands into a final image.
+
+There are many parts to the interior of the pipeline, some of which we can write fully custom code for, and others are a fixed function provided by the GPU. Here is a diagram of the main parts of the pipeline:
+
+![A sketch of a graphics pipeline][pipeline_sketch]
+
+The stages marked in green are the ones that we can write fully custom code for, while the others are done mostly automatically by the GPU. Also, note that the first stage, the custom encoding of drawing commands is done on the CPU, and all other steps are done on the GPU.
+
+1. Encoding Drawing Commands / Vertex Data: The data that the GPU receives, and that must be processed in the pipeline.
+2. Vertex Shader: Converts the 3D vertex locations into 2D screen coordinates. It also passes vertex data down the pipeline.
+3. Tessellation: Subdivides triangles into further triangles to provide higher-quality results.
+4. Rasterization: Discretizes the 2D geometric data into 2D discrete pixels. This will also take data attached to each vertex and interpolate it over the whole shape to every rasterized pixel.
+5. Fragment Shader: Given the interpolated pixel data from the rasterizer, the fragment shader determines the final color of each pixel.
+
+Tessellation is an advanced technique that will be looked at much later, but the drawing command encoding, vertex shader, and fragment shader are necessary parts for the pipeline, and we will work on setting them up now.
+
+### Creating Vertex and Fragment Shaders
 
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
 [unity website]: https://unity3d.com
 [basic_pipeline]: /public/post_assets/metal/metal-intro-1/basic_pipeline.png
 [clear_sketch]: /public/post_assets/metal/metal-intro-1/clear_sketch.png
+[pipeline_sketch]: /public/post_assets/metal/metal-intro-1/pipeline.png
 
 [screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
 [screen2]: /public/post_assets/metal/metal-intro-1/screen2.png
