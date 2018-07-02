@@ -317,10 +317,31 @@ class Renderer : NSObject, MTKViewDelegate {
 }
 ```
 
+### A Review of the Metal Architecture
+
+With the code to clear the screen, we have most of the infrastructure that we need for performing rendering passes. Not all, but most. Since there are a lot of different pieces to the Metal API, let's briefly organize these into a mental picture. The GPU executes pipelines which transform vertex data and encoded drawing commands into a final image result. The different Metal classes fit in as so:
+
+- A `MTLCommandBuffer` represents the entire set of information the GPU needs to execute this pipeline: it contains the pipeline info itself, as well as vertex data and drawing commands that will be fed into the pipeline by the GPU. 
+- A `MTLRenderPassDescriptor` is used to configure the interface of the pipeline, but not the interior of the pipeline. It is like the 2 openings of the pipe.
+- A `MTLRenderCommandEncoder` is used to prepare the vertex data and drawing commands that will be fed into the pipeline (we will see code for this in the next section).
+- A `MTLCommandQueue` keeps track of many `MTLCommandBuffer`s that are waiting in line to be executed.
+- A `MTLDevice` represents the actual GPU.
+
+Sketched as picture, the interactions of these pieces look like:
+
+![Metal Sketch][clear_sketch]
+
+### Configuring the Pipeline
+
+In the above diagram, we have written code to setup or configure pretty much all parts of it. The two pieces we have avoided so far are encoding drawing commands / vertex data, and configuring the pipeline itself. We have configured the `MTLRenderPassDescriptor`, which is the openings to the pipeline, how it connects to the rest, but we have not configured the internals of the pipeline.
+
+TODO: Rest goes here.
+
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
 [unity website]: https://unity3d.com
 [basic_pipeline]: /public/post_assets/metal/metal-intro-1/basic_pipeline.png
+[clear_sketch]: /public/post_assets/metal/metal-intro-1/clear_sketch.png
 
 [screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
 [screen2]: /public/post_assets/metal/metal-intro-1/screen2.png
