@@ -41,7 +41,7 @@ class Renderer : NSObject, MTKViewDelegate {
         let library = device.makeDefaultLibrary()
         pipelineDescriptor.vertexFunction = library?.makeFunction(name: "vertexShader")
         pipelineDescriptor.fragmentFunction = library?.makeFunction(name: "fragmentShader")
-        
+
         // Setup the output pixel format to match the pixel format of the metal kit view
         pipelineDescriptor.colorAttachments[0].pixelFormat = metalKitView.colorPixelFormat
         
@@ -69,9 +69,9 @@ class Renderer : NSObject, MTKViewDelegate {
         renderEncoder.setRenderPipelineState(pipelineState)
         // What vertex buffer data to use
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+
         // And what to draw
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
-        
         // This finalizes the encoding of drawing commands.
         renderEncoder.endEncoding()
         

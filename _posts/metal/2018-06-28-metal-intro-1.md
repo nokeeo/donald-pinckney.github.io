@@ -189,7 +189,7 @@ let device: MTLDevice
 let commandQueue: MTLCommandQueue
 ```
 
-Now, inside the intializer (the `init?` function) add the following code to setup these variables:
+Now, inside the initializer (the `init?` function) add the following code to setup these variables:
 
 ```swift
 device = mtkView.device!
@@ -401,6 +401,7 @@ To use our shaders we need to configure our own custom pipeline in `Renderer.swi
 We will do this in a new function. Add this new class function stub to `Renderer` (we will see why we need the parameters soon):
 
 ```swift
+// Create our custom rendering pipeline, which loads shaders using `device`, and outputs to the format of `metalKitView`
 class func buildRenderPipelineWith(device: MTLDevice, metalKitView: MTKView) throws -> MTLRenderPipelineState {
     // ...
 }
@@ -422,7 +423,7 @@ pipelineDescriptor.vertexFunction = library?.makeFunction(name: "vertexShader")
 pipelineDescriptor.fragmentFunction = library?.makeFunction(name: "fragmentShader")
 ```
 
-The device is required to make the default library (and is thus a parameter for the function), since at this time the Metal code must be compiled into final machine code that is specific to the device. 
+The device is required to make the default library (and is thus a parameter for the function), since when this code is rune the Metal code must be compiled into final machine code that is specific to the device. 
 
 We also need to tell the pipeline in what format to store the pixel data. Options include how many bytes per pixel, and in what order to store red, green, blue, and alpha. But we just need the pipeline's output format to match the format of the `MTKView`, which is why an `MTKView` is a parameter. We setup this configuration with one line:
 
@@ -438,6 +439,214 @@ Lastly, we have to compile the pipeline descriptor to a final pipeline, ready to
 return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
 ```
 
+Now we just need to use our `buildRenderPipelineWith(device: MTLDevice, metalKitView: MTKView)` function to save the pipeline into an instance variable. Add this instance variable to `Renderer`:
+
+```swift
+let pipelineState: MTLRenderPipelineState
+```
+
+And in the initializer add the following:
+
+```swift
+// Create the Render Pipeline
+do {
+    pipelineState = try Renderer.buildRenderPipelineWith(device: device, metalKitView: mtkView)
+} catch {
+    print("Unable to compile render pipeline state: \(error)")
+    return nil
+}
+```
+
+## Sending Vertex Data and Drawing Commands to the GPU
+
+Now that we have a configured pipeline, we had better use it. That means we need to send vertex data to the GPU, and drawing commands telling it what to do with that data. First, let's discuss what exactly vertex data is, and then we will implement it. After that, encoding drawing commands is easy.
+
+As described above, vertex data just stores information about each vertex. In the vertex data itself we do not specify what types of shapes (points, lines, or triangles) the vertices describe, that is done later in the draw call. The information stored in vertex data is entirely up to us: we can include any vector data in it, in any format that is convenient for us. We already decided this format above: a `vector_float4` for color (RGBA), and a `vector_float2` for XY screen coordinates. However, how should we scale the X coordinate? It could be a real screen coordinate, in the range of 0 to `width`, or it could be a normalized screen coordinate, in the range of -1 (left) to 1 (right). Likewise for the Y coordinate. Again, it is entirely up to us. As we will see, it is the job of the vertex shader to translate our arbitrary vertex data to consistent position data for the GPU to understand. For simplicity we will use normalized screen coordinates. First, we create an array of our desired vertex data in the initializer of `Renderer`:
+
+```swift
+// Create our vertex data
+let vertices = [Vertex(color: [1, 0, 0, 1], pos: [-1, -1]),
+				Vertex(color: [0, 1, 0, 1], pos: [0, 1]),
+				Vertex(color: [0, 0, 1, 1], pos: [1, -1])]
+```
+
+If you are unsure how this vertex data relates to our final goal of drawing a triangle with red, green, and blue vertices, then I suggest getting our a piece of paper and sketching the positions of these vertices, and their colors.
+
+This vertex data is correct, but it's not accessible by the GPU, since it is stored in CPU accessible memory, not GPU accessible memory. To make it accessible by the GPU, we must use a `MTLBuffer`, which provides access to CPU and GPU shared memory. Add an instance variable to `Renderer` for this buffer:
+
+```swift
+let vertexBuffer: MTLBuffer
+```
+
+And in the initializer you can now create a buffer:
+
+```swift
+// And copy it to a Metal buffer...
+vertexBuffer = device.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Vertex>.stride, options: [])!
+```
+
+Note that the `makeBuffer` function takes `length` bytes stored at the given pointer in CPU memory, and copies the bytes directly into a newly allocated shared CPU / GPU buffer. In this case the buffer looks like this:
+
+![Buffer][buffer_sketch]
+
+Keep in mind that the GPU doesn't automatically know anything about the structure, all it sees is the raw bytes in the bottom row of the above diagram.  The only way the GPU knows about the structure of the vertex data is because we will code our vertex shader accordingly (in a bit). As a side note, the padding bytes are added into the buffer for each vertex so that 16 bytes alignment is maintained. This has ups and downs, and can be avoided, which may be discussed in a future post.
+
+At this point we have both the pipeline and the vertex data prepared. The last code we need to write on the CPU side is to encode drawing commands for the GPU. Let's return to the function `draw(in view: MTKView)`, and look at the section between creating `renderEncoder` and calling `renderEncoder.endEncoding()`. Between these is where we want to place our code to encode drawing commands. First, we tell it what pipeline and what vertex data buffer to use:
+
+```swift
+// Setup render commands to encode
+// We tell it what render pipeline to use
+renderEncoder.setRenderPipelineState(pipelineState)
+// What vertex buffer data to use
+renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+```
+
+We use `offset: 0` since we want Metal to read the buffer starting at the beginning. Metal supports sending multiple vertex buffers in one render pass; we only have one vertex buffer so it must be at index 0, so we use `index: 0`.
+
+Lastly, we need to encode the actual drawing command to the GPU:
+
+```swift
+// And what to draw
+renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+```
+
+We tell Metal to draw a triangle (other options include `point`, `line`, `lineStrip` and `triangleStrip`, possibly explored in later posts), and to start drawing using the vertex at position 0 in the buffer. Clearly we have 3 vertices to draw for our one triangle. At this point, the code in `Renderer.swift` is complete for this post!
+
+## Type Signatures of Vertex and Fragment Shaders
+
+The only work we have left to do is in the vertex and fragment shaders: they are currently empty stubs! If we run the code right now, an error message like this is printed:
+
+```
+2018-07-03 16:12:37.685893-0700 MetalIntro1[13387:661616] Compiler failed to build request
+Unable to compile render pipeline state: Error Domain=CompilerError Code=1 "RasterizationEnabled is true but the vertex shader's return type is void" UserInfo={NSLocalizedDescription=RasterizationEnabled is true but the vertex shader's return type is void}
+Renderer failed to initialize
+```
+
+This is just saying that the type signatures of the vertex and fragment shader functions are not correct. What should they be instead? 
+
+Well, we know that the job of the vertex shader is to pre-process per-vertex data, so its input must be some form of vertex data. In fact, the vertex shader will take the entire buffer (actually a pointer to it) and a vertex ID which indexes into this buffer as input. So when we perform our draw call with a buffer of 3 vertices, the vertex shader will be invoked once for each vertex for a total of 3 times, each time with the same buffer pointer as an argument, but with vertex indices of 0, 1, 2, respectively. Omitting the return type for now, in Metal shader code these 2 vertex shader function parameters look like:
+
+```c++
+vertex ??? vertexShader(const device Vertex *vertexArray [[buffer(0)]], unsigned int vid [[vertex_id]])
+```
+
+Since we are using the `Vertex` struct here, don't forget to add `#include "ShaderDefinitions.h"` to the top of the Metal shader file. Now, most of this seems clear enough: we have a constant pointer to our `MTLBuffer` containing `Vertex` structs, and an unsigned integer vertex ID. But there is some new syntax here to break down. 
+
+First, `device` indicates in what address space of the GPU should the `vertexArray` be placed in. The two options are `device` (read-write address space) and `constant` (read-only address space). However, semantically and for efficiency one should use `device` for data which will be accessed differently by each vertex (this is our case, we have a different vertex ID for each vertex) and use `constant` for data which all vertices will use in the same way. Note that we don't have to specify the address space of `vid` since it is a simple type, not a pointer type.
+
+Second, Metal uses the `[[...]]` syntax to specify Metal specific annotations. We said that we want one parameter to be the vertex buffer, which means that Metal has to call this function and pass the vertex buffer as the first argument. But Metal does not know by itself which parameter of the vertex shader function it should pass the vertex buffer to, so writing `[[buffer(0)]]` is how we tell Metal that this specific parameter `vertexArray` is where is should pass the first buffer. Note that the `0` here corresponds directly to the `index: 0` in the call `renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)`.
+
+Similarly, Metal needs to pass the vertex ID to the vertex shader function, so writing `[[vertex_id]]` on the second parameter tells Metal where to pass the vertex ID.
+
+Before we discuss the return type of the vertex shader, let's decide the return type of the fragment shader, since it is easy. Recall that the fragment shader's job is to receive interpolated data per-pixel from the rasterizer (which receives data from the vertex shader), and then output the final pixel color. At the point that Metal calls the fragment shader the GPU already knows the position of the pixel, just not the color. The only data the fragment shader needs to return is the color, and thus the return type can simply be `float4`. As a side note, in the Metal shader language, `float4` is just the same as `vector_float4` in the `simd.h` library.
+
+As for the return type (call it `T`) of the vertex shader, the key realization is that the output of the vertex shader (`T`) is fed to the rasterizer, which will interpolate this output over the appropriate destination pixels, and then call the fragment shader with this interpolated data (interpolated version of `T`). So, the return type `T` of the vertex shader must match the parameter of the fragment shader, plus some Metal specific interpolation magic. As for what `T` is, it really can be arbitrary, *except that it must provide a screen-space position coordinate*. Remember, the vertex shader must convert the positions in the vertex buffer to normalized screen-space positions. For now this is easy, since our vertex buffer already contains normalized screen-space positions. But we will still need to tell Metal where this normalized screen-space position is, using a `[[...]]` annotation.
+
+For rendering our triangle, our vertex shader just needs to pass the color of the vertex into the rasterizer for interpolation, and then into the fragment shader. So we declare a new `struct` type in `Shaders.metal`:
+
+```c++
+struct VertexOut {
+    float4 color;
+    float4 pos [[position]];
+};
+```
+
+The `float4 color` is just the color data we want to pass through. There are two interesting things though about `pos`. First, we use `[[position]]` to tell the Metal rasterizer to use this field of the struct as the normalized screen-space position for performing the rasterizing / interpolation. Second, although I keep saying that we must use a normalized *screen-space* (2D) coordinate for the position for rasterizing, `pos` is actually 4 dimensional, and in fact it must be. In spirit `pos` is 2 dimensional, but the 3rd coordinate can be used for depth: it doesn't actually affect where the vertex is on screen, but can be used to track depth. The last coordinate is used to put `pos` into 4D homogeneous space: a standard, useful, and unfortunately confusing way to store locations in 3D graphics. Fortunately, both the 3rd and 4th components we do not have to worry about in this post, we just need to keep them there to make Metal happy.
+
+We can now give final typed stubs of the vertex and fragment shader functions:
+
+```c++
+struct VertexOut {
+    float4 color;
+    float4 pos [[position]];
+};
+
+vertex VertexOut vertexShader(const device Vertex *vertexArray [[buffer(0)]], unsigned int vid [[vertex_id]])
+{
+    // TODO: Write vertex shader
+}
+
+fragment float4 fragmentShader(VertexOut interpolated [[stage_in]])
+{
+    // TODO: Write fragment shader
+}
+```
+
+All the pieces of this have been explained, except for ``[[stage_in]]``. This is another Metal attribute, which tells Metal that parameter `interpolated` should be fed the interpolated results of the rasterizer.
+
+## Writing Vertex and Fragment Shader Code
+
+Finally, we get to write the actual implementations of the vertex and fragment shader, starting with the vertex shader.
+
+The first task in the vertex shader is to fetch the vertex data of the given vertex ID:
+
+```c++
+// Get the data for the current vertex.
+Vertex in = vertexArray[vid];
+```
+
+Now we need to create an instance of `VertexOut`, set its properties and return it. Starting with the color is easy:
+
+```c++
+VertexOut out;
+
+// Pass the vertex color directly to the rasterizer
+out.color = in.color;
+```
+
+As for the position, we need to convert our vertex data of the form \\((x_v, y_v)\\) to the form \\((x_s, y_s, z, w)\\), where \\(x_s\\) and \\(y_s\\) must be in normalized screen-space. In our case \\(x_v\\) and \\(y_v\\) are already in normalized screen-space, so we assign them directly to \\(x_s\\) and \\(y_s\\). As for \\(z\\) (depth) and \\(w\\) (homogeneous component) it suffices to use values of 0 and 1. After that we simply return `out`:
+
+```c++
+// Pass the already normalized screen-space coordinates to the rasterizer
+out.pos = float4(in.pos.x, in.pos.y, 0, 1);
+
+return out;
+```
+
+> Vertex shaders which simply pass data through mostly unchanged to the rasterizer are a very common pattern, and are called pass-through vertex shaders.
+
+Now, to code the fragment shader, all we need to do is return the final color we want. But the rasterizer has already linearly interpolated the colors of the 3 vertices among the rasterized pixels, which is exactly what we want. Thus, the only code in the fragment shader is:
+
+```c++
+return interpolated.color;
+```
+
+Now we can finally compile and run the code, and we see:
+
+![Red Screen With Multicolored Triangle][screen3]
+
+That is almost what we wanted! We just forgot that we left the clear color at red. Go back and change the clear color to black, and it should look like this:
+
+![Black Screen With Multicolored Triangle][screen4]
+
+Congratulations, you have just learned most of the fundamentals behind Metal. Perhaps this was a bit long (it was a longer post than I expected), but it is pretty cool to synthesize all of the basic concepts together.
+
+For reference the complete sample project is [available for download here][project_link].
+
+# Concluding Remarks
+This post covered a lot of material; to recap, we saw how to:
+1. Setup a MetalKit view in a native macOS app.
+2. Manage a `MTLCommandQueue` and `MTLCommandBuffer` objects to send commands to the GPU.
+3. Configure rendering properties using `MTLRenderPassDescriptor`.
+4. Setup a pipeline with custom shaders using `MTLRenderPipelineDescriptor`.
+5. Prepare our custom vertex data, and send it over to the GPU using `MTLBuffer`.
+6. Write basic pass-through shaders.
+
+These concepts are crucial: without them it's impossible to do any Metal programming. But the good news is that these concepts are mostly the same regardless of what you are doing with Metal: we will add complexity on top of this solid foundation.
+
+# Exercises
+
+What's really great and fun about graphics programming is that it is easy to experiment with and try things on your own. Below are some suggestions for things to try; some are more structured than others, but they are roughly sorted in increasing order of difficulty. Do as many as you please!
+
+1. Try moving around the positions of the vertices of the triangle, making sure you are comfortable with how normalized screen-space coordinates work.
+2. In graphics there are usually multiple ways to achieve the same effect, but with different tradeoffs. We don't care about the tradeoffs yet, but we can experiment with different ways to do things. Make the triangle all blue *by only modifying `Renderer.swift`*, so it looks like this: ![All Blue Triangle][screen5].
+3. Again make the triangle all blue, but this time *by only modifying `Shaders.metal`. After doing this, in what way could you simplify the `Vertex` data struct, buffer, and `VertexOut`?
+4. Flip the triangle upside down *by only modifying `Renderer.swift`*, so it looks like this: ![Upside down triangle][screen6].
+5. Again flip the triangle upside down *but this time only modify `Shaders.metal`*.
+6. Render a rectangle instead of a triangle.
+7. Try to render a circle *by modifying `Shaders.metal` only* (you can use rectagle code from 6. in `Renderer.swift` if you want). Hint: you can use `interpolated.pos` to also determine color, BUT it is in unnormalized screen-space! It is fine if you code is hacky and does not work as the window resizes.
+8. Try to render a circle by using the normal code (or single color code) for `Shaders.metal`, but by creating a ton of triangles in `Renderer.swift`.
+9. Play around and experiment with whatever you want!
 
 [metal website]: https://developer.apple.com/metal/
 [opengl website]: https://www.opengl.org
@@ -445,9 +654,18 @@ return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
 [basic_pipeline]: /public/post_assets/metal/metal-intro-1/basic_pipeline.png
 [clear_sketch]: /public/post_assets/metal/metal-intro-1/clear_sketch.png
 [pipeline_sketch]: /public/post_assets/metal/metal-intro-1/pipeline.png
+[buffer_sketch]: /public/post_assets/metal/metal-intro-1/buffer.png
+
 
 [screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
 [screen2]: /public/post_assets/metal/metal-intro-1/screen2.png
+[screen3]: /public/post_assets/metal/metal-intro-1/screen3.png
+[screen4]: /public/post_assets/metal/metal-intro-1/screen4.png
+[screen5]: /public/post_assets/metal/metal-intro-1/screen5.png
+[screen6]: /public/post_assets/metal/metal-intro-1/screen6.png
+
 [xcode1]: /public/post_assets/metal/metal-intro-1/xcode1.png
 [xcode2]: /public/post_assets/metal/metal-intro-1/xcode2.png
 [shading_lang]: https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf
+
+[project_link]: /public/post_assets/metal/metal-intro-1/MetalIntro1.zip
