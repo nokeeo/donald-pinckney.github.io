@@ -466,8 +466,8 @@ As described above, vertex data just stores information about each vertex. In th
 ```swift
 // Create our vertex data
 let vertices = [Vertex(color: [1, 0, 0, 1], pos: [-1, -1]),
-				Vertex(color: [0, 1, 0, 1], pos: [0, 1]),
-				Vertex(color: [0, 0, 1, 1], pos: [1, -1])]
+	        Vertex(color: [0, 1, 0, 1], pos: [0, 1]),
+	        Vertex(color: [0, 0, 1, 1], pos: [1, -1])]
 ```
 
 If you are unsure how this vertex data relates to our final goal of drawing a triangle with red, green, and blue vertices, then I suggest getting our a piece of paper and sketching the positions of these vertices, and their colors.
