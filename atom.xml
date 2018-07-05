@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-07-05T00:19:57-07:00</updated>
+ <updated>2018-07-05T00:28:38-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -14,9 +14,9 @@
  
  <entry>
    <title>Metal 3D Graphics Part 1: Basic Rendering</title>
-   <link href="https://donaldpinckney.com/metal/2018/06/28/metal-intro-1.html"/>
-   <updated>2018-06-28T00:00:00-07:00</updated>
-   <id>https://donaldpinckney.com/metal/2018/06/28/metal-intro-1</id>
+   <link href="https://donaldpinckney.com/metal/2018/07/05/metal-intro-1.html"/>
+   <updated>2018-07-05T00:00:00-07:00</updated>
+   <id>https://donaldpinckney.com/metal/2018/07/05/metal-intro-1</id>
    <content type="html">&lt;h1 id=&quot;what-is-metal-and-why-use-it&quot;&gt;What is Metal, and why use it?&lt;/h1&gt;
 &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/metal/&quot;&gt;Metal&lt;/a&gt; is a powerful new GPU programming API designed by Apple. Originally it was announced in 2014 for iOS and claimed significant performance benefits over &lt;a href=&quot;https://www.opengl.org&quot;&gt;OpenGL&lt;/a&gt;, the standard 3D graphics API, and since 2014 it has gained the ability for general purpose GPU computation, cross-platform support between iOS and macOS, and other features. But what exactly is it, and how does it compare to OpenGL?&lt;/p&gt;
 
