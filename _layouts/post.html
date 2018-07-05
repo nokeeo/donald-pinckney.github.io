@@ -39,7 +39,18 @@ layout: default
 
 </span>
 
-  {{ content }}
+
+{% if page.noToc != true %}
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+{% endif %}
+
+{{ content }}
 </div>
 
 

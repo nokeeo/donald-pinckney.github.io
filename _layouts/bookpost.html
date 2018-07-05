@@ -33,16 +33,25 @@ layout: default
     {% assign categories = page.categories %}
   {% endif %}
   {% for category in categories %}
-  <a href="{{site.baseurl}}/books/{{category | downcase}}/book">Read the {{category}} book</a>
+  <a href="{{site.baseurl}}/books/{{category | downcase}}/book">Read this post via the {{category}} book instead</a>
   {% unless forloop.last %}&nbsp;{% endunless %}
   {% endfor %}
 </div>
 
 </span>
 
-  {{ content }}
-</div>
+{% if page.noToc != true %}
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+{% endif %}
 
+{{ content }}
+</div>
 
 
 <div class="related">
