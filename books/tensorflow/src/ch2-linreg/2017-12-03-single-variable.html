@@ -28,7 +28,15 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.4.0 -->
+  <!-- jQuery -->
+  <script src="https://google.com/jsapi"></script>; <script> google.load("jquery", "1"); </script>
+
+  <!-- TOC -->
+  <script src="/public/js/toc.js"></script>
+
+
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
 <title>Single Variable Linear Regression | Donald Pinckney</title>
 <meta name="generator" content="Jekyll v3.7.3" />
 <meta property="og:title" content="Single Variable Linear Regression" />
@@ -226,14 +234,24 @@
   <div class="post-categories">
   
   
-  <a href="/books/tensorflow/book">Read the TensorFlow book</a>
+  <a href="/books/tensorflow/book">Read this post via the TensorFlow book instead</a>
   
   
 </div>
 
 </span>
 
-  <h1 id="single-variable-regression">Single Variable Regression</h1>
+
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+
+
+<h1 id="single-variable-regression">Single Variable Regression</h1>
 
 <p>Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow <a href="#implementation">implementation</a>.</p>
 
@@ -690,7 +708,6 @@ But estimates – created from public health surveys and population models – s
 </div>
 
 </div>
-
 
 
 <div class="related">

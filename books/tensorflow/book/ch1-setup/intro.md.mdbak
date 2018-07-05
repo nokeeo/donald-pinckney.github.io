@@ -28,7 +28,15 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.4.0 -->
+  <!-- jQuery -->
+  <script src="https://google.com/jsapi"></script>; <script> google.load("jquery", "1"); </script>
+
+  <!-- TOC -->
+  <script src="/public/js/toc.js"></script>
+
+
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
 <title>Introduction to Machine Learning with TensorFlow | Donald Pinckney</title>
 <meta name="generator" content="Jekyll v3.7.3" />
 <meta property="og:title" content="Introduction to Machine Learning with TensorFlow" />
@@ -226,14 +234,24 @@
   <div class="post-categories">
   
   
-  <a href="/books/tensorflow/book">Read the TensorFlow book</a>
+  <a href="/books/tensorflow/book">Read this post via the TensorFlow book instead</a>
   
   
 </div>
 
 </span>
 
-  # Introduction
+
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+
+
+# Introduction
 
 Welcome to *Machine Learning with TensorFlow*, an easy to follow book / blog about understanding machine learning concepts and their implementation in [Python](https://www.python.org) and [TensorFlow](https://www.tensorflow.org). My goal is to create an intuitive explanation of machine learning methods, paired with practical knowledge of implementation with TensorFlow. This book does assume some small working knowledge of programming, but Python specific syntax will be briefly introduced as needed.  In addition, some mathematics background will be useful, in particular linear algebra and calculus, but is not needed to follow the intuition and implementation. Resources to review relevant math concepts will be provided as required. Finally, this book is [open source on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/tree/src/books/tensorflow/src), and I would be happy to consider edits, both tiny and large. Feel free to open pull requests with changes to improve this book!
 
@@ -270,7 +288,6 @@ So, without further ado, we can get started by installing Python, TensorFlow, an
 [poodle]: /books/tensorflow/book/ch1-setup/assets/poodle.jpg
 
 </div>
-
 
 
 <div class="related">

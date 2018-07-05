@@ -28,7 +28,15 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.4.0 -->
+  <!-- jQuery -->
+  <script src="https://google.com/jsapi"></script>; <script> google.load("jquery", "1"); </script>
+
+  <!-- TOC -->
+  <script src="/public/js/toc.js"></script>
+
+
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
 <title>Multi Variable Linear Regression | Donald Pinckney</title>
 <meta name="generator" content="Jekyll v3.7.3" />
 <meta property="og:title" content="Multi Variable Linear Regression" />
@@ -226,14 +234,24 @@
   <div class="post-categories">
   
   
-  <a href="/books/tensorflow/book">Read the TensorFlow book</a>
+  <a href="/books/tensorflow/book">Read this post via the TensorFlow book instead</a>
   
   
 </div>
 
 </span>
 
-  # Multi Variable Regression
+
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+
+
+# Multi Variable Regression
 
 In [chapter 2.1](/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html) we learned the basics of TensorFlow by creating a single variable linear regression model. In this chapter we expand this model to handle multiple variables. Note that less time will be spent explaining the basics of TensorFlow: only new concepts will be explained, so feel free to refer to previous chapters as needed.
 
@@ -570,7 +588,6 @@ for t in range(2000):
 [scatter]: /books/tensorflow/book/ch2-linreg/assets/linreg-multi-synthetic-2.png
 
 </div>
-
 
 
 <div class="related">

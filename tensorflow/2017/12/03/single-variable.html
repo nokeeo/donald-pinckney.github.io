@@ -28,7 +28,15 @@
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
 
-  <!-- Begin Jekyll SEO tag v2.4.0 -->
+  <!-- jQuery -->
+  <script src="https://google.com/jsapi"></script>; <script> google.load("jquery", "1"); </script>
+
+  <!-- TOC -->
+  <script src="/public/js/toc.js"></script>
+
+
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
 <title>Single Variable Linear Regression | Donald Pinckney</title>
 <meta name="generator" content="Jekyll v3.7.3" />
 <meta property="og:title" content="Single Variable Linear Regression" />
@@ -226,14 +234,24 @@
   <div class="post-categories">
   
   
-  <a href="/books/tensorflow/book">Read the TensorFlow book</a>
+  <a href="/books/tensorflow/book">Read this post via the TensorFlow book instead</a>
   
   
 </div>
 
 </span>
 
-  <h1 id="single-variable-regression">Single Variable Regression</h1>
+
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+
+
+<h1 id="single-variable-regression">Single Variable Regression</h1>
 
 <p>Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow <a href="#implementation">implementation</a>.</p>
 
@@ -692,10 +710,18 @@ But estimates – created from public health surveys and population models – s
 </div>
 
 
-
 <div class="related">
   <h2>Related Posts</h2>
   <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/metal/2018/06/28/metal-intro-1.html" class="titular">
+            Metal 3D Graphics Part 1: Basic Rendering
+            <small>28 Jun 2018</small>
+          </a>
+        </h3>
+      </li>
     
       <li>
         <h3>
@@ -711,15 +737,6 @@ But estimates – created from public health surveys and population models – s
           <a href="/tensorflow/2017/12/27/optimization.html" class="titular">
             Exploring Optimization Convergence
             <small>27 Dec 2017</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/2017/06/06/content-coming-soon.html" class="titular">
-            A Sneak Peek of What's to Come
-            <small>06 Jun 2017</small>
           </a>
         </h3>
       </li>
