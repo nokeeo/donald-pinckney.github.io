@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Metal 3D Graphics Part 1: Basic Rendering"
-date: 2018-06-28
+date: 2018-07-05
 categories: Metal
 isEditable: true
 editPath: _posts/metal/metal-intro-1.md
