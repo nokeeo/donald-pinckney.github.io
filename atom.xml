@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-07-05T00:28:38-07:00</updated>
+ <updated>2018-07-22T03:40:21-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -22,7 +22,7 @@
 
 &lt;p&gt;Both Metal and OpenGL are low-level APIs that provide programmable access to GPU hardware for 3D graphics. Both allow you to write code that will execute on the GPU to customize how 3D objects are rendered. However, OpenGL tends to hide the communication between the CPU and the GPU, whereas Metal requires you to explicitly program this communication.&lt;/p&gt;
 
-&lt;p&gt;This gives us two advantages: first, it allows for greater efficiency in terms of CPU and GPU communication; and second it provides an excellent learning opportunity to understand how this low-level communication works. But don’t let this scare you: while this might sound horribly complicated, but actually it’s quite elegant and enjoyable code to write.&lt;/p&gt;
+&lt;p&gt;This gives us two advantages: first, it allows for greater efficiency in terms of CPU and GPU communication; and second it provides an excellent learning opportunity to understand how this low-level communication works. But don’t let this scare you: while this might sound horribly complicated, it’s actually quite elegant and enjoyable code to write.&lt;/p&gt;
 
 &lt;p&gt;Finally, a quick note about what this tutorial is and what it isn’t: it is meant to give a brief introduction to the very basics of rendering with Metal, with little or no prior knowledge required about Swift or 3D graphics. Later tutorials will build on this by looking at programming interesting 3D effects in Metal. However, if your goal is to get started quickly with game development, learning Metal is probably not the fastest way to make a game; instead you should look at higher-level game engines, such as &lt;a href=&quot;https://unity3d.com&quot;&gt;Unity&lt;/a&gt; or others.&lt;/p&gt;
 
@@ -37,7 +37,7 @@
 
 &lt;p&gt;In short, a &lt;strong&gt;pipeline&lt;/strong&gt; is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial, and as we go through the code we will break this abstract pipeline into detailed individual components.&lt;/p&gt;
 
-&lt;h1 id=&quot;basic-setup-and-clearing-the-screen&quot;&gt;Basic Setup and Clearing the Screen!&lt;/h1&gt;
+&lt;h1 id=&quot;basic-setup-and-clearing-the-screen&quot;&gt;Basic Setup and Clearing the Screen&lt;/h1&gt;
 
 &lt;h2 id=&quot;creating-a-one-window-macos-app&quot;&gt;Creating a one window macOS app&lt;/h2&gt;
 &lt;p&gt;Open Xcode (make sure to install the latest version of Xcode from the Mac App Store), make a new Xcode project, choose “Cocoa App” under “macOS”, and hit next. Then, fill in whatever you want for the Product Name (I’ll use &lt;code class=&quot;highlighter-rouge&quot;&gt;MetalIntro1&lt;/code&gt;), choose Swift for the language, make sure Use Storyboards is checked, and Create Document-Based Application is &lt;em&gt;not&lt;/em&gt; checked. My settings look like this:&lt;/p&gt;
@@ -120,7 +120,7 @@
 &lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;renderer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Renderer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;At the end of the &lt;code class=&quot;highlighter-rouge&quot;&gt;viewDidLoad&lt;/code&gt; function we create an instance of the &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer&lt;/code&gt; class, and configure the &lt;code class=&quot;highlighter-rouge&quot;&gt;delegate&lt;/code&gt; property:&lt;/p&gt;
+&lt;p&gt;At the end of the &lt;code class=&quot;highlighter-rouge&quot;&gt;viewDidLoad&lt;/code&gt; function we create an instance of the &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer&lt;/code&gt; class and configure the &lt;code class=&quot;highlighter-rouge&quot;&gt;delegate&lt;/code&gt; property:&lt;/p&gt;
 
 &lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;tempRenderer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Renderer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;mtkView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mtkView&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Renderer failed to initialize&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -241,7 +241,7 @@
 &lt;p&gt;Setting up the callback to place it into the &lt;code class=&quot;highlighter-rouge&quot;&gt;MTKView&lt;/code&gt; is very easy, since &lt;code class=&quot;highlighter-rouge&quot;&gt;MTKView&lt;/code&gt; actually provides most of the implementation for us. We just need to tell the &lt;code class=&quot;highlighter-rouge&quot;&gt;commandBuffer&lt;/code&gt; to present into the &lt;code class=&quot;highlighter-rouge&quot;&gt;MTKView&lt;/code&gt;’s drawable:&lt;/p&gt;
 
 &lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Tell Metal to send the rendering result to the MTKView when rendering completes&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;commandBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;present&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDrawable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;commandBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;present&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;view&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentDrawable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;A drawable is simply a resource managed by the &lt;code class=&quot;highlighter-rouge&quot;&gt;MTKView&lt;/code&gt; which Metal can write the result into.&lt;/p&gt;
@@ -618,7 +618,7 @@ Renderer failed to initialize
 
 &lt;p&gt;These concepts are crucial: without them it’s impossible to do any Metal programming. But the good news is that these concepts are mostly the same regardless of what you are doing with Metal: we will add complexity on top of this solid foundation.&lt;/p&gt;
 
-&lt;h1 id=&quot;exercises&quot;&gt;Exercises&lt;/h1&gt;
+&lt;h1 id=&quot;challenges&quot;&gt;Challenges&lt;/h1&gt;
 
 &lt;p&gt;What’s really great and fun about graphics programming is that it is easy to experiment with and try things on your own. Below are some suggestions for things to try; some are more structured than others, but they are roughly sorted in increasing order of difficulty. Do as many as you please!&lt;/p&gt;
 
@@ -629,7 +629,7 @@ Renderer failed to initialize
   &lt;li&gt;Flip the triangle upside down &lt;em&gt;by only modifying &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer.swift&lt;/code&gt;&lt;/em&gt;, so it looks like this: &lt;img src=&quot;/public/post_assets/metal/metal-intro-1/screen6.png&quot; alt=&quot;Upside down triangle&quot; /&gt;.&lt;/li&gt;
   &lt;li&gt;Again flip the triangle upside down &lt;em&gt;but this time only modify &lt;code class=&quot;highlighter-rouge&quot;&gt;Shaders.metal&lt;/code&gt;&lt;/em&gt;.&lt;/li&gt;
   &lt;li&gt;Render a rectangle instead of a triangle.&lt;/li&gt;
-  &lt;li&gt;Try to render a circle &lt;em&gt;by modifying &lt;code class=&quot;highlighter-rouge&quot;&gt;Shaders.metal&lt;/code&gt; only&lt;/em&gt; (you can use rectagle code from 6. in &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer.swift&lt;/code&gt; if you want). Hint: you can use &lt;code class=&quot;highlighter-rouge&quot;&gt;interpolated.pos&lt;/code&gt; to also determine color, BUT it is in unnormalized screen-space! It is fine if you code is hacky and does not work as the window resizes.&lt;/li&gt;
+  &lt;li&gt;Try to render a circle &lt;em&gt;by modifying &lt;code class=&quot;highlighter-rouge&quot;&gt;Shaders.metal&lt;/code&gt; only&lt;/em&gt; (you can use rectangle code from 6. in &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer.swift&lt;/code&gt; if you want). Hint: you can use &lt;code class=&quot;highlighter-rouge&quot;&gt;interpolated.pos&lt;/code&gt; to also determine color, BUT it is in un-normalized screen-space! It is fine if you code is hacky and does not work as the window resizes.&lt;/li&gt;
   &lt;li&gt;Try to render a circle by using the normal code (or single color code) for &lt;code class=&quot;highlighter-rouge&quot;&gt;Shaders.metal&lt;/code&gt;, but by creating a ton of triangles in &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer.swift&lt;/code&gt;.&lt;/li&gt;
   &lt;li&gt;Play around and experiment with whatever you want!&lt;/li&gt;
 &lt;/ol&gt;

@@ -257,7 +257,7 @@
 
 <p>Both Metal and OpenGL are low-level APIs that provide programmable access to GPU hardware for 3D graphics. Both allow you to write code that will execute on the GPU to customize how 3D objects are rendered. However, OpenGL tends to hide the communication between the CPU and the GPU, whereas Metal requires you to explicitly program this communication.</p>
 
-<p>This gives us two advantages: first, it allows for greater efficiency in terms of CPU and GPU communication; and second it provides an excellent learning opportunity to understand how this low-level communication works. But don’t let this scare you: while this might sound horribly complicated, but actually it’s quite elegant and enjoyable code to write.</p>
+<p>This gives us two advantages: first, it allows for greater efficiency in terms of CPU and GPU communication; and second it provides an excellent learning opportunity to understand how this low-level communication works. But don’t let this scare you: while this might sound horribly complicated, it’s actually quite elegant and enjoyable code to write.</p>
 
 <p>Finally, a quick note about what this tutorial is and what it isn’t: it is meant to give a brief introduction to the very basics of rendering with Metal, with little or no prior knowledge required about Swift or 3D graphics. Later tutorials will build on this by looking at programming interesting 3D effects in Metal. However, if your goal is to get started quickly with game development, learning Metal is probably not the fastest way to make a game; instead you should look at higher-level game engines, such as <a href="https://unity3d.com">Unity</a> or others.</p>
 
@@ -272,7 +272,7 @@
 
 <p>In short, a <strong>pipeline</strong> is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial, and as we go through the code we will break this abstract pipeline into detailed individual components.</p>
 
-<h1 id="basic-setup-and-clearing-the-screen">Basic Setup and Clearing the Screen!</h1>
+<h1 id="basic-setup-and-clearing-the-screen">Basic Setup and Clearing the Screen</h1>
 
 <h2 id="creating-a-one-window-macos-app">Creating a one window macOS app</h2>
 <p>Open Xcode (make sure to install the latest version of Xcode from the Mac App Store), make a new Xcode project, choose “Cocoa App” under “macOS”, and hit next. Then, fill in whatever you want for the Product Name (I’ll use <code class="highlighter-rouge">MetalIntro1</code>), choose Swift for the language, make sure Use Storyboards is checked, and Create Document-Based Application is <em>not</em> checked. My settings look like this:</p>
@@ -355,7 +355,7 @@
 <div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">renderer</span><span class="p">:</span> <span class="kt">Renderer</span><span class="o">!</span>
 </code></pre></div></div>
 
-<p>At the end of the <code class="highlighter-rouge">viewDidLoad</code> function we create an instance of the <code class="highlighter-rouge">Renderer</code> class, and configure the <code class="highlighter-rouge">delegate</code> property:</p>
+<p>At the end of the <code class="highlighter-rouge">viewDidLoad</code> function we create an instance of the <code class="highlighter-rouge">Renderer</code> class and configure the <code class="highlighter-rouge">delegate</code> property:</p>
 
 <div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">guard</span> <span class="k">let</span> <span class="nv">tempRenderer</span> <span class="o">=</span> <span class="kt">Renderer</span><span class="p">(</span><span class="nv">mtkView</span><span class="p">:</span> <span class="n">mtkView</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Renderer failed to initialize"</span><span class="p">)</span>
@@ -476,7 +476,7 @@
 <p>Setting up the callback to place it into the <code class="highlighter-rouge">MTKView</code> is very easy, since <code class="highlighter-rouge">MTKView</code> actually provides most of the implementation for us. We just need to tell the <code class="highlighter-rouge">commandBuffer</code> to present into the <code class="highlighter-rouge">MTKView</code>’s drawable:</p>
 
 <div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Tell Metal to send the rendering result to the MTKView when rendering completes</span>
-<span class="n">commandBuffer</span><span class="o">.</span><span class="nf">present</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">currentDrawable</span><span class="p">)</span>
+<span class="n">commandBuffer</span><span class="o">.</span><span class="nf">present</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">currentDrawable</span><span class="o">!</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>A drawable is simply a resource managed by the <code class="highlighter-rouge">MTKView</code> which Metal can write the result into.</p>
@@ -853,7 +853,7 @@ Renderer failed to initialize
 
 <p>These concepts are crucial: without them it’s impossible to do any Metal programming. But the good news is that these concepts are mostly the same regardless of what you are doing with Metal: we will add complexity on top of this solid foundation.</p>
 
-<h1 id="exercises">Exercises</h1>
+<h1 id="challenges">Challenges</h1>
 
 <p>What’s really great and fun about graphics programming is that it is easy to experiment with and try things on your own. Below are some suggestions for things to try; some are more structured than others, but they are roughly sorted in increasing order of difficulty. Do as many as you please!</p>
 
@@ -864,7 +864,7 @@ Renderer failed to initialize
   <li>Flip the triangle upside down <em>by only modifying <code class="highlighter-rouge">Renderer.swift</code></em>, so it looks like this: <img src="/public/post_assets/metal/metal-intro-1/screen6.png" alt="Upside down triangle" />.</li>
   <li>Again flip the triangle upside down <em>but this time only modify <code class="highlighter-rouge">Shaders.metal</code></em>.</li>
   <li>Render a rectangle instead of a triangle.</li>
-  <li>Try to render a circle <em>by modifying <code class="highlighter-rouge">Shaders.metal</code> only</em> (you can use rectagle code from 6. in <code class="highlighter-rouge">Renderer.swift</code> if you want). Hint: you can use <code class="highlighter-rouge">interpolated.pos</code> to also determine color, BUT it is in unnormalized screen-space! It is fine if you code is hacky and does not work as the window resizes.</li>
+  <li>Try to render a circle <em>by modifying <code class="highlighter-rouge">Shaders.metal</code> only</em> (you can use rectangle code from 6. in <code class="highlighter-rouge">Renderer.swift</code> if you want). Hint: you can use <code class="highlighter-rouge">interpolated.pos</code> to also determine color, BUT it is in un-normalized screen-space! It is fine if you code is hacky and does not work as the window resizes.</li>
   <li>Try to render a circle by using the normal code (or single color code) for <code class="highlighter-rouge">Shaders.metal</code>, but by creating a ton of triangles in <code class="highlighter-rouge">Renderer.swift</code>.</li>
   <li>Play around and experiment with whatever you want!</li>
 </ol>
