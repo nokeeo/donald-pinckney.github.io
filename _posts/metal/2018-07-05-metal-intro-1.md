@@ -27,7 +27,7 @@ Rendering a 2D multi-colored triangle is the hello world program for graphics, a
 
 In short, a **pipeline** is a series of pre-configured steps that the GPU hardware takes to turn a bunch of vertex data into a final rendered image. Modern 3D graphics requires being able to program exactly what happens inside of the pipeline, and describing the pipeline via code is the central concept in Metal programming. Programming a simple pipeline that can render a single 2D triangle is the goal of this tutorial, and as we go through the code we will break this abstract pipeline into detailed individual components.
 
-# Basic Setup and Clearing the Screen!
+# Basic Setup and Clearing the Screen
 
 ## Creating a one window macOS app
 Open Xcode (make sure to install the latest version of Xcode from the Mac App Store), make a new Xcode project, choose "Cocoa App" under "macOS", and hit next. Then, fill in whatever you want for the Product Name (I'll use `MetalIntro1`), choose Swift for the language, make sure Use Storyboards is checked, and Create Document-Based Application is *not* checked. My settings look like this:
