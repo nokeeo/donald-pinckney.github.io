@@ -12,7 +12,7 @@ editPath: _posts/metal/metal-intro-1.md
 
 Both Metal and OpenGL are low-level APIs that provide programmable access to GPU hardware for 3D graphics. Both allow you to write code that will execute on the GPU to customize how 3D objects are rendered. However, OpenGL tends to hide the communication between the CPU and the GPU, whereas Metal requires you to explicitly program this communication. 
 
-This gives us two advantages: first, it allows for greater efficiency in terms of CPU and GPU communication; and second it provides an excellent learning opportunity to understand how this low-level communication works. But don't let this scare you: while this might sound horribly complicated, but actually it's quite elegant and enjoyable code to write.
+This gives us two advantages: first, it allows for greater efficiency in terms of CPU and GPU communication; and second it provides an excellent learning opportunity to understand how this low-level communication works. But don't let this scare you: while this might sound horribly complicated, it's actually quite elegant and enjoyable code to write.
 
 Finally, a quick note about what this tutorial is and what it isn't: it is meant to give a brief introduction to the very basics of rendering with Metal, with little or no prior knowledge required about Swift or 3D graphics. Later tutorials will build on this by looking at programming interesting 3D effects in Metal. However, if your goal is to get started quickly with game development, learning Metal is probably not the fastest way to make a game; instead you should look at higher-level game engines, such as [Unity][unity website] or others.
 
@@ -116,7 +116,7 @@ Now that we have this skeleton class, we can create an instance in the `viewDidL
 var renderer: Renderer!
 ```
 
-At the end of the `viewDidLoad` function we create an instance of the `Renderer` class, and configure the `delegate` property:
+At the end of the `viewDidLoad` function we create an instance of the `Renderer` class and configure the `delegate` property:
 
 ```swift
 guard let tempRenderer = Renderer(mtkView: mtkView) else {
