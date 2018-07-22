@@ -636,7 +636,7 @@ This post covered a lot of material; to recap, we saw how to:
 
 These concepts are crucial: without them it's impossible to do any Metal programming. But the good news is that these concepts are mostly the same regardless of what you are doing with Metal: we will add complexity on top of this solid foundation.
 
-# Exercises
+# Challenges
 
 What's really great and fun about graphics programming is that it is easy to experiment with and try things on your own. Below are some suggestions for things to try; some are more structured than others, but they are roughly sorted in increasing order of difficulty. Do as many as you please!
 
