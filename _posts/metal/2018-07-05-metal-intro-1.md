@@ -244,7 +244,7 @@ Setting up the callback to place it into the `MTKView` is very easy, since `MTKV
 
 ```swift
 // Tell Metal to send the rendering result to the MTKView when rendering completes
-commandBuffer.present(view.currentDrawable)
+commandBuffer.present(view.currentDrawable!)
 ```
 
 A drawable is simply a resource managed by the `MTKView` which Metal can write the result into.
