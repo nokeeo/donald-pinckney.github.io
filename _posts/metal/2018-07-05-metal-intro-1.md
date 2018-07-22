@@ -646,7 +646,7 @@ What's really great and fun about graphics programming is that it is easy to exp
 4. Flip the triangle upside down *by only modifying `Renderer.swift`*, so it looks like this: ![Upside down triangle][screen6].
 5. Again flip the triangle upside down *but this time only modify `Shaders.metal`*.
 6. Render a rectangle instead of a triangle.
-7. Try to render a circle *by modifying `Shaders.metal` only* (you can use rectagle code from 6. in `Renderer.swift` if you want). Hint: you can use `interpolated.pos` to also determine color, BUT it is in unnormalized screen-space! It is fine if you code is hacky and does not work as the window resizes.
+7. Try to render a circle *by modifying `Shaders.metal` only* (you can use rectangle code from 6. in `Renderer.swift` if you want). Hint: you can use `interpolated.pos` to also determine color, BUT it is in un-normalized screen-space! It is fine if you code is hacky and does not work as the window resizes.
 8. Try to render a circle by using the normal code (or single color code) for `Shaders.metal`, but by creating a ton of triangles in `Renderer.swift`.
 9. Play around and experiment with whatever you want!
 
