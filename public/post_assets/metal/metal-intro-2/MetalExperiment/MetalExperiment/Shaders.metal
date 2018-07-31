@@ -24,7 +24,7 @@ vertex VertexOut vertexShader(const device Vertex *vertexArray [[buffer(0)]], un
     return out;
 }
 
-fragment float4 fragmentShader(VertexOut interpolated [[stage_in]])
+fragment float4 fragmentShader(VertexOut interpolated [[stage_in]], constant FragmentUniforms &uniforms [[buffer(0)]])
 {
-    return interpolated.color;
+    return float4(uniforms.brightness * interpolated.color.rgb, interpolated.color.a);
 }

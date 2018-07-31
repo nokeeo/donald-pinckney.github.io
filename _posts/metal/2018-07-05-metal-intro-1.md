@@ -380,7 +380,7 @@ struct Vertex {
 
 We have the data structure for vertex data ready, so now we can make our shaders. Create a new file, and this time choose "Metal file", and name it `Shaders.metal`. Now, the vertex shader is a function, which converts input vertex data into final locations of vertices on the screen. It is declared like any C / C++ function, but with a special keyword so Metal knows that it is a vertex shader. Similarly, a fragment shader is a function that converts interpolated data into a final pixel color, and also has a special keyword. Add the following to `Shaders.metal`:
 
-```metal
+```c++
 // TODO: We need to change the parameters and return types of the shaders.
 
 vertex void vertexShader()

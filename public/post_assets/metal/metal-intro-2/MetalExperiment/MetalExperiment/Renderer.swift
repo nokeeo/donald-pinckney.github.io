@@ -2,13 +2,21 @@
 import Foundation
 import Metal
 import MetalKit
+import CoreGraphics
 
 class Renderer : NSObject, MTKViewDelegate {
     
     let device: MTLDevice
     let commandQueue: MTLCommandQueue
     let pipelineState: MTLRenderPipelineState
+    
     let vertexBuffer: MTLBuffer
+    let fragmentUniformsBuffer: MTLBuffer
+    
+    var lastRenderTime: CFTimeInterval? = nil
+    var currentTime: Double = 0
+    
+    let gpuLock = DispatchSemaphore(value: 1)
     
     // This is the initializer for the Renderer class.
     // We will need access to the mtkView later, so we add it as a parameter here.
@@ -30,6 +38,10 @@ class Renderer : NSObject, MTKViewDelegate {
                         Vertex(color: [0, 1, 0, 1], pos: [0, 1]),
                         Vertex(color: [0, 0, 1, 1], pos: [1, -1])]
         vertexBuffer = device.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<Vertex>.stride, options: [])!
+        
+        // Create our uniform buffer, and fill it with an initial brightness of 1.0
+        var initialFragmentUniforms = FragmentUniforms(brightness: 1.0)
+        fragmentUniformsBuffer = device.makeBuffer(bytes: &initialFragmentUniforms, length: MemoryLayout<FragmentUniforms>.stride, options: [])!
     }
     
     // Create our custom rendering pipeline, which loads shaders using `device`, and outputs to the format of `metalKitView`
@@ -49,9 +61,27 @@ class Renderer : NSObject, MTKViewDelegate {
         return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
     
+    func update(dt: CFTimeInterval) {
+        let ptr = fragmentUniformsBuffer.contents().bindMemory(to: FragmentUniforms.self, capacity: 1)
+        ptr.pointee.brightness = Float(0.5 * cos(currentTime) + 0.5)
+        
+        currentTime += dt
+    }
+    
     // mtkView will automatically call this function
     // whenever it wants new content to be rendered.
     func draw(in view: MTKView) {
+        
+        // Compute dt
+        let currentTime = CACurrentMediaTime()
+        let timeDifference = (lastRenderTime == nil) ? 0 : (currentTime - lastRenderTime!)
+        lastRenderTime = currentTime
+        
+        gpuLock.wait()
+        
+        // Update state
+        update(dt: timeDifference)
+        
         // Get an available command buffer
         guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
         
@@ -67,8 +97,13 @@ class Renderer : NSObject, MTKViewDelegate {
         // Setup render commands to encode
         // We tell it what render pipeline to use
         renderEncoder.setRenderPipelineState(pipelineState)
+        
         // What vertex buffer data to use
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        
+        // Bind the fragment uniforms
+        renderEncoder.setFragmentBuffer(fragmentUniformsBuffer, offset: 0, index: 0)
+        
         // And what to draw
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
         
@@ -77,6 +112,10 @@ class Renderer : NSObject, MTKViewDelegate {
         
         // Tell Metal to send the rendering result to the MTKView when rendering completes
         commandBuffer.present(view.currentDrawable!)
+        
+        commandBuffer.addCompletedHandler { finishedCommandBuffer in
+            self.gpuLock.signal()
+        }
         
         // Finally, send the encoded command buffer to the GPU.
         commandBuffer.commit()
