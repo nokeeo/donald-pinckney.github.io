@@ -31,7 +31,7 @@ Right now we can render a triangle, but the output of the rendering is always id
 
 ![Colored Triangle with Changing Brightness][screen1]
 
-Let's brainstorm how we could accomplish this effect.  We currently have a `MTLBuffer` that contains the vertex data for drawing the triangle. Each vertex data contains the position and color. The vertexdata we currently have in it is:
+Let's brainstorm how we could accomplish this effect.  We currently have a `MTLBuffer` that contains the vertex data for drawing the triangle. Each vertex data contains the position and color. The vertex data we currently have in it is:
 
 | Color        | Position |
 |--------------|----------|
@@ -47,7 +47,7 @@ Since we are describing the color of each vertex in this buffer, what we could d
 | (0, 0.9, 0, 1) | (0, 1)   |
 | (0, 0, 0.9, 1) | (1, -1)  |
 
-to make the triangle a bit darker, and so on. Now, this strategy can work, but it's a poor way to go about it. Consider what happens if we have a ton (millions?) of vertices to render complex shapes. To adjust the brightness of the complex shapes we would need to change the color data for all of the millions of vertices, using the CPU. The amount of work the CPU has to do grows linearly with the number of vertices, which is bad news when you want to have a complex scene with lots of vertices.
+to make the triangle a bit darker, and so on. Now, this strategy can work, but it's a poor way to go about it. Consider what happens if we have a ton of vertices to render complex shapes. To adjust the brightness of the complex shapes we would need to change the color data for all of the vertices using the CPU. The amount of work the CPU has to do grows linearly with the number of vertices, which is bad news when you want to have a complex scene with lots of vertices.
 
 We can instead achieve this effect by modifying our shader code to make it a bit more general. How can we mathematically make a color darker or brighter? Since bright red is `(1, 0, 0, 1)` and the darkest red (that is, pure black) is `(0, 0, 0, 1)`, we can simply multiply our color by a number between 0 and 1:
 \\[
