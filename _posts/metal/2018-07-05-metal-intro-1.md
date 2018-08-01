@@ -626,6 +626,7 @@ Congratulations, you have just learned most of the fundamentals behind Metal. Pe
 For reference the complete sample project is [available for download here][project_link].
 
 # Concluding Remarks
+
 This post covered a lot of material; to recap, we saw how to:
 1. Setup a MetalKit view in a native macOS app.
 2. Manage a `MTLCommandQueue` and `MTLCommandBuffer` objects to send commands to the GPU.

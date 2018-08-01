@@ -2,7 +2,6 @@
 import Foundation
 import Metal
 import MetalKit
-import CoreGraphics
 
 class Renderer : NSObject, MTKViewDelegate {
     
@@ -13,7 +12,9 @@ class Renderer : NSObject, MTKViewDelegate {
     let vertexBuffer: MTLBuffer
     let fragmentUniformsBuffer: MTLBuffer
     
+    // This keeps track of the system time of the last render
     var lastRenderTime: CFTimeInterval? = nil
+    // This is the current time in our app, starting at 0, in units of seconds
     var currentTime: Double = 0
     
     let gpuLock = DispatchSemaphore(value: 1)
@@ -73,9 +74,10 @@ class Renderer : NSObject, MTKViewDelegate {
     func draw(in view: MTKView) {
         
         // Compute dt
-        let currentTime = CACurrentMediaTime()
-        let timeDifference = (lastRenderTime == nil) ? 0 : (currentTime - lastRenderTime!)
-        lastRenderTime = currentTime
+        let systemTime = CACurrentMediaTime()
+        let timeDifference = (lastRenderTime == nil) ? 0 : (systemTime - lastRenderTime!)
+        // Save this system time
+        lastRenderTime = systemTime
         
         gpuLock.wait()
         
@@ -127,3 +129,41 @@ class Renderer : NSObject, MTKViewDelegate {
         
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

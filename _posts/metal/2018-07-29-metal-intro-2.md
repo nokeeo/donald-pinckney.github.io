@@ -145,12 +145,72 @@ Once you are done experiment with it, set the initial value back to `1.0`.
 
 # Animating the brightness
 
-Right now we have uniform data being initialized on the CPU, and passed to the GPU. But what we really want to do is animate the brightness of the triangle, which means we want to modify the brightness uniform on each frame.
+## Keeping track of time
 
-[screen1]: /public/post_assets/metal/metal-intro-2/screen1.png
+Right now we have uniform data being initialized on the CPU, and passed to the GPU. But what we really want to do is animate the brightness of the triangle, which means we want to modify the brightness uniform on each frame. The first thing we need to do is start keeping track of time, so that we can base the brightness off of the current time. Our strategy is:
+
+1. Keep track of our app's time with a variable `currentTime`.
+2. On each frame compute the difference in time between the current frame and the previous frame. To do so we will have to store the system time of the previous frame in a variable `lastRenderTime`.
+3. Use the time difference to update `currentTime`.
+
+We start by adding these instance variables to the `Renderer` class:
+
+```swift
+// This keeps track of the system time of the last render
+var lastRenderTime: CFTimeInterval? = nil
+// This is the current time in our app, starting at 0, in units of seconds
+var currentTime: Double = 0
+```
+
+Now at the top of `draw(in view: MTKView)` we compute the time difference, save the system time to `lastRenderTime`, and then use the time difference to update the state:
+
+```swift
+// Compute dt
+let systemTime = CACurrentMediaTime()
+let timeDifference = (lastRenderTime == nil) ? 0 : (systemTime - lastRenderTime!)
+// Save this system time
+lastRenderTime = systemTime
+
+// Update state
+update(dt: timeDifference) //
+```
+
+## Updating state
+
+Now we just need to implement this `update` function to update the `currentTime`, and change the brightness:
+
+```swift
+func update(dt: CFTimeInterval) {
+    let ptr = fragmentUniformsBuffer.contents().bindMemory(to: FragmentUniforms.self, capacity: 1)
+    ptr.pointee.brightness = Float(0.5 * cos(currentTime) + 0.5)
+
+    currentTime += dt
+}
+```
+
+First, we access the memory location of the uniform buffer via `.contents()`, and then tell Swift to interpret the memory location as a pointer to a `FragmentUniforms` struct (which it is). Then, we write to the `brightness` field, setting the brightness to be a cosine wave based on the current time. Using a cosine wave makes the brightness start at 1, and then smoothly animate between 1 and 0:
+
+![cosine wave][cosine]
+
+Finally, we update the `currentTime` by adding the time difference. If you run this code now, you should see exactly what we were hoping for, a triangle with smoothly animating brightness:
+
+![animating triangle][screen1]
+
+## Synchronizing the CPU and GPU
+
+
+
+# Concluding Remarks
+
+
+
+# Challenges
+
+[screen1]: /public/post_assets/metal/metal-intro-2/screen1.gif
 [screen2]: /public/post_assets/metal/metal-intro-2/screen2.png
+[cosine]: /public/post_assets/metal/metal-intro-2/cosine.png
 
-[prevous post]: /metal/2018/07/05/metal-intro-1.html
+[previous post]: /metal/2018/07/05/metal-intro-1.html
 [metal website]: https://developer.apple.com/metal/
 
 [doc_mtldevice]: https://developer.apple.com/documentation/metal/mtldevice
