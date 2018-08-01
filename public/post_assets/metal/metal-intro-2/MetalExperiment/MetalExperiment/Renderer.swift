@@ -73,13 +73,13 @@ class Renderer : NSObject, MTKViewDelegate {
     // whenever it wants new content to be rendered.
     func draw(in view: MTKView) {
         
+        gpuLock.wait()
+        
         // Compute dt
         let systemTime = CACurrentMediaTime()
         let timeDifference = (lastRenderTime == nil) ? 0 : (systemTime - lastRenderTime!)
         // Save this system time
         lastRenderTime = systemTime
-        
-        gpuLock.wait()
         
         // Update state
         update(dt: timeDifference)
@@ -115,7 +115,7 @@ class Renderer : NSObject, MTKViewDelegate {
         // Tell Metal to send the rendering result to the MTKView when rendering completes
         commandBuffer.present(view.currentDrawable!)
         
-        commandBuffer.addCompletedHandler { finishedCommandBuffer in
+        commandBuffer.addCompletedHandler { _ in
             self.gpuLock.signal()
         }
         
@@ -129,41 +129,3 @@ class Renderer : NSObject, MTKViewDelegate {
         
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

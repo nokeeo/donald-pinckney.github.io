@@ -198,17 +198,64 @@ Finally, we update the `currentTime` by adding the time difference. If you run t
 
 ## Synchronizing the CPU and GPU
 
+Unfortunately, the code we currently have is subtly bugged. The output looks fine, but there is actually a race condition that may or may not manifest itself in the future. It's actually an easy fix, but we need to understand what is happening in terms of CPU and GPU coordination. 
 
+Each time `draw(in view: MTKView)` is called (60 times per second), we use the CPU to update the uniform data, and then tell the GPU to go and render using that uniform data *asynchronously*. Let's lay the rendering of the first 3 frames in a timeline:
 
-# Concluding Remarks
+![timeline1][timeline1]
 
+This is fine, and there are not really any problems with this. But what happens if our rendering starts to take too long? Something like this:
 
+![timeline2][timeline2]
+
+In the red highlighted areas, there is a big problem. The GPU is reading from the uniforms buffer while the CPU is simultaneously writing to it (remember, they both share the same physical memory). What exactly will happen here is anyone's guess: it could crash (though this would be far too forgiving), subtly introduce incorrectly rendered pixels, or have no visible effect. It's hard to predict, and hard to track down later. Ignoring this bug that isn't immediately affecting us is the embodiment of this meme:
+
+![dog in burning house][fine]
+
+(Image credit: KC Green, The Nib). The solution is to synchronize the CPU and GPU. What we want to ensure is that the writing to the uniforms buffer by the CPU can not overlap with the GPU's rendering. We accomplish this by using a [semaphore][semaphore]. Let's code it really fast, and then explain how the code works. Add this instance variable to the `Renderer` class:
+
+```swift
+let gpuLock = DispatchSemaphore(value: 1)
+```
+
+This creates the semaphore we will use. Then at the very top of `draw(in view: MTKView)` add:
+
+```swift
+gpuLock.wait()
+```
+
+Finally, just before `commandBuffer.commit()`, add:
+
+```swift
+commandBuffer.addCompletedHandler { _ in
+    self.gpuLock.signal()
+}
+```
+
+That's all the code we need to add. Let's walk through how this exactly works. We first initialize the semaphore with a value of `1`. Then, when we call `wait` one of two things happen:
+
+1. If the semaphore value is greater than 0, it is decremented by 1, and execution continues.
+2. If the semaphore value is 0, then the CPU waits until the value is greater than 0, after which it will decrement it and continue executing.
+
+So when `draw(in view: MTKView)` is called the first time, the value is 1, so `wait` changes the value to 0 and moves on. We then update uniforms and encode the drawing. Before the GPU starts drawing (`commandBuffer.commit()`), we add a completion handler that will call `signal` when the GPU is done drawing. All `signal` does is increment the semaphore's value by 1.
+
+This means that the next time `draw(in view: MTKView)` is called the CPU will wait to start modifying the uniforms until the previous rendering is complete, which ensures that we do not read and write to the uniforms simultaneously.
+
+The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. 
 
 # Challenges
+
+1. We are currently computing the `brightness` using `cos()` on the CPU, and passing this to the GPU. Instead, try to pass the `currentTime` to the GPU, and compute the `brightness` on the GPU.
+2. I wrote this post as passing the `brightness` uniform to the fragment shader. But we can accomplish the exact same thing by passing the `brightness` uniform to the vertex shader instead, and in the vertex shader modify the vertex colors before interpolation.
+3. In challenge #2 you achieved the exact same effect by modifying the vertex colors in the vertex shader instead of the fragment shader. Will this always be the case? As an example, try taking the `sqrt()` of each RGB color component in the vertex shader and compare to doing it in the fragment shader. Are they identical?
+4. Use a time uniform to cause the triangle to grow and shrink. (Hint: what happens if you multiply the vertex positions by a number less than 1 or greater than 1?)
 
 [screen1]: /public/post_assets/metal/metal-intro-2/screen1.gif
 [screen2]: /public/post_assets/metal/metal-intro-2/screen2.png
 [cosine]: /public/post_assets/metal/metal-intro-2/cosine.png
+[timeline1]: /public/post_assets/metal/metal-intro-2/timeline1.png
+[timeline2]: /public/post_assets/metal/metal-intro-2/timeline2.png
+[fine]: /public/post_assets/metal/metal-intro-2/fine.jpg
 
 [previous post]: /metal/2018/07/05/metal-intro-1.html
 [metal website]: https://developer.apple.com/metal/
@@ -221,6 +268,8 @@ Finally, we update the `currentTime` by adding the time difference. If you run t
 [doc_MTLRenderPassDescriptor]: https://developer.apple.com/documentation/metal/MTLRenderPassDescriptor
 [doc_MTLRenderCommandEncoder]: https://developer.apple.com/documentation/metal/MTLRenderCommandEncoder
 [doc_MTLBuffer]: https://developer.apple.com/documentation/metal/MTLBuffer
+
+[semaphore]: https://en.wikipedia.org/wiki/Semaphore_(programming)
 
 
 
