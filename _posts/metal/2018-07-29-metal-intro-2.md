@@ -172,7 +172,7 @@ let timeDifference = (lastRenderTime == nil) ? 0 : (systemTime - lastRenderTime!
 lastRenderTime = systemTime
 
 // Update state
-update(dt: timeDifference) //
+update(dt: timeDifference) // TODO: We need to implement this function!
 ```
 
 ## Updating state
