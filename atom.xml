@@ -4,13 +4,294 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-07-22T03:40:21-07:00</updated>
+ <updated>2018-08-01T09:16:13-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
    <email>donald_pinckney@icloud.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization</title>
+   <link href="https://donaldpinckney.com/metal/2018/07/27/metal-intro-2.html"/>
+   <updated>2018-07-27T00:00:00-07:00</updated>
+   <id>https://donaldpinckney.com/metal/2018/07/27/metal-intro-2</id>
+   <content type="html">&lt;h1 id=&quot;recap&quot;&gt;Recap&lt;/h1&gt;
+
+&lt;p&gt;In the &lt;a href=&quot;/metal/2018/07/05/metal-intro-1.html&quot;&gt;previous post&lt;/a&gt; we setup the necessary basic code to render a multi-colored triangle using &lt;a href=&quot;https://developer.apple.com/metal/&quot;&gt;Metal&lt;/a&gt;. By doing so we learned about the fundamental concepts of the Metal API:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/mtldevice&quot;&gt;MTLDevice&lt;/a&gt; represents the actual GPU.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLRenderPipelineDescriptor&quot;&gt;MTLRenderPipelineDescriptor&lt;/a&gt; / &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLRenderPipelineState&quot;&gt;MTLRenderPipelineState&lt;/a&gt; describes what the render pipeline consists of. In particular, this is where we specify what vertex and fragment shaders to use. A &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLRenderPipelineState&lt;/code&gt; is just a compiled version of a &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLRenderPipelineDescriptor&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLCommandQueue&quot;&gt;MTLCommandQueue&lt;/a&gt; keeps track of many &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLCommandBuffer&lt;/code&gt;s that are waiting in line to be executed.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLCommandBuffer&quot;&gt;MTLCommandBuffer&lt;/a&gt; represents the entire set of information the GPU needs to execute this pipeline: it contains the pipeline info itself, as well as vertex data and drawing commands that will be fed into the pipeline by the GPU.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLRenderPassDescriptor&quot;&gt;MTLRenderPassDescriptor&lt;/a&gt; is used to configure the interface of the pipeline, but not the interior of the pipeline. It is like the 2 openings of the pipe. For example, a &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLRenderPassDescriptor&lt;/code&gt; contains information such as the destination resolution to render to. This information is included in each &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLCommandBuffer&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLRenderCommandEncoder&quot;&gt;MTLRenderCommandEncoder&lt;/a&gt; is used to prepare the vertex data and drawing commands that will be fed into the pipeline.&lt;/li&gt;
+  &lt;li&gt;A &lt;a href=&quot;https://developer.apple.com/documentation/metal/MTLBuffer&quot;&gt;MTLBuffer&lt;/a&gt; represents a chunk of data which can be accessed by either the CPU and GPU. We used a &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; to create the vertex data on the CPU, and let the GPU access it in the shader code.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We managed to render a triangle, which looks like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-1/screen1.png&quot; alt=&quot;Colored Triangle&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This post will build on top of the last post by adding what is called &lt;strong&gt;uniform data&lt;/strong&gt; (or just &lt;strong&gt;uniforms&lt;/strong&gt;) to the rendering process. Use your code from the previous post, or feel free to &lt;a href=&quot;/public/post_assets/metal/metal-intro-1/MetalIntro1.zip&quot;&gt;download my code&lt;/a&gt; and use it.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-a-uniform-and-what-is-it-good-for&quot;&gt;What is a uniform, and what is it good for?&lt;/h1&gt;
+
+&lt;p&gt;Right now we can render a triangle, but the output of the rendering is always identical. Having the rendering output be different each frame is necessary for almost any real-time graphics application: for example, every 3D video game needs to move the camera around. In future posts we will actually look at moving the camera around in a 3D scene, but for now we will settle for something more modest; a triangle that changes brightness overtime:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/screen1.gif&quot; alt=&quot;Colored Triangle with Changing Brightness&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s brainstorm how we could accomplish this effect.  We currently have a &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; that contains the vertex data for drawing the triangle. Each vertex data contains the position and color. The vertex data we currently have in it is:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Color&lt;/th&gt;
+      &lt;th&gt;Position&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(1, 0, 0, 1)&lt;/td&gt;
+      &lt;td&gt;(-1, -1)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(0, 1, 0, 1)&lt;/td&gt;
+      &lt;td&gt;(0, 1)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(0, 0, 1, 1)&lt;/td&gt;
+      &lt;td&gt;(1, -1)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Since we are describing the color of each vertex in this buffer, what we could do is modify the color of each vertex during every new frame. For example, during the second frame we could change the vertex buffer data to:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Color&lt;/th&gt;
+      &lt;th&gt;Position&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(0.9, 0, 0, 1)&lt;/td&gt;
+      &lt;td&gt;(-1, -1)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(0, 0.9, 0, 1)&lt;/td&gt;
+      &lt;td&gt;(0, 1)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(0, 0, 0.9, 1)&lt;/td&gt;
+      &lt;td&gt;(1, -1)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;to make the triangle a bit darker, and so on. Now, this strategy can work, but it’s a poor way to go about it. Consider what happens if we have a ton of vertices to render complex shapes. To adjust the brightness of the complex shapes we would need to change the color data for all of the vertices using the CPU. The amount of work the CPU has to do grows linearly with the number of vertices, which is bad news when you want to have a complex scene with lots of vertices.&lt;/p&gt;
+
+&lt;p&gt;We can instead achieve this effect by modifying our shader code to make it a bit more general. How can we mathematically make a color darker or brighter? Since bright red is &lt;code class=&quot;highlighter-rouge&quot;&gt;(1, 0, 0, 1)&lt;/code&gt; and the darkest red (that is, pure black) is &lt;code class=&quot;highlighter-rouge&quot;&gt;(0, 0, 0, 1)&lt;/code&gt;, we can simply multiply our color by a number between 0 and 1:
+\[
+    \tilde{c} = c \cdot brightness, \;\; brightness \in [0, 1] 
+\]&lt;/p&gt;
+
+&lt;p&gt;For example, if \(c = (1, 0, 0)\), and \(brightness = 0.9\), then the final color output would be the almost fully-bright red \(\tilde{c} = (0.9, 0, 0)\).&lt;/p&gt;
+
+&lt;p&gt;Now, this \(brightness\) variable is what we call a &lt;strong&gt;uniform&lt;/strong&gt;. Like vertex data we use it in our shaders to affect the final pixel color, but it is &lt;em&gt;uniform&lt;/em&gt; across all the vertices. While there are 3 vertices, each with different position and color data, there is only 1 \(brightness\) value. I like to think of it as a knob on the control panel of our shader: our shader will take in the vertex data and accordingly render a triangle, and the \(brightness\) know provides a way to adjust the brightness of the rendering output. And who is responsible for turning the knob? The CPU is.&lt;/p&gt;
+
+&lt;p&gt;Each frame the CPU can update the brightness, a single floating point number, to affect the rendering of the entire triangle. Much more efficient than modifying every vertex’s color data!&lt;/p&gt;
+
+&lt;h1 id=&quot;adding-uniform-parameters-to-the-shader-code&quot;&gt;Adding uniform parameters to the shader code&lt;/h1&gt;
+
+&lt;p&gt;Enough talk, let’s get on with the code! We will start by first adding the code for our brightness uniform to the shaders. In pseduo-Metal-code, we want to write something like this for our fragment shader:&lt;/p&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;fragment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;fragmentShader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VertexOut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interpolated&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stage_in&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;brightness&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interpolated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;However, this isn’t quite right for 2 reasons: the first is obvious, we need to define the variable &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt;. The second reason will be discussed soon. So how do we define &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt;? That is, how does the CPU pass data (the value of &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt;) to the GPU? It works in essentially the same way as vertex data: we use a &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; on the CPU side, and a &lt;code class=&quot;highlighter-rouge&quot;&gt;[[buffer(0)]]&lt;/code&gt; on the GPU side, just like the vertex buffer data that is passed to the vertex shader. First, crack open &lt;code class=&quot;highlighter-rouge&quot;&gt;ShaderDefinitions.h&lt;/code&gt; and add the following &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; definition:&lt;/p&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FragmentUniforms&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;brightness&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is a &lt;code class=&quot;highlighter-rouge&quot;&gt;struct&lt;/code&gt; that will hold all of the uniforms that will be passed to our fragment shader. Right now it only contains one uniform, &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt;. Then we can add it as a buffer parameter to the fragment shader, and use the &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; member of the struct to do the multiplication:&lt;/p&gt;
+
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;fragment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;fragmentShader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VertexOut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interpolated&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stage_in&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FragmentUniforms&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniforms&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]])&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniforms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;brightness&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interpolated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rgb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;interpolated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;While this code isn’t entirely foreign looking since it is similar to the vertex buffer parameter, there are some differences to walk through. Most importantly, we declare the buffer parameter to be &lt;code class=&quot;highlighter-rouge&quot;&gt;constant&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;device&lt;/code&gt; because each pixel that is rendered will access the same memory location of the buffer (just the since &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; member). We also have the parameter be a reference (&lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;&lt;/code&gt;) instead of a pointer (&lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt;). They are quite similar and both perform the role of referencing a location in memory, but references can’t be used to reference an &lt;em&gt;array&lt;/em&gt; of structs, just a single struct. We will not have an array of &lt;code class=&quot;highlighter-rouge&quot;&gt;FragmentUniforms&lt;/code&gt;, unlike for the vertex buffer where we did have an array of 3 &lt;code class=&quot;highlighter-rouge&quot;&gt;Vertex&lt;/code&gt; structs. Since we don’t have an array here, we are free to use either a pointer or a reference or a pointer.&lt;/p&gt;
+
+&lt;p&gt;Finally, the multiplication is a bit more convoluted than just doing &lt;code class=&quot;highlighter-rouge&quot;&gt;uniforms.brightness * interpolated.color&lt;/code&gt;. This is because the colors are in &lt;code class=&quot;highlighter-rouge&quot;&gt;(r, g, b, a)&lt;/code&gt; format, and we want to make the color darker by decreasing &lt;code class=&quot;highlighter-rouge&quot;&gt;r&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;g&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, but we want to leave &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; (the alpha value) alone. So we grab just the &lt;code class=&quot;highlighter-rouge&quot;&gt;rgb&lt;/code&gt; components of the interpolated color, multiply those by &lt;code class=&quot;highlighter-rouge&quot;&gt;uniforms.brightness&lt;/code&gt;, and repack the result into a &lt;code class=&quot;highlighter-rouge&quot;&gt;float4&lt;/code&gt; with the original alpha value.&lt;/p&gt;
+
+&lt;p&gt;This is all the shader code we need to write. If we run this now, we get the following crash:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;validateFunctionArguments:3332: failed assertion `Fragment Function(fragmentShader): missing buffer binding at index 0 for uniforms[0].'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is perfect, Metal tells us directly that the fragment shader is expecting a buffer to be bound at index 0, and we didn’t do that yet. Let’s get to it!&lt;/p&gt;
+
+&lt;h1 id=&quot;creating-and-binding-a-uniform-buffer&quot;&gt;Creating and binding a uniform buffer&lt;/h1&gt;
+
+&lt;p&gt;Open up &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer.swift&lt;/code&gt;, and first define a new buffer in the class:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;fragmentUniformsBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLBuffer&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now in the initializer we need to setup this buffer. The buffer will contain the data for only one &lt;code class=&quot;highlighter-rouge&quot;&gt;FragmentUniforms&lt;/code&gt; struct, so we don’t use an array but just a direct pointer. Add this below the initialization of the vertex data buffer:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Create our uniform buffer, and fill it with an initial brightness of 1.0&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;initialFragmentUniforms&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;FragmentUniforms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;brightness&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;fragmentUniformsBuffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;makeBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;initialFragmentUniforms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MemoryLayout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;FragmentUniforms&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stride&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s important to note that &lt;code class=&quot;highlighter-rouge&quot;&gt;initialFragmentUniforms&lt;/code&gt; is just a temporary instance of &lt;code class=&quot;highlighter-rouge&quot;&gt;FragmentUniforms&lt;/code&gt;: we create it and then copy the data of it into the &lt;code class=&quot;highlighter-rouge&quot;&gt;fragmentUniformsBuffer&lt;/code&gt;, but once the initializer finishes, the actual memory of &lt;code class=&quot;highlighter-rouge&quot;&gt;initialFragmentUniforms&lt;/code&gt; will be gone forever.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Side remark about mutability in Swift: we need &lt;code class=&quot;highlighter-rouge&quot;&gt;initialFragmentUniforms&lt;/code&gt; to be mutable (use &lt;code class=&quot;highlighter-rouge&quot;&gt;var&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;let&lt;/code&gt;) since a pointer of it is passed to &lt;code class=&quot;highlighter-rouge&quot;&gt;makeBuffer(...)&lt;/code&gt;. Metal &lt;em&gt;could&lt;/em&gt; modify &lt;code class=&quot;highlighter-rouge&quot;&gt;initialFragmentUniforms&lt;/code&gt; via this pointer, so we have to mark &lt;code class=&quot;highlighter-rouge&quot;&gt;initialFragmentUniforms&lt;/code&gt; as mutable. Of course Metal doesn’t do this, it just benignly copies the data somewhere else, but Swift doesn’t know that.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Now we need to bind our &lt;code class=&quot;highlighter-rouge&quot;&gt;fragmentUniformsBuffer&lt;/code&gt; to the fragment shader. Just like the vertex data, we perform this binding every frame using the &lt;code class=&quot;highlighter-rouge&quot;&gt;renderEncoder&lt;/code&gt;. Inside &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; we currently have the code:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// What vertex buffer data to use&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;renderEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setVertexBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertexBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// And what to draw&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;renderEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawPrimitives&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;triangle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;vertexStart&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;vertexCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is where we bind the vertex buffer to the buffer at index 0 in the vertex shader. We do the same thing, but with the fragment shader and fragment uniforms by adding the following line before the &lt;code class=&quot;highlighter-rouge&quot;&gt;drawPrimitives&lt;/code&gt; call:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Bind the fragment uniforms&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;renderEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setFragmentBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fragmentUniformsBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And now, if we run the app, we get a triangle that looks identical to before. It is the same as before since we used an initial brightness of &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0&lt;/code&gt;. We can quickly test that &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; actually works by manually changing the initial value from &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;0.5&lt;/code&gt;, which should give a darker looking triangle:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/screen2.png&quot; alt=&quot;Darker Triangle&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once you are done experiment with it, set the initial value back to &lt;code class=&quot;highlighter-rouge&quot;&gt;1.0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;animating-the-brightness&quot;&gt;Animating the brightness&lt;/h1&gt;
+
+&lt;h2 id=&quot;keeping-track-of-time&quot;&gt;Keeping track of time&lt;/h2&gt;
+
+&lt;p&gt;Right now we have uniform data being initialized on the CPU, and passed to the GPU. But what we really want to do is animate the brightness of the triangle, which means we want to modify the brightness uniform on each frame. The first thing we need to do is start keeping track of time, so that we can base the brightness off of the current time. Our strategy is:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Keep track of our app’s time with a variable &lt;code class=&quot;highlighter-rouge&quot;&gt;currentTime&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;On each frame compute the difference in time between the current frame and the previous frame. To do so we will have to store the system time of the previous frame in a variable &lt;code class=&quot;highlighter-rouge&quot;&gt;lastRenderTime&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Use the time difference to update &lt;code class=&quot;highlighter-rouge&quot;&gt;currentTime&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We start by adding these instance variables to the &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer&lt;/code&gt; class:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// This keeps track of the system time of the last render&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;lastRenderTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;CFTimeInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// This is the current time in our app, starting at 0, in units of seconds&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;currentTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Double&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now at the top of &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; we compute the time difference, save the system time to &lt;code class=&quot;highlighter-rouge&quot;&gt;lastRenderTime&lt;/code&gt;, and then use the time difference to update the state:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Compute dt&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;systemTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;CACurrentMediaTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;timeDifference&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lastRenderTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;systemTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastRenderTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// Save this system time&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;lastRenderTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;systemTime&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Update state&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;dt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeDifference&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// TODO: We need to implement this function!&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;updating-state&quot;&gt;Updating state&lt;/h2&gt;
+
+&lt;p&gt;Now we just need to implement this &lt;code class=&quot;highlighter-rouge&quot;&gt;update&lt;/code&gt; function to update the &lt;code class=&quot;highlighter-rouge&quot;&gt;currentTime&lt;/code&gt;, and change the brightness:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;dt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;CFTimeInterval&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fragmentUniformsBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;contents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;bindMemory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;FragmentUniforms&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;capacity&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ptr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pointee&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;brightness&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currentTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;currentTime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dt&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;First, we access the memory location of the uniform buffer via &lt;code class=&quot;highlighter-rouge&quot;&gt;.contents()&lt;/code&gt;, and then tell Swift to interpret the memory location as a pointer to a &lt;code class=&quot;highlighter-rouge&quot;&gt;FragmentUniforms&lt;/code&gt; struct (which it is). Then, we write to the &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; field, setting the brightness to be a cosine wave based on the current time. Using a cosine wave makes the brightness start at 1, and then smoothly animate between 1 and 0:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/cosine.png&quot; alt=&quot;cosine wave&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Finally, we update the &lt;code class=&quot;highlighter-rouge&quot;&gt;currentTime&lt;/code&gt; by adding the time difference. If you run this code now, you should see exactly what we were hoping for, a triangle with smoothly animating brightness:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/screen1.gif&quot; alt=&quot;animating triangle&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;synchronizing-the-cpu-and-gpu&quot;&gt;Synchronizing the CPU and GPU&lt;/h2&gt;
+
+&lt;p&gt;Unfortunately, the code we currently have is subtly bugged. The output looks fine, but there is actually a race condition that may or may not manifest itself in the future. It’s actually an easy fix, but we need to understand what is happening in terms of CPU and GPU coordination.&lt;/p&gt;
+
+&lt;p&gt;Each time &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; is called (60 times per second), we use the CPU to update the uniform data, and then tell the GPU to go and render using that uniform data &lt;em&gt;asynchronously&lt;/em&gt;. Let’s lay the rendering of the first 3 frames in a timeline:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/timeline1.png&quot; alt=&quot;timeline1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is fine, and there are not really any problems with this. But what happens if our rendering starts to take too long? Something like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/timeline2.png&quot; alt=&quot;timeline2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In the red highlighted areas, there is a big problem. The GPU is reading from the uniforms buffer while the CPU is simultaneously writing to it (remember, they both share the same physical memory). What exactly will happen here is anyone’s guess: it could crash (though this would be far too forgiving), subtly introduce incorrectly rendered pixels, or have no visible effect. It’s hard to predict, and hard to track down later. Ignoring this bug that isn’t immediately affecting us is the embodiment of this meme:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/public/post_assets/metal/metal-intro-2/fine.jpg&quot; alt=&quot;dog in burning house&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;(Image credit: KC Green, The Nib). The solution is to synchronize the CPU and GPU. What we want to ensure is that the writing to the uniforms buffer by the CPU can not overlap with the GPU’s rendering. We accomplish this by using a &lt;a href=&quot;https://en.wikipedia.org/wiki/Semaphore_(programming)&quot;&gt;semaphore&lt;/a&gt;. Let’s code it really fast, and then explain how the code works. Add this instance variable to the &lt;code class=&quot;highlighter-rouge&quot;&gt;Renderer&lt;/code&gt; class:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;gpuLock&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;DispatchSemaphore&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This creates the semaphore we will use. Then at the very top of &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; add:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;gpuLock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;wait&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Finally, just before &lt;code class=&quot;highlighter-rouge&quot;&gt;commandBuffer.commit()&lt;/code&gt;, add:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;commandBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;addCompletedHandler&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;gpuLock&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;signal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s all the code we need to add. Let’s walk through how this exactly works. We first initialize the semaphore with a value of &lt;code class=&quot;highlighter-rouge&quot;&gt;1&lt;/code&gt;. Then, when we call &lt;code class=&quot;highlighter-rouge&quot;&gt;wait&lt;/code&gt; one of two things happen:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;If the semaphore value is greater than 0, it is decremented by 1, and execution continues.&lt;/li&gt;
+  &lt;li&gt;If the semaphore value is 0, then the CPU waits until the value is greater than 0, after which it will decrement it and continue executing.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So when &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; is called the first time, the value is 1, so &lt;code class=&quot;highlighter-rouge&quot;&gt;wait&lt;/code&gt; changes the value to 0 and moves on. We then update uniforms and encode the drawing. Before the GPU starts drawing (&lt;code class=&quot;highlighter-rouge&quot;&gt;commandBuffer.commit()&lt;/code&gt;), we add a completion handler that will call &lt;code class=&quot;highlighter-rouge&quot;&gt;signal&lt;/code&gt; when the GPU is done drawing. All &lt;code class=&quot;highlighter-rouge&quot;&gt;signal&lt;/code&gt; does is increment the semaphore’s value by 1.&lt;/p&gt;
+
+&lt;p&gt;This means that the next time &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; is called the CPU will wait to start modifying the uniforms until the previous rendering is complete, which ensures that we do not read and write to the uniforms simultaneously.&lt;/p&gt;
+
+&lt;p&gt;The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data.&lt;/p&gt;
+
+&lt;h1 id=&quot;challenges&quot;&gt;Challenges&lt;/h1&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;We are currently computing the &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; using &lt;code class=&quot;highlighter-rouge&quot;&gt;cos()&lt;/code&gt; on the CPU, and passing this to the GPU. Instead, try to pass the &lt;code class=&quot;highlighter-rouge&quot;&gt;currentTime&lt;/code&gt; to the GPU, and compute the &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; on the GPU.&lt;/li&gt;
+  &lt;li&gt;I wrote this post as passing the &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; uniform to the fragment shader. But we can accomplish the exact same thing by passing the &lt;code class=&quot;highlighter-rouge&quot;&gt;brightness&lt;/code&gt; uniform to the vertex shader instead, and in the vertex shader modify the vertex colors before interpolation.&lt;/li&gt;
+  &lt;li&gt;In challenge #2 you achieved the exact same effect by modifying the vertex colors in the vertex shader instead of the fragment shader. Will this always be the case? As an example, try taking the &lt;code class=&quot;highlighter-rouge&quot;&gt;sqrt()&lt;/code&gt; of each RGB color component in the vertex shader and compare to doing it in the fragment shader. Are they identical?&lt;/li&gt;
+  &lt;li&gt;Use a time uniform to cause the triangle to grow and shrink. (Hint: what happens if you multiply the vertex positions by a number less than 1 or greater than 1?)&lt;/li&gt;
+&lt;/ol&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>Metal 3D Graphics Part 1: Basic Rendering</title>
@@ -379,18 +660,18 @@
 
 &lt;p&gt;We have the data structure for vertex data ready, so now we can make our shaders. Create a new file, and this time choose “Metal file”, and name it &lt;code class=&quot;highlighter-rouge&quot;&gt;Shaders.metal&lt;/code&gt;. Now, the vertex shader is a function, which converts input vertex data into final locations of vertices on the screen. It is declared like any C / C++ function, but with a special keyword so Metal knows that it is a vertex shader. Similarly, a fragment shader is a function that converts interpolated data into a final pixel color, and also has a special keyword. Add the following to &lt;code class=&quot;highlighter-rouge&quot;&gt;Shaders.metal&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&quot;language-metal&quot;&gt;// TODO: We need to change the parameters and return types of the shaders.
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// TODO: We need to change the parameters and return types of the shaders.
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertex&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vertexShader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 
-vertex void vertexShader()
-{
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 
-}
+&lt;span class=&quot;n&quot;&gt;fragment&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;fragmentShader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 
-fragment void fragmentShader()
-{
-
-}
-&lt;/code&gt;&lt;/pre&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;We will come back to fixing the types of the functions shortly, but first we will load the shaders and setup vertex data on the CPU.&lt;/p&gt;
 
@@ -606,6 +887,7 @@ Renderer failed to initialize
 &lt;p&gt;For reference the complete sample project is &lt;a href=&quot;/public/post_assets/metal/metal-intro-1/MetalIntro1.zip&quot;&gt;available for download here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h1 id=&quot;concluding-remarks&quot;&gt;Concluding Remarks&lt;/h1&gt;
+
 &lt;p&gt;This post covered a lot of material; to recap, we saw how to:&lt;/p&gt;
 &lt;ol&gt;
   &lt;li&gt;Setup a MetalKit view in a native macOS app.&lt;/li&gt;

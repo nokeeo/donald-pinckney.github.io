@@ -139,6 +139,10 @@
           
         
           
+            
+          
+        
+          
         
           
         
@@ -171,6 +175,8 @@
             
               <a class="horizontal-item sidebar-nav-item" href="/about.html">About Me</a>
             
+          
+        
           
         
           
@@ -614,18 +620,18 @@
 
 <p>We have the data structure for vertex data ready, so now we can make our shaders. Create a new file, and this time choose “Metal file”, and name it <code class="highlighter-rouge">Shaders.metal</code>. Now, the vertex shader is a function, which converts input vertex data into final locations of vertices on the screen. It is declared like any C / C++ function, but with a special keyword so Metal knows that it is a vertex shader. Similarly, a fragment shader is a function that converts interpolated data into a final pixel color, and also has a special keyword. Add the following to <code class="highlighter-rouge">Shaders.metal</code>:</p>
 
-<pre><code class="language-metal">// TODO: We need to change the parameters and return types of the shaders.
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// TODO: We need to change the parameters and return types of the shaders.
+</span>
+<span class="n">vertex</span> <span class="kt">void</span> <span class="nf">vertexShader</span><span class="p">()</span>
+<span class="p">{</span>
 
-vertex void vertexShader()
-{
+<span class="p">}</span>
 
-}
+<span class="n">fragment</span> <span class="kt">void</span> <span class="nf">fragmentShader</span><span class="p">()</span>
+<span class="p">{</span>
 
-fragment void fragmentShader()
-{
-
-}
-</code></pre>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <p>We will come back to fixing the types of the functions shortly, but first we will load the shaders and setup vertex data on the CPU.</p>
 
@@ -841,6 +847,7 @@ Renderer failed to initialize
 <p>For reference the complete sample project is <a href="/public/post_assets/metal/metal-intro-1/MetalIntro1.zip">available for download here</a>.</p>
 
 <h1 id="concluding-remarks">Concluding Remarks</h1>
+
 <p>This post covered a lot of material; to recap, we saw how to:</p>
 <ol>
   <li>Setup a MetalKit view in a native macOS app.</li>
@@ -880,6 +887,15 @@ Renderer failed to initialize
     
       <li>
         <h3>
+          <a href="/metal/2018/07/27/metal-intro-2.html" class="titular">
+            Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization
+            <small>27 Jul 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
           <a href="/tensorflow/2018/02/25/multi-variable.html" class="titular">
             Multi Variable Linear Regression
             <small>25 Feb 2018</small>
@@ -892,15 +908,6 @@ Renderer failed to initialize
           <a href="/tensorflow/2017/12/27/optimization.html" class="titular">
             Exploring Optimization Convergence
             <small>27 Dec 2017</small>
-          </a>
-        </h3>
-      </li>
-    
-      <li>
-        <h3>
-          <a href="/tensorflow/2017/12/03/single-variable.html" class="titular">
-            Single Variable Linear Regression
-            <small>03 Dec 2017</small>
           </a>
         </h3>
       </li>
