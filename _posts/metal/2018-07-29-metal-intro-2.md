@@ -241,7 +241,7 @@ So when `draw(in view: MTKView)` is called the first time, the value is 1, so `w
 
 This means that the next time `draw(in view: MTKView)` is called the CPU will wait to start modifying the uniforms until the previous rendering is complete, which ensures that we do not read and write to the uniforms simultaneously.
 
-The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. 
+The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. As always, the complete source code is ![available for download][project_link].
 
 # Challenges
 
@@ -276,4 +276,4 @@ The problem of enforcing synchronization between the CPU and GPU is not unique t
 [old_screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
 [old_project_link]: /public/post_assets/metal/metal-intro-1/MetalIntro1.zip
 
-[project_link]: /public/post_assets/metal/metal-intro-2/MetalIntro2.zip
+[project_link]: /public/post_assets/metal/metal-intro-2/MetalFinal.zip
