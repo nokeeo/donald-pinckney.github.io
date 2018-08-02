@@ -9,4 +9,8 @@ struct Vertex {
     vector_float2 pos;
 };
 
+struct FragmentUniforms {
+    float brightness;
+};
+
 #endif /* ShaderDefinitions_h */
