@@ -246,7 +246,7 @@ The problem of enforcing synchronization between the CPU and GPU is not unique t
 # Challenges
 
 1. We are currently computing the `brightness` using `cos()` on the CPU, and passing this to the GPU. Instead, try to pass the `currentTime` to the GPU, and compute the `brightness` on the GPU.
-2. I wrote this post as passing the `brightness` uniform to the fragment shader. But we can accomplish the exact same thing by passing the `brightness` uniform to the vertex shader instead, and in the vertex shader modify the vertex colors before interpolation.
+2. I wrote this post as passing the `brightness` uniform to the fragment shader. But we can accomplish the exact same thing by passing the `brightness` uniform to the vertex shader instead, and in the vertex shader modify the vertex colors before interpolation. Implement it this way instead.
 3. In challenge #2 you achieved the exact same effect by modifying the vertex colors in the vertex shader instead of the fragment shader. Will this always be the case? As an example, try taking the `sqrt()` of each RGB color component in the vertex shader and compare to doing it in the fragment shader. Are they identical?
 4. Use a time uniform to cause the triangle to grow and shrink. (Hint: what happens if you multiply the vertex positions by a number less than 1 or greater than 1?)
 
