@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-08-01T23:49:41-07:00</updated>
+ <updated>2018-08-02T21:27:14-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -279,7 +279,7 @@
 
 &lt;p&gt;This means that the next time &lt;code class=&quot;highlighter-rouge&quot;&gt;draw(in view: MTKView)&lt;/code&gt; is called the CPU will wait to start modifying the uniforms until the previous rendering is complete, which ensures that we do not read and write to the uniforms simultaneously.&lt;/p&gt;
 
-&lt;p&gt;The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. As always, the complete source code is &lt;img src=&quot;/public/post_assets/metal/metal-intro-2/MetalFinal.zip&quot; alt=&quot;available for download&quot; /&gt;.&lt;/p&gt;
+&lt;p&gt;The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. As always, the complete source code is &lt;a href=&quot;/public/post_assets/metal/metal-intro-2/MetalFinal.zip&quot;&gt;available for download&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h1 id=&quot;challenges&quot;&gt;Challenges&lt;/h1&gt;
 

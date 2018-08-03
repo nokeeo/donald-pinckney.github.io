@@ -520,7 +520,7 @@
 
 <p>This means that the next time <code class="highlighter-rouge">draw(in view: MTKView)</code> is called the CPU will wait to start modifying the uniforms until the previous rendering is complete, which ensures that we do not read and write to the uniforms simultaneously.</p>
 
-<p>The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. As always, the complete source code is <img src="/public/post_assets/metal/metal-intro-2/MetalFinal.zip" alt="available for download" />.</p>
+<p>The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. As always, the complete source code is <a href="/public/post_assets/metal/metal-intro-2/MetalFinal.zip">available for download</a>.</p>
 
 <h1 id="challenges">Challenges</h1>
 
