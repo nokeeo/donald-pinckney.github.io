@@ -8,7 +8,7 @@ The content of all blog posts (files ending in `.md` contained in `_posts/`), al
 ```bash
 # Install Ruby and Jekyll stuff
 sudo apt install ruby ruby-dev
-sudo gem install jekyll jekyll-paginate jekyll-gist github-pages jekyll-sitemap jekyll-seo-tag
+sudo gem install jekyll jekyll-paginate jekyll-gist github-pages jekyll-sitemap jekyll-seo-tag bundler
 
 # Install Rust and mdbook stuff
 curl https://sh.rustup.rs -sSf | sh # (follow direction, maybe have to setup PATH, and probably restart your shell)
@@ -16,4 +16,4 @@ cargo install mdbook
 ```
 
 # How to build and run
-To build and locally preview the site, run `./run` from the root directory of the repository.
+To build and locally preview the site, run `./run` from the root directory of the repository, and then navigate to [http://127.0.0.1:4000/](http://127.0.0.1:4000/)
