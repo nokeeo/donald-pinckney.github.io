@@ -47,17 +47,18 @@ source ~/tensorflow/bin/activate.fish
 ```
 
 After activating the virtualenv, your command prompt should change to look like: `(tensorflow)$`. At this point, we are finally ready to install TensorFlow:
+
 ```bash
 pip3 install --upgrade tensorflow # If installing WITHOUT GPU support
 pip3 install --upgrade tensorflow-gpu # If installing WITH GPU support
 ```
 
 In addition, we also install a few other Python packages that are useful for machine learning:
+
 ```bash
 pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
-pip3 install --upgrade tensorflow-tensorboard # Used for visualizing tensorflow training
 ```
 
 Once everything is installed, you can exit the virtualenv using the command `deactivate`.

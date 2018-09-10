@@ -78,7 +78,6 @@ In addition, we also install a few other Python packages that are useful for mac
 pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
-pip3 install --upgrade tensorflow-tensorboard # Used for visualizing tensorflow training
 ```
 
 Just so you know, you can always exit the virtualenv using the command `deactivate`. In the future, to use TensorFlow you need to activate the virtualenv first using the appropriate `source` command listed above.
