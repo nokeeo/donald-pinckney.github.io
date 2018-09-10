@@ -297,6 +297,7 @@
 <p>One of the simplest ways to visualize training progress is to plot the value of the loss function over time. We could certainly plot the value of the loss function using matplotlib, like we plotted the data set. But TensorFlow actually has a tool built-in for plotting training progress, called TensorBoard. It’s pretty handy, but first we need to do some work to refactor our current code.</p>
 
 <p>The first thing I’d like to do is move <strong>hyperparameters</strong> to the top of the script. What exactly are <strong>hyperparameters</strong>? They are parameters that affect how the training of the model proceeds, but are not part of the model itself. For example, \(a\) and \(b\) are parameters, while the learning rate \(\alpha\) is a hyperparameter. The hyperparameters we have are:</p>
+
 <ol>
   <li>The learning rate, currently <code class="highlighter-rouge">0.2</code>.</li>
   <li>The number of training iterations, currently <code class="highlighter-rouge">10000</code>.</li>
@@ -431,8 +432,9 @@
 
 <p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code class="highlighter-rouge">/tmp/tensorflow/single_var_reg/{log_name}</code>. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python ~/tensorflow/bin/tensorboard <span class="nt">--logdir</span><span class="o">=</span>/tmp/tensorflow/single_var_reg/
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python <span class="nt">-m</span> tensorboard.main <span class="nt">--logdir</span><span class="o">=</span>/tmp/tensorflow/single_var_reg/
 </code></pre></div></div>
+
 <p>Once you run that command, go to <a href="http://localhost:6006">http://localhost:6006</a> in your web browser, and you should see plots of <code class="highlighter-rouge">L</code>, <code class="highlighter-rouge">a</code>, and <code class="highlighter-rouge">b</code> as the training progressed. With the hyperparameter choices from above, the plots should look like:</p>
 
 <p><img src="/books/tensorflow/book/ch2-linreg/assets/tensorboard_1.png" alt="TensorBoard 1" /></p>

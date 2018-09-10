@@ -296,6 +296,7 @@ There aren't exact or easy answers to the above questions, but answering these q
 One of the simplest ways to visualize training progress is to plot the value of the loss function over time. We could certainly plot the value of the loss function using matplotlib, like we plotted the data set. But TensorFlow actually has a tool built-in for plotting training progress, called TensorBoard. It's pretty handy, but first we need to do some work to refactor our current code.
 
 The first thing I'd like to do is move **hyperparameters** to the top of the script. What exactly are **hyperparameters**? They are parameters that affect how the training of the model proceeds, but are not part of the model itself. For example, \\(a\\) and \\(b\\) are parameters, while the learning rate \\(\alpha\\) is a hyperparameter. The hyperparameters we have are:
+
 1. The learning rate, currently `0.2`.
 2. The number of training iterations, currently `10000`.
 3. The choice of optimization routine, currently `tf.train.AdamOptimizer` (This isn't often thought of as a hyperparameter, but here will think of it as one).
@@ -433,8 +434,9 @@ for t in range(NUM_ITERS):
 With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to `/tmp/tensorflow/single_var_reg/{log_name}`. Now, we can open this up with TensorBoard, by running this command in Terminal (make sure to activate the virtual environment first):
 
 ```bash
-python ~/tensorflow/bin/tensorboard --logdir=/tmp/tensorflow/single_var_reg/
+python -m tensorboard.main --logdir=/tmp/tensorflow/single_var_reg/
 ```
+
 Once you run that command, go to [http://localhost:6006](http://localhost:6006) in your web browser, and you should see plots of `L`, `a`, and `b` as the training progressed. With the hyperparameter choices from above, the plots should look like:
 
 ![TensorBoard 1][tensorboard_1]
