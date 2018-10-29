@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 
 # fs = 2*xs + 0.013*ys + 4
 
-LEARNING_RATE = 0.01 # 0.0000025
+LEARNING_RATE = 0.0000025 # 0.01 0.0000025
 OPTIMIZER_CONSTRUCTOR = tf.train.GradientDescentOptimizer
 NUM_ITERS = 5000
-DIV_Y = 100 # 1
+DIV_Y = 1 # 1
 # DIV_X_1 = 1
 # SUB_Y = 13
 
@@ -62,44 +62,49 @@ optimizer = OPTIMIZER_CONSTRUCTOR(learning_rate=LEARNING_RATE).minimize(L)
 session = tf.Session()
 session.run(tf.global_variables_initializer())
 
-run_data = np.empty((0, 3))
+# run_data = np.empty((0, 3))
 
 # Main optimization loop
-for t in range(NUM_ITERS):
-    _, current_loss, current_A = session.run([optimizer, L, A], feed_dict={
+# for t in range(NUM_ITERS):
+#     _, current_loss, current_A = session.run([optimizer, L, A], feed_dict={
+#         x: X_data,
+#         y: y_data
+#     })
+#     row = np.array([current_A[0,0], current_A[0,1], current_loss])
+#     run_data = np.append(run_data, [row], axis=0)
+#     # summary_writer.add_summary(summary, t)
+#     # print("t = %g, loss = %g" % (t, current_loss))
+
+
+def lossEval(a0, a1):
+    # global session
+    l = session.run([L], feed_dict={
         x: X_data,
-        y: y_data
+        y: y_data,
+        A: np.matrix([a0, a1])
     })
-    row = np.array([current_A[0,0], current_A[0,1], current_loss])
-    run_data = np.append(run_data, [row], axis=0)
-    # summary_writer.add_summary(summary, t)
-    # print("t = %g, loss = %g" % (t, current_loss))
+    return l[0]
+
+a0s = np.linspace(-3, 3, num=100)
+a1s = np.linspace(-1, 5, num=100)
+ls = np.zeros((len(a0s), len(a1s)))
 
 
-start_idx = 20
-end_idx = run_data.shape[0]
 
-print(run_data)
+for i, a0 in np.ndenumerate(a0s):
+    for j, a1 in np.ndenumerate(a1s):
+        ls[i,j] = lossEval(a0, a1)
 
-old_data = np.load('run1.npy')
+np.save('a0s_r1', a0s)
+np.save('a1s_r1', a1s)
+np.save('ls_r1', ls)
 
-plt.figure(num=None, figsize=(10, 4), dpi=80)
-plt.rc('text', usetex=True)
-plt.rc('font', family='serif')
+ls = ls.transpose()
 
-plt.subplot(1, 2, 1)
-plt.plot(np.arange(start_idx, end_idx), old_data[start_idx:,0])
-plt.plot(np.arange(start_idx, end_idx), run_data[start_idx:,0])
-plt.title('Value of $A_0$')
-plt.xlabel('Iteration')
-plt.ylabel('$A_0$')
-
-
-plt.subplot(1, 2, 2)
-plt.plot(np.arange(start_idx, end_idx), old_data[start_idx:,2])
-plt.plot(np.arange(start_idx, end_idx), run_data[start_idx:,2])
-plt.title('Value of the loss function')
-plt.xlabel('Iteration')
-plt.ylabel('Loss function')
-
+levels = np.linspace(8.5, 700)
+plt.contour(a0s, a1s, ls, 20)
+# plt.scatter(1.3, 2.0, c='r')
+plt.title('Level sets of the loss function')
+plt.xlabel('A[0]')
+plt.ylabel('A[1]')
 plt.show()
