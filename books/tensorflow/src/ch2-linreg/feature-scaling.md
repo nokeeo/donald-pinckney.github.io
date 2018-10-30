@@ -93,9 +93,26 @@ Don't be fooled: like the previous plot the level sets also form ellipses, but t
 
 We can clearly see that gradient descent applies large updates to `A[1]` (a bit too large, a smaller learning rate would have been a bit better) due to the large gradient in the `A[1]` direction. But due to the (comparatively) tiny gradient in the `A[0]` direction very small updates are done to `A[0]`. Gradient descent quickly converges on the optimal value of `A[1]`, but is very very far away from finding the optimal value of `A[0]`.
 
-## Theory of Condition Numbers
+## Rescaling Features
 
-## How to Fix Poor Conditioning
+Let's take a quick look at what is going on mathematically to see why this happens. The model we are using is:
+\\[
+    y'(x, A) = Ax = a_1 x_1 + a_2 x_2 
+\\]
+Here, \\(a_1\\) is in the role of `A[0]` and \\(a_2\\) is `A[1]`. We substitute this into the loss function to get:
+\\[
+    L(a_1, a_2) = \\sum_{i=1}^m (a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})^2
+\\]
+Now if we differentiate \\(L\\) in the direction of \\(a_1\\) and \\(a_2\\) separately, we get:
+\\[
+    \\frac{\\partial L}{\\partial a_1} = \\sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_1^{(i)} \\\\
+    \\frac{\\partial L}{\\partial a_2} = \\sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_2^{(i)}
+\\]
+Here we can see the problem: the inner terms of the derivatives are the same, except one is multiplied by \\(x_1^{(i)}\\) and the other by \\(x_2^{(i)}\\). If \\(x_2\\) is on average 100 times bigger than \\(x_1\\) (which it is in the original data set), then we would expect \\(\\frac{\\partial L}{\\partial a_2}\\) to be roughly 100 times bigger than \\(\\frac{\\partial L}{\\partial a_1}\\). It isn't exactly 100 times larger, but with any reasonable data set it should be close. Since the derivatives in the directions of \\(a_1\\) and \\(a_2\\) are scaled completely differently, gradient descent fails to update both of them adequately. 
+
+The solution is simple: we need to rescale the input features before training. This is exactly what happened when we mysteriously divided by 100: we rescaled \\(x_2\\) to be comparable to \\(x_1\\). Let's work out a more methodical way of rescaling, rather than randomly dividing by 100.
+
+
 
 ## Implementation and Experiments
 
