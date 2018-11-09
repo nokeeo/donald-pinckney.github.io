@@ -27,7 +27,7 @@ Since we don't have any theory yet to understand linear regression, first we nee
 
 ### Data set format
 
-For regression problems, the goal is to predict a continuous variable output, given some input variables (usually also continuous). For single variable regression, we only have one input variable, called \\(x\\), and our *desired* output \\(y\\). Our data set \\(D\\) then consists of many examples of \\(x\\) and \\(y\\), so:
+For regression problems, the goal is to predict a continuous variable output, given some input variables (also called **features**). For single variable regression, we only have one input variable, called \\(x\\), and our *desired* output \\(y\\). Our data set \\(D\\) then consists of many examples of \\(x\\) and \\(y\\), so:
 \\[
     D = \\{ (x_1, y_1), (x_2, y_2), \\cdots, (x_m, y_m) \\}
 \\]
@@ -111,7 +111,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 ```
 
-We use pandas to easily load the CSV homicide data:
+We use Pandas to easily load the CSV homicide data:
 ```python
 D = pd.read_csv("homicide.csv")
 x_data = np.matrix(D.age.values)

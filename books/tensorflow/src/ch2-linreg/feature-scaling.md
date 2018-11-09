@@ -93,8 +93,6 @@ Don't be fooled: like the previous plot the level sets also form ellipses, but t
 
 We can clearly see that gradient descent applies large updates to `A[1]` (a bit too large, a smaller learning rate would have been a bit better) due to the large gradient in the `A[1]` direction. But due to the (comparatively) tiny gradient in the `A[0]` direction very small updates are done to `A[0]`. Gradient descent quickly converges on the optimal value of `A[1]`, but is very very far away from finding the optimal value of `A[0]`.
 
-## Rescaling Features
-
 Let's take a quick look at what is going on mathematically to see why this happens. The model we are using is:
 \\[
     y'(x, A) = Ax = a_1 x_1 + a_2 x_2 
@@ -108,11 +106,37 @@ Now if we differentiate \\(L\\) in the direction of \\(a_1\\) and \\(a_2\\) sepa
     \\frac{\\partial L}{\\partial a_1} = \\sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_1^{(i)} \\\\
     \\frac{\\partial L}{\\partial a_2} = \\sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_2^{(i)}
 \\]
-Here we can see the problem: the inner terms of the derivatives are the same, except one is multiplied by \\(x_1^{(i)}\\) and the other by \\(x_2^{(i)}\\). If \\(x_2\\) is on average 100 times bigger than \\(x_1\\) (which it is in the original data set), then we would expect \\(\\frac{\\partial L}{\\partial a_2}\\) to be roughly 100 times bigger than \\(\\frac{\\partial L}{\\partial a_1}\\). It isn't exactly 100 times larger, but with any reasonable data set it should be close. Since the derivatives in the directions of \\(a_1\\) and \\(a_2\\) are scaled completely differently, gradient descent fails to update both of them adequately. 
+Here we can see the problem: the inner terms of the derivatives are the same, except one is multiplied by \\(x_1^{(i)}\\) and the other by \\(x_2^{(i)}\\). If \\(x_2\\) is on average 100 times bigger than \\(x_1\\) (which it is in the original data set), then we would expect \\(\\frac{\\partial L}{\\partial a_2}\\) to be roughly 100 times bigger than \\(\\frac{\\partial L}{\\partial a_1}\\). It isn't exactly 100 times larger, but with any reasonable data set it should be close. Since the derivatives in the directions of \\(a_1\\) and \\(a_2\\) are scaled completely differently, gradient descent fails to update both of them adequately.
 
-The solution is simple: we need to rescale the input features before training. This is exactly what happened when we mysteriously divided by 100: we rescaled \\(x_2\\) to be comparable to \\(x_1\\). Let's work out a more methodical way of rescaling, rather than randomly dividing by 100.
+The solution is simple: we need to rescale the input features before training. This is exactly what happened when we mysteriously divided by 100: we rescaled \\(x_2\\) to be comparable to \\(x_1\\). But we should work out a more methodical way of rescaling, rather than randomly dividing by 100.
 
+## Rescaling Features
 
+This wasn't explored above, but there are really two ways that we potentially need to rescale features. Consider an example where \\(x_1\\) ranges between -1 and 1, but \\x_2\\) ranges between 99 and 101: both of these features have (at least approximately) the same [standard deviation][std_wiki], but \\(x_2\\) has a much larger [mean][mean_wiki]. On the other hand, consider an example where \\(x_1\\) still ranges between -1 and 1, but \\(x_2\\) ranges between -100 and 100. This time, they have the same mean, but \\(x_2\\) has a much larger standard deviation. Both of these situations can make gradient descent and related algorithms slower and less reliable. So, our goal is to ensure that all features have the same mean and standard deviation.
+
+> **Note:** There are other methods to measure how different features are, and then subsequently rescale them. For a look at more of them, feel free to consult the [Wikipedia article][scaling_wiki]. However, after implementing the technique presented here, any other technique is fairly similar and easy to implement if needed.
+
+Wihtout digressing too far into statistics, let's quickly review how to calculate the mean \\(\\mu\\) and standard deviation \\(\\sigma\\). Suppose we have already read in our data set in Python into a Numpy vector / matrix, and have all the values for the feature \\(x_j\\), for each \\(j\\). Mathematically, the mean for feature \\(x_j\\) is just the average:
+\\[
+    \\mu_j = \\frac{\\sum_{i=1}^m x_j^{(i)}}{m}
+\\]
+In Numpy there is a convenient `np.mean()` function we will use.
+
+The standard deviation \\(\\sigma\\) is a bit more tricky. We measure how far each point \\(x_j^{(i)}\\) is from the mean \\(\\mu_j\\), square this, then take the mean of all of this, and finally square root it:
+\\[
+    \\sigma_j = \\sqrt{\\frac{\\sum_{i=1}^m (x_j^{(i)} - \\mu_j)^2 }{m}}
+\\]
+Again, Numpy provides a convenient `np.std()` function.
+
+> **Note:** Statistics nerds might point out that in the above equation we should divide by \\(m - 1\\) instead of \\(m\\) to obtain an unbiased estimate of the standard deviation. This might well be true, but in this usage it does not matter since we are only using this to rescale features relative to each other, and not make a rigorous statistical inference. To be more precise, doing so would involve multiplying each scaled feature by only a constant factor, and will not change any of their standard deviations or means relative to each other.
+
+Once we have every mean \\(\\mu_j\\) and standard devation \\(\\sigma_j\\), rescaling is easy: we simply rescale every feature like so:
+
+\\[
+    x_j' = \\frac{x_j - \\mu_j}{\\sigma_j}
+\\]
+
+This will force every feature to have a mean of 0 and a standard deviation of 1, and thus be scaled well relative to each other.
 
 ## Implementation and Experiments
 
@@ -142,3 +166,6 @@ The [complete example code is available on GitHub](https://github.com/donald-pin
 [contour1_dots]: /books/tensorflow/book/ch2-linreg/assets/contour1_dots.png
 [contour2_dots]: /books/tensorflow/book/ch2-linreg/assets/contour2_dots.png
 [level_sets]: https://en.wikipedia.org/wiki/Level_set
+[mean_wiki]: https://en.wikipedia.org/wiki/Expected_value
+[std_wiki]: https://en.wikipedia.org/wiki/Standard_deviation
+[scaling_wiki]: https://en.wikipedia.org/wiki/Feature_scaling
