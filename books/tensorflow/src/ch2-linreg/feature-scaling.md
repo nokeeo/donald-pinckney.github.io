@@ -138,6 +138,8 @@ Once we have every mean \\(\\mu_j\\) and standard devation \\(\\sigma_j\\), resc
 
 This will force every feature to have a mean of 0 and a standard deviation of 1, and thus be scaled well relative to each other.
 
+> **Note:** Be careful to make sure to perform the rescaling at both training time and prediction time. That is, we first have to perform the rescaling on the whole training data set, and then train the model so as to achieve good training performance. Once the model is trained and we have a new, never before seen input \\(x\\), we also need to rescale its features to \\(x'\\) because the trained model only understands inputs that have already been rescaled (because we trained it that way).
+
 ## Implementation and Experiments
 
 # Concluding Remarks
