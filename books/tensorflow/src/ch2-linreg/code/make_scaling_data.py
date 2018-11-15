@@ -13,7 +13,7 @@ ys = np.reshape(ys, n*n)
 
 fs = 2*xs + 0.013*ys
 rs = np.random.randn(n*n)
-rfs = fs + 3*rs
+rfs = fs + 0*rs
 
 D = np.column_stack((xs, ys, rfs))
 print(D.shape)

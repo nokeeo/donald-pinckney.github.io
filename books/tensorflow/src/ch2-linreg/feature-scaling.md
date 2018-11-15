@@ -7,13 +7,19 @@ isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/feature-scaling.md
 ---
 
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+
 # Feature Scaling
 
 In chapters [2.1](/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html), [2.2](/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html), [2.3](/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html) we used the gradient descent algorithm (or variants of) to minimize a loss function, and thus achieve a line of best fit. However, it turns out that the optimization in chapter 2.3 was much, much slower than it needed to be. While this isn’t a big problem for these fairly simple linear regression models that we can train in seconds anyways, this inefficiency becomes a much more drastic problem when dealing with large data sets and models.
 
 ## Example of the Problem
 
-First, let’s look at a concrete example of the problem, by again considering a synthetic data set. Like in chapter 2.3 I generated a simple [synthetic data set][synthetic-data] consisting of 2 independent variables \\(x_1\\) and \\(x_2\\), and one dependent variable \\(y = 2x_1 + 0.013x_2 + \\varepsilon \\), where \\(\\varepsilon\\) is some random noise. However, note that the range for \\(x_1\\) is 0 to 10, but the range for \\(x_2\\) is 0 to 1000. Let's call this data set \\(D\\). A few sample data points look like this:
+First, let’s look at a concrete example of the problem, by again considering a synthetic data set. Like in chapter 2.3 I generated a simple [synthetic data set][synthetic-data] consisting of 2 independent variables \\(x_1\\) and \\(x_2\\), and one dependent variable \\(y = 2x_1 + 0.013x_2\\). However, note that the range for \\(x_1\\) is 0 to 10, but the range for \\(x_2\\) is 0 to 1000. Let's call this data set \\(D\\). A few sample data points look like this:
 
 | \\(x_1\\) | \\(x_2\\) | \\(y\\)
 |-----|---------------------|-|
@@ -133,7 +139,9 @@ Again, Numpy provides a convenient `np.std()` function.
 Once we have every mean \\(\\mu_j\\) and standard devation \\(\\sigma_j\\), rescaling is easy: we simply rescale every feature like so:
 
 \\[
+\\begin{equation} \\label{eq:scaling}
     x_j' = \\frac{x_j - \\mu_j}{\\sigma_j}
+\\end{equation}
 \\]
 
 This will force every feature to have a mean of 0 and a standard deviation of 1, and thus be scaled well relative to each other.
@@ -197,22 +205,147 @@ for t in range(2000):
 
 ```
 
+If you run this code right now, you might see output like the following:
+
+```
+...
+t = 1995, loss = 0.505296, A = [[1.9920335  0.01292674]], b = 0.089939
+t = 1996, loss = 0.5042, A = [[1.9920422  0.01292683]], b = 0.0898404
+t = 1997, loss = 0.5031, A = [[1.9920509  0.01292691]], b = 0.0897419
+t = 1998, loss = 0.501984, A = [[1.9920596  0.01292699]], b = 0.0896435
+t = 1999, loss = 0.50089, A = [[1.9920683  0.01292707]], b = 0.0895451
+```
+
+Note that if you run this code multiple times you will get different results each time due to the random initialization. The synthetic data was generated with the equation \\(y = 2x_1 + 0.013x_2 + 0\\). So after 2000 iterations of training we are getting close-ish to the correct values, but it's not fully trained. So let's implement feature scaling to fix this.
+
+The first step is to compute the mean and standard deviation for each feature in the training data set. Add the following after `X_data` is loaded:
+
+```python
+means = X_data.mean(axis=1)
+deviations = X_data.std(axis=1)
+```
+
+Using `axis=1` means that we compute the mean for each feature, averaged over all data points. That is, `X_data` is a \\(2 \\times 400\\) matrix, `means` is a \\(2 \\times 1\\) matrix (vector). If we had used `axis=0`, `means` would be a \\(1 \\times 400\\) matrix, which is not what we want.
+
+Now that we know the means and standard deviations of each feature, we have to use them to transform the inputs via Equation \\((\\ref{eq:scaling})\\). We have two options: we could implement the transformation directly using `numpy` to transform `X_data` before training, or we could include the transformation within the TensorFlow computations. But since we need to do the transformation again when we want to predict output given new inputs, including it in the TensorFlow computations will be a bit more convenient.
+
+Just like before we setup `x` as a placeholder, so this code is identical:
+
+```python
+# Define data placeholders
+x = tf.placeholder(tf.float32, shape=(n, None))
+```
+
+Now we want to transform `x` according to Equation \\((\\ref{eq:scaling})\\). We can define a new TensorFlow value `x_scaled`:
+
+```python
+# Apply the rescaling
+x_scaled = (x - means) / deviations
+```
+
+One important concept is that when this line of code runs, `means` and `deviations` have already been computed: they are actual matrices. So to TensorFlow they are **constants**: they are neither trainable variables that will be updated during optimization, nor are they placeholders that need to be fed values later. They have already been computed, and TensorFlow just uses the already computed values directly.
+
+Also, note that since `x` and `means` are compatibly sized matrices, the subtraction (and division) will be done separately for each feature, automatically. So while Equation \\((\\ref{eq:scaling})\\) technically says how to scale one feature individually, this single line of code scales all the features.
+
+Now, everywhere that we use `x` in the model we should now use `x_scaled` instead. For us the only code that needs to change is in defining the model's prediction:
+
+```python
+# Define model output, using the scaled features
+y_predicted = tf.matmul(A, x_scaled) + b
+```
+
+Note that when we run the session we do *not* feed values to `x_scaled`, because we want to feed unscaled values to `x` which will then automatically get scaled when `x_scaled` is computed based on what is fed to `x`. We instead continue to feed values to `x` as before.
+
+That's all that we need to implement for feature scaling, it's really pretty easy. If we run this code now we should see:
+
+```
+...
+t = 1995, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1996, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1997, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1998, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1999, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+```
+
+The fact that none of the trained weights are updating anymore and that the loss function is very small is a good sign that we have achieved convergence. But the weights are not the values we expect... shouldn't we get `A = [[2, 0.013]], b = 0`, since that is the equation that generated the synthetic data? Actually, the weights we got *are* correct because the model is now being trained on the rescaled data set, so we get different weights at the end. See Challenge Problem 3 below to explore this more.
+
 # Concluding Remarks
 
+We've seen how to implement feature scaling for a simple multi-variable linear regression model.  While this is a fairly simple model, the principles are basically the same for applying feature scaling to more complex models (which we will see very soon). In fact, the code is pretty much identical: just compute the means and standard deviations, apply the formula to `x` to compute `x_scaled`, and anywhere you use `x` in the model, just use `x_scaled` instead.
 
-# Exercises
+Whether or not feature scaling helps is dependent on the problem and the model. If you have having trouble getting your model to converge, you can always implement feature scaling and see how it affects the training. While it wasn't used in this chapter, using TensorBoard (see [chapter 2.2](/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html)) is a great way to run experiments to compare training with and without feature scaling.
 
+# Challenge Problems
 
+1. **Coding:** Take one of the challenge problems from the previous chapter [the previous chapter](/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html#challenges), and implement it with and without feature scaling, and then compare how training performs.
+2. **Coding:** Add TensorBoard support to the code from this chapter, and use it to explore for yourself the effect feature scaling has. Also, you can compare with different optimization algorithms.
+3. **Theory:** One problem with feature scaling is that we learn different model parameters. In this chapter, the original data set was generated with \\(y = 2x_1 + 0.013x_2 + 0\\), but the parameters that the model learned were \\(a_1' = 6.0697703, a_2' = 3.9453504, b' = 16.5\\). Note that I have called these learned parameters \\(a_1'\\) rather than \\(a_1\\) to indicate that these learned parameters are for the *rescaled* data.<p>One important use of linear regression is to explore and understand a data set, not just predict outputs. After doing a regression, one can understand through the learned weights how severely each feature affects the output. For example, if we have two features \\(A\\) and \\(B\\) which are used to predict rates of cancer, and the learned weight for \\(A\\) is much larger than the learned weight for \\(B\\), this indicates that occurrence of \\(A\\) is more correlated with cancer than occurrence of \\(B\\) is, which is interesting in its own right. Unfortunately, performing feature scaling destroys this: since we have rescaled the training data, the weight for \\(A\\) (\\(a_1'\\)) has lost its relevance to the values of \\(A\\) in the real world. But all is not lost, since we can actually recover the "not-rescaled" parameters from the learned parameters, which we will derive now.</p><p>First, suppose that we have learned the "rescaled" parameters \\(a_1', a_2', b'\\). That is, we predict the output \\(y\\) to be: \\[\\begin{equation}\\label{eq:start}y = a_1' x_1' + a_2' x_2' + b'\\end{equation}\\]where \\(x_1', x_2'\\) are the rescaled features. Now, we *want* a model that uses some (yet unknown) weights \\(a_1, a_2, b\\) to predict the same output \\(y\\), but using the not-rescaled features \\(x_1, x_2\\). That is, we want to find \\(a_1, a_2, b\\) such that this is true:\\[\\begin{equation}\\label{eq:goal}y = a_1 x_1 + a_2 x_2 + b\\end{equation}\\]To go about doing this, substitute for \\(x_1'\\) and \\(x_2'\\) using Equation \\((\\ref{eq:scaling})\\) into Equation \\((\\ref{eq:start})\\), and then compare it to Equation \\((\\ref{eq:goal})\\) to obtain 3 equations: one to relate each scaled and not-scaled parameter. Finally, you can use these equations to be able to compute the "not-scaled" parameters in terms of the learned parameters. You can check your work by computing the not-scaled parameters in terms of the learned parameters for the synthetic data set, and verify that they match the expected values.</p>
 
 # Complete Code
 
 The [complete example code is available on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/feature_scaling.py), as well as directly here:
 
 ```python
+import numpy as np
+import tensorflow as tf
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# First we load the entire CSV file into an m x n matrix
+D = np.matrix(pd.read_csv("linreg-scaling-synthetic.csv", header=None).values)
+
+# Make a convenient variable to remember the number of input columns
+n = 2
+
+# We extract all rows and the first n columns into X_data
+# Then we flip it
+X_data = D[:, 0:n].transpose()
+
+# We extract all rows and the last column into y_data
+# Then we flip it
+y_data = D[:, n].transpose()
+
+# We compute the mean and standard deviation of each feature
+means = X_data.mean(axis=1)
+deviations = X_data.std(axis=1)
+
+print(means)
+print(deviations)
+# exit(0)
+
+# Define data placeholders
+x = tf.placeholder(tf.float32, shape=(n, None))
+y = tf.placeholder(tf.float32, shape=(1, None))
+
+# Apply the rescaling
+x_scaled = (x - means) / deviations
+
+# Define trainable variables
+A = tf.get_variable("A", shape=(1, n))
+b = tf.get_variable("b", shape=())
+
+# Define model output, using the scaled features
+y_predicted = tf.matmul(A, x_scaled) + b
+
+# Define the loss function
+L = tf.reduce_sum((y_predicted - y)**2)
+
+# Define optimizer object
+optimizer = tf.train.AdamOptimizer(learning_rate=0.1).minimize(L)
+
+# Create a session and initialize variables
+session = tf.Session()
+session.run(tf.global_variables_initializer())
+
+# Main optimization loop
+for t in range(2000):
+    _, current_loss, current_A, current_b = session.run([optimizer, L, A, b], feed_dict={
+        x: X_data,
+        y: y_data
+    })
+    print("t = %g, loss = %g, A = %s, b = %g" % (t, current_loss, str(current_A), current_b))
 
 ``` 
-
-# References
 
 [synthetic-data]: /books/tensorflow/book/ch2-linreg/code/linreg-scaling-synthetic.csv
 [plot1]: /books/tensorflow/book/ch2-linreg/assets/scaling_plot1.png
