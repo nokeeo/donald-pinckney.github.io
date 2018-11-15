@@ -21,6 +21,7 @@ Thumbs.db
 .cache
 .project
 .settings
+.vscode
 .tmproj
 *.esproj
 nbproject
