@@ -132,7 +132,47 @@
         
           
             
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
               <a class="horizontal-item sidebar-nav-item" href="/ml.html">ML Resources</a>
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
             
           
         
@@ -147,7 +187,7 @@
           
         
 
-        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book">TensorFlow Book</a>
+        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book">TensorFlow Guide</a>
 
         <div class="horizontal-item">
         </div>
@@ -175,6 +215,26 @@
             
               <a class="horizontal-item sidebar-nav-item" href="/about.html">About Me</a>
             
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
           
         
           
@@ -241,7 +301,7 @@
   <div class="post-categories">
   
   
-  <a href="/books/tensorflow/book">Read this post via the TensorFlow book instead</a>
+  <a href="/books/tensorflow/book">Read this post in book format instead</a>
   
   
 </div>
@@ -509,7 +569,7 @@ The experimental nature of this chapter should illustrate the practicalities of 
 
 In future chapters I won't include the code specifically for TensorBoard (unless it is important to that chapter) since I don't want it to get in the way of actual models, but *I would highly encourage you to insert your own TensorBoard summary code*, and monitor plots of convergence in TensorBoard, since it is useful both educationally and practically.
 
-# Exercises
+# Challenge Problems
 
 1. Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates. If you prefer a more focused goal, try to beat my configuration of an Adagrad optimizer with a learning rate of 50, and converge faster. Also note that some optimization algorithms have additional hyperparameters other than the learning rate. See the TensorFlow documentation for information about these.
 2. One other cause of slow convergence for the homicide rate linear regression is the somewhat extreme scaling of the problem. The \\(y\\) variable is a whole order of magnitude greater than the \\(x\\) variable, and this affects optimization. We will actually look at this problem specifically in chapter 2.4, but for now you can experiment on your own with one solution: instead of using the \\(x\\) and \\(y\\) data directly from the data set, modify them first to rescale them. A quick, hacky way is to modify the code that loads the data, so that \\(x\\) and \\(y\\) vary between 0 and 1:

@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-09-09T19:16:16-07:00</updated>
+ <updated>2018-11-15T09:26:11-08:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -1243,7 +1243,7 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 
 &lt;p&gt;Linear regression with multiple variables is only slightly different in essence from single variable linear regression. The main difference is abstracting the linear operation \(ax\) where \(a\) and \(x\) are single numbers to the linear operation \(Ax\), where now \(A\) is a matrix, \(x\) is a vector. In addition, at the implementation level we also have to deal with loading data in a more sophisticated manner, but otherwise the code is mostly the same. In later chapters we will use this abstraction we have built to define even more powerful models.&lt;/p&gt;
 
-&lt;h1 id=&quot;exercises&quot;&gt;Exercises&lt;/h1&gt;
+&lt;h1 id=&quot;challenge-problems&quot;&gt;Challenge Problems&lt;/h1&gt;
 
 &lt;p&gt;So far this chapter has used a synthetic data set, &lt;code class=&quot;highlighter-rouge&quot;&gt;linreg-multi-synthetic-2.csv&lt;/code&gt;, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data. Note that in real-world data not all columns are useful, and some might not have a linear relationship with the MPG. Including these unhelpful columns in your model might decrease the accuracy of your model. You should try plotting various columns vs. the output column to determine which seem most helpful in predicting the output, and then only include these useful columns as your input.&lt;/p&gt;
 
@@ -1567,7 +1567,7 @@ rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; /tmp/tensorflow/single_var_
 
 &lt;p&gt;In future chapters I won’t include the code specifically for TensorBoard (unless it is important to that chapter) since I don’t want it to get in the way of actual models, but &lt;em&gt;I would highly encourage you to insert your own TensorBoard summary code&lt;/em&gt;, and monitor plots of convergence in TensorBoard, since it is useful both educationally and practically.&lt;/p&gt;
 
-&lt;h1 id=&quot;exercises&quot;&gt;Exercises&lt;/h1&gt;
+&lt;h1 id=&quot;challenge-problems&quot;&gt;Challenge Problems&lt;/h1&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates. If you prefer a more focused goal, try to beat my configuration of an Adagrad optimizer with a learning rate of 50, and converge faster. Also note that some optimization algorithms have additional hyperparameters other than the learning rate. See the TensorFlow documentation for information about these.&lt;/li&gt;
@@ -1695,7 +1695,7 @@ rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; /tmp/tensorflow/single_var_
 
 &lt;h3 id=&quot;data-set-format&quot;&gt;Data set format&lt;/h3&gt;
 
-&lt;p&gt;For regression problems, the goal is to predict a continuous variable output, given some input variables (usually also continuous). For single variable regression, we only have one input variable, called \(x\), and our &lt;em&gt;desired&lt;/em&gt; output \(y\). Our data set \(D\) then consists of many examples of \(x\) and \(y\), so:
+&lt;p&gt;For regression problems, the goal is to predict a continuous variable output, given some input variables (also called &lt;strong&gt;features&lt;/strong&gt;). For single variable regression, we only have one input variable, called \(x\), and our &lt;em&gt;desired&lt;/em&gt; output \(y\). Our data set \(D\) then consists of many examples of \(x\) and \(y\), so:
 \[
     D = \{ (x_1, y_1), (x_2, y_2), \cdots, (x_m, y_m) \}
 \]
@@ -1720,7 +1720,8 @@ where \(x\) is an input, \(a, b\) are constants, and \(y’\) is the prediction 
 Recall that there are \(m\) examples in the data set, \(x_i\) is the i’th input, and \(y_i\) is the i’th desired output. So, \((y’(x_i, a, b) - y_i)^2\) measures how far the i’th prediction is from the i’th desired output. For example, if the prediction \(y’\) is 7, and the correct output \(y\) is 10, then we would get \((7 - 10)^2 = 9.\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \(a\) and \(b\)) occurs exactly at the smallest value of \(L(a, b)\). For this reason, the model is also called &lt;a href=&quot;https://en.wikipedia.org/wiki/Least_squares&quot;&gt;least squares regression&lt;/a&gt;.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In a sense, the choice of models and loss functions is one of the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.
+However, there is also a concrete mathematical reason for why we specifically square it. It’s too much to go into here, but it will be explored in &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/mle.html&quot;&gt;bonus chapter 2.8&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.&lt;/p&gt;
@@ -1782,7 +1783,7 @@ where \(\alpha\) is a constant called the &lt;strong&gt;learning rate&lt;/strong
 &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;We use pandas to easily load the CSV homicide data:&lt;/p&gt;
+&lt;p&gt;We use Pandas to easily load the CSV homicide data:&lt;/p&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;homicide.csv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;x_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num_homicide_deaths&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -2008,7 +2009,7 @@ But estimates – created from public health surveys and population models – s
 
 &lt;p&gt;This is an open question, and one that I certainly don’t have an answer to right now. For the short term we can focus on the problem of not trusting a simple linear regression model to properly predict data outside of what it has been trained on, while in the long term keeping in mind that “with great power comes great responsibility.”&lt;/p&gt;
 
-&lt;h1 id=&quot;exercises&quot;&gt;Exercises&lt;/h1&gt;
+&lt;h1 id=&quot;challenge-problems&quot;&gt;Challenge Problems&lt;/h1&gt;
 
 &lt;p&gt;Feel free to complete as many of these as you wish, to get more practice with single variable linear regression. Note that for different problems you might have to adjust the learning rate and / or the number of training iterations.&lt;/p&gt;
 

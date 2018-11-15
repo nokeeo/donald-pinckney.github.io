@@ -132,7 +132,47 @@
         
           
             
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
               <a class="horizontal-item sidebar-nav-item" href="/ml.html">ML Resources</a>
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
             
           
         
@@ -147,7 +187,7 @@
           
         
 
-        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book">TensorFlow Book</a>
+        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book">TensorFlow Guide</a>
 
         <div class="horizontal-item">
         </div>
@@ -175,6 +215,26 @@
             
               <a class="horizontal-item sidebar-nav-item" href="/about.html">About Me</a>
             
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
           
         
           
@@ -241,7 +301,7 @@
   <div class="post-categories">
   
   
-  <a href="/books/tensorflow/book">Read this post via the TensorFlow book instead</a>
+  <a href="/books/tensorflow/book">Read this post in book format instead</a>
   
   
 </div>
@@ -289,7 +349,7 @@
 
 <h3 id="data-set-format">Data set format</h3>
 
-<p>For regression problems, the goal is to predict a continuous variable output, given some input variables (usually also continuous). For single variable regression, we only have one input variable, called \(x\), and our <em>desired</em> output \(y\). Our data set \(D\) then consists of many examples of \(x\) and \(y\), so:
+<p>For regression problems, the goal is to predict a continuous variable output, given some input variables (also called <strong>features</strong>). For single variable regression, we only have one input variable, called \(x\), and our <em>desired</em> output \(y\). Our data set \(D\) then consists of many examples of \(x\) and \(y\), so:
 \[
     D = \{ (x_1, y_1), (x_2, y_2), \cdots, (x_m, y_m) \}
 \]
@@ -314,7 +374,8 @@ where \(x\) is an input, \(a, b\) are constants, and \(y’\) is the prediction 
 Recall that there are \(m\) examples in the data set, \(x_i\) is the i’th input, and \(y_i\) is the i’th desired output. So, \((y’(x_i, a, b) - y_i)^2\) measures how far the i’th prediction is from the i’th desired output. For example, if the prediction \(y’\) is 7, and the correct output \(y\) is 10, then we would get \((7 - 10)^2 = 9.\) Squaring it is important so that it is always positive.  Finally, we just add up all of these individual losses. Since the smallest possible values for the squared terms indicate that the line fits the data as closely as possible, the line of best fit (determined by the choice of \(a\) and \(b\)) occurs exactly at the smallest value of \(L(a, b)\). For this reason, the model is also called <a href="https://en.wikipedia.org/wiki/Least_squares">least squares regression</a>.</p>
 
 <blockquote>
-  <p><strong>Note:</strong> The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In sense, the choice of models and loss functions is the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.</p>
+  <p><strong>Note:</strong> The choice to square \(y’(x_i, a, b) - y_i\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In a sense, the choice of models and loss functions is one of the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.
+However, there is also a concrete mathematical reason for why we specifically square it. It’s too much to go into here, but it will be explored in <a href="/books/tensorflow/book/ch2-linreg/mle.html">bonus chapter 2.8</a></p>
 </blockquote>
 
 <p>Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.</p>
@@ -376,7 +437,7 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 </code></pre></div></div>
 
-<p>We use pandas to easily load the CSV homicide data:</p>
+<p>We use Pandas to easily load the CSV homicide data:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
 <span class="n">x_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 <span class="n">y_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
@@ -602,7 +663,7 @@ But estimates – created from public health surveys and population models – s
 
 <p>This is an open question, and one that I certainly don’t have an answer to right now. For the short term we can focus on the problem of not trusting a simple linear regression model to properly predict data outside of what it has been trained on, while in the long term keeping in mind that “with great power comes great responsibility.”</p>
 
-<h1 id="exercises">Exercises</h1>
+<h1 id="challenge-problems">Challenge Problems</h1>
 
 <p>Feel free to complete as many of these as you wish, to get more practice with single variable linear regression. Note that for different problems you might have to adjust the learning rate and / or the number of training iterations.</p>
 
