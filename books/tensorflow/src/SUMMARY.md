@@ -13,5 +13,6 @@
     - [Nonlinear Regression](temp)
     - [Regularization](temp)
     - [Evaluation](temp)
+    - [Bonus: Why we square errors](ch2-linreg/mle.md)
 ---
 [By Donald Pinckney](https://index)
