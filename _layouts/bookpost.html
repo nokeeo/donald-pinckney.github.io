@@ -33,7 +33,7 @@ layout: default
     {% assign categories = page.categories %}
   {% endif %}
   {% for category in categories %}
-  <a href="{{site.baseurl}}/books/{{category | downcase}}/book">Read this post via the {{category}} book instead</a>
+  <a href="{{site.baseurl}}/books/{{category | downcase}}/book">Read this post in book format instead</a>
   {% unless forloop.last %}&nbsp;{% endunless %}
   {% endfor %}
 </div>
