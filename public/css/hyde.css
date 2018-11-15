@@ -92,7 +92,7 @@ html {
 }
 
 .sidebar-about p {
-  font-family: "CMU Classical Serif", Helvetica, Arial, sans-serif;
+  font-family: "Classical Computer Modern", sans-serif;
   font-size: 1.0rem;
   display: none;
 }
@@ -191,7 +191,7 @@ a.sidebar-nav-item:focus {
 
 
 /*.sidebar p {
-  font-family: "CMU Classical Serif", Helvetica, Arial, sans-serif;
+  font-family: "Classical Computer Modern", sans-serif;
 }*/
 
 /* Sticky sidebar
