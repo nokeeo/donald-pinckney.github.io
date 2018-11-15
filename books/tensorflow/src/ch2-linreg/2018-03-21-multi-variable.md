@@ -274,7 +274,7 @@ The model is fully trained, so now given a new input \\(x\\) we could now predic
 
 Linear regression with multiple variables is only slightly different in essence from single variable linear regression. The main difference is abstracting the linear operation \\(ax\\) where \\(a\\) and \\(x\\) are single numbers to the linear operation \\(Ax\\), where now \\(A\\) is a matrix, \\(x\\) is a vector. In addition, at the implementation level we also have to deal with loading data in a more sophisticated manner, but otherwise the code is mostly the same. In later chapters we will use this abstraction we have built to define even more powerful models.
 
-# Exercises
+# Challenge Problems
 
 So far this chapter has used a synthetic data set, `linreg-multi-synthetic-2.csv`, for easy demonstration. The exercises are primarily concerned with getting practice at applying this model to real-world data. Note that in real-world data not all columns are useful, and some might not have a linear relationship with the MPG. Including these unhelpful columns in your model might decrease the accuracy of your model. You should try plotting various columns vs. the output column to determine which seem most helpful in predicting the output, and then only include these useful columns as your input.
 

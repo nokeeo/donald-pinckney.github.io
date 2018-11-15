@@ -349,7 +349,7 @@ With examples like these, we quickly move from a technical discussion about mach
 
 This is an open question, and one that I certainly don't have an answer to right now. For the short term we can focus on the problem of not trusting a simple linear regression model to properly predict data outside of what it has been trained on, while in the long term keeping in mind that "with great power comes great responsibility."
 
-# Exercises
+# Challenge Problems
 
 Feel free to complete as many of these as you wish, to get more practice with single variable linear regression. Note that for different problems you might have to adjust the learning rate and / or the number of training iterations.
 
