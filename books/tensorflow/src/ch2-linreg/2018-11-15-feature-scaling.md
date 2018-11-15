@@ -1,10 +1,10 @@
 ---
 layout: bookpost
 title: Feature Scaling
-date: 2018-06-22
+date: 2018-11-15
 categories: TensorFlow
 isEditable: true
-editPath: books/tensorflow/src/ch2-linreg/feature-scaling.md
+editPath: books/tensorflow/src/ch2-linreg/2018-11-15-feature-scaling.md
 ---
 
 <script type="text/x-mathjax-config">
