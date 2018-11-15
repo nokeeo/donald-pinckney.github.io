@@ -4,13 +4,466 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-11-15T09:26:11-08:00</updated>
+ <updated>2018-11-15T11:42:45-08:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
    <email>donald_pinckney@icloud.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Feature Scaling</title>
+   <link href="https://donaldpinckney.com/tensorflow/2018/11/15/feature-scaling.html"/>
+   <updated>2018-11-15T00:00:00-08:00</updated>
+   <id>https://donaldpinckney.com/tensorflow/2018/11/15/feature-scaling</id>
+   <content type="html">&lt;script type=&quot;text/x-mathjax-config&quot;&gt;
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: &quot;AMS&quot; } }
+});
+&lt;/script&gt;
+
+&lt;h1 id=&quot;feature-scaling&quot;&gt;Feature Scaling&lt;/h1&gt;
+
+&lt;p&gt;In chapters &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html&quot;&gt;2.1&lt;/a&gt;, &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html&quot;&gt;2.2&lt;/a&gt;, &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html&quot;&gt;2.3&lt;/a&gt; we used the gradient descent algorithm (or variants of) to minimize a loss function, and thus achieve a line of best fit. However, it turns out that the optimization in chapter 2.3 was much, much slower than it needed to be. While this isn’t a big problem for these fairly simple linear regression models that we can train in seconds anyways, this inefficiency becomes a much more drastic problem when dealing with large data sets and models.&lt;/p&gt;
+
+&lt;h2 id=&quot;example-of-the-problem&quot;&gt;Example of the Problem&lt;/h2&gt;
+
+&lt;p&gt;First, let’s look at a concrete example of the problem, by again considering a synthetic data set. Like in chapter 2.3 I generated a simple &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/code/linreg-scaling-synthetic.csv&quot;&gt;synthetic data set&lt;/a&gt; consisting of 2 independent variables \(x_1\) and \(x_2\), and one dependent variable \(y = 2x_1 + 0.013x_2\). However, note that the range for \(x_1\) is 0 to 10, but the range for \(x_2\) is 0 to 1000. Let’s call this data set \(D\). A few sample data points look like this:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;\(x_1\)&lt;/th&gt;
+      &lt;th&gt;\(x_2\)&lt;/th&gt;
+      &lt;th&gt;\(y\)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;7.36&lt;/td&gt;
+      &lt;td&gt;1000&lt;/td&gt;
+      &lt;td&gt;34.25&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;9.47&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;19.24&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0.52&lt;/td&gt;
+      &lt;td&gt;315.78&lt;/td&gt;
+      &lt;td&gt;3.50&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1.57&lt;/td&gt;
+      &lt;td&gt;315.78&lt;/td&gt;
+      &lt;td&gt;11.02&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;6.31&lt;/td&gt;
+      &lt;td&gt;263.15&lt;/td&gt;
+      &lt;td&gt;13.93&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1.57&lt;/td&gt;
+      &lt;td&gt;526.31&lt;/td&gt;
+      &lt;td&gt;10.21&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0.52&lt;/td&gt;
+      &lt;td&gt;105.26&lt;/td&gt;
+      &lt;td&gt;3.41&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4.21&lt;/td&gt;
+      &lt;td&gt;842.10&lt;/td&gt;
+      &lt;td&gt;16.27&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2.63&lt;/td&gt;
+      &lt;td&gt;894.73&lt;/td&gt;
+      &lt;td&gt;19.04&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3.68&lt;/td&gt;
+      &lt;td&gt;210.52&lt;/td&gt;
+      &lt;td&gt;4.60&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;For simplification I have excluded a constant term from this synthetic data set, and when training models I “cheated” by not training the constant term \(b\) and just setting it to 0, so as to simplify visualization. The model that I used was simply:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# A is a 1x2 matrix&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Since this is just a simple application of the ideas from chapter 2.3, one would expect this to work fairly easily. However, when using a &lt;code class=&quot;highlighter-rouge&quot;&gt;GradientDescentOptimizer&lt;/code&gt;, training goes rather poorly. Here is a plot showing the training progress of &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and the loss function side-by-side:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/scaling_plot1.png&quot; alt=&quot;Training progress without scaling&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This optimization was performed with a learning rate of 0.0000025, which is about the largest before it would diverge. The loss function quickly decreases at first, but then quickly stalls, and decreases quite slowly. Meanwhile, \(A_0\) is increasing towards the expected value of approximately 2.0, but very slowly. Within 5000 iterations this model fails to finish training.&lt;/p&gt;
+
+&lt;p&gt;Now let’s do something rather strange: take the data set \(D\), and create a new data set \(D’\) by dividing all the \(x_2\) values by 100. The resulting data set \(D’\) looks roughly like this:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;\(x_1’\)&lt;/th&gt;
+      &lt;th&gt;\(x_2’\)&lt;/th&gt;
+      &lt;th&gt;\(y’\)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;7.36&lt;/td&gt;
+      &lt;td&gt;10&lt;/td&gt;
+      &lt;td&gt;34.25&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;9.47&lt;/td&gt;
+      &lt;td&gt;0&lt;/td&gt;
+      &lt;td&gt;19.24&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0.52&lt;/td&gt;
+      &lt;td&gt;3.1578&lt;/td&gt;
+      &lt;td&gt;3.50&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1.57&lt;/td&gt;
+      &lt;td&gt;3.1578&lt;/td&gt;
+      &lt;td&gt;11.02&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;6.31&lt;/td&gt;
+      &lt;td&gt;2.6315&lt;/td&gt;
+      &lt;td&gt;13.93&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1.57&lt;/td&gt;
+      &lt;td&gt;5.2631&lt;/td&gt;
+      &lt;td&gt;10.21&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;0.52&lt;/td&gt;
+      &lt;td&gt;1.0526&lt;/td&gt;
+      &lt;td&gt;3.41&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4.21&lt;/td&gt;
+      &lt;td&gt;8.4210&lt;/td&gt;
+      &lt;td&gt;16.27&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2.63&lt;/td&gt;
+      &lt;td&gt;8.9473&lt;/td&gt;
+      &lt;td&gt;19.04&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3.68&lt;/td&gt;
+      &lt;td&gt;2.1052&lt;/td&gt;
+      &lt;td&gt;4.60&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+      &lt;td&gt;…&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;A crucial note is that while \(D’\) is technically different from \(D\), it contains exactly the same information: one can convert between them freely, by dividing or multiplying the second column by 100. In fact, since this transformation is linear, and we are using a linear model, we can train our model on \(D’\) instead. We would just expect to obtain a value of 1.3 for &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; rather than 0.013. So let’s give it a try!&lt;/p&gt;
+
+&lt;p&gt;The first interesting observation is that we can use a much larger learning rate. The largest learning rate we could use with \(D\) was 0.0000025, but with \(D’\) we can use a learning rate of 0.01. And when we plot &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and the loss function for both \(D\) and \(D’\) we see something pretty crazy:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/scaling_plot2.png&quot; alt=&quot;Training progress with scaling&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;While training on \(D\) wasn’t even close to done after 5000 iterations, training on \(D’\) seems to have completed nearly instantly. If we zoom in on the first 60 iterations, we can see the training more clearly:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/scaling_plot3.png&quot; alt=&quot;Training progress with scaling zoom&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So this incredibly simple data set transformation has changed a problem that was untrainable within 5000 iterations to one that can be trained practically instantly with 50 iterations. What is this black magic, and how does it work?&lt;/p&gt;
+
+&lt;h2 id=&quot;visualizing-gradient-descent-with-level-sets&quot;&gt;Visualizing Gradient Descent with Level Sets&lt;/h2&gt;
+
+&lt;p&gt;One of the best ways to gain insight in machine learning is by visualization. As seen in chapter 2.1 we can visualize loss functions using plots. Since we have 2 parameters &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; of the loss function, it would be a 3D plot. We used this for visualization in chapter 2.1, but frankly it’s a bit messy looking. Instead, we will use &lt;a href=&quot;https://en.wikipedia.org/wiki/Level_set&quot;&gt;level sets&lt;/a&gt; (also called contour plots), which use lines to indicate where the loss function has a constant value. An example is easiest, so here is the contour plot for the loss function for \(D’\), the one that converges quickly:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/contour2.png&quot; alt=&quot;Contour plot of D'&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Each ellipse border is where the loss function has a particular constant value (the innermost ones are labeled), and the red X marks the spot of the optimal values of &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt;. By convention the particular constant values of the loss function are evenly spaced, which means that contour lines that are closer together indicate a “steeper” slope. In this plot, the center near the X is quite shallow, while far away is pretty steep. In addition, one diagonal axis of the ellipses is steeper than the other diagonal axis.&lt;/p&gt;
+
+&lt;p&gt;We can also plot how &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; evolve during training on the contour plot, to get a feel for how gradient descent is working:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/contour2_dots.png&quot; alt=&quot;Contour plot of D' with training&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here, we can see that the initial values for &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; start pretty far off, but gradient descent quickly zeros in towards the X. As a side note, the line connecting each pair of dots is perpendicular to the line of the level set: see if you can figure out why.&lt;/p&gt;
+
+&lt;p&gt;So if that is what the contour plot looks like for the “good” case of \(D’\), how does it look for \(D\)? Well, it looks rather strange:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/contour1.png&quot; alt=&quot;Contour plot of D&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Don’t be fooled: like the previous plot the level sets also form ellipses, but they are so stretched that they are nearly straight lines at this scale. This means that vertically (&lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; is constant and we vary &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt;) there is substantial gradient, but horizontally (&lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; is constant and we vary &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt;) there is practically no slope. Put another way, gradient descent only knows to vary &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt;, and (almost) doesn’t vary &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt;.  We can test this hypothesis by plotting how gradient descent updates &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt;, like above. Since gradient descent makes such little progress though, we have to zoom in a lot to see what is going on:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/books/tensorflow/book/ch2-linreg/assets/contour1_dots.png&quot; alt=&quot;Contour plot of D&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We can clearly see that gradient descent applies large updates to &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; (a bit too large, a smaller learning rate would have been a bit better) due to the large gradient in the &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt; direction. But due to the (comparatively) tiny gradient in the &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; direction very small updates are done to &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt;. Gradient descent quickly converges on the optimal value of &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt;, but is very very far away from finding the optimal value of &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let’s take a quick look at what is going on mathematically to see why this happens. The model we are using is:
+\[
+    y’(x, A) = Ax = a_1 x_1 + a_2 x_2 
+\]
+Here, \(a_1\) is in the role of &lt;code class=&quot;highlighter-rouge&quot;&gt;A[0]&lt;/code&gt; and \(a_2\) is &lt;code class=&quot;highlighter-rouge&quot;&gt;A[1]&lt;/code&gt;. We substitute this into the loss function to get:
+\[
+    L(a_1, a_2) = \sum_{i=1}^m (a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})^2
+\]
+Now if we differentiate \(L\) in the direction of \(a_1\) and \(a_2\) separately, we get:
+\[
+    \frac{\partial L}{\partial a_1} = \sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_1^{(i)} \&lt;br /&gt;
+    \frac{\partial L}{\partial a_2} = \sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_2^{(i)}
+\]
+Here we can see the problem: the inner terms of the derivatives are the same, except one is multiplied by \(x_1^{(i)}\) and the other by \(x_2^{(i)}\). If \(x_2\) is on average 100 times bigger than \(x_1\) (which it is in the original data set), then we would expect \(\frac{\partial L}{\partial a_2}\) to be roughly 100 times bigger than \(\frac{\partial L}{\partial a_1}\). It isn’t exactly 100 times larger, but with any reasonable data set it should be close. Since the derivatives in the directions of \(a_1\) and \(a_2\) are scaled completely differently, gradient descent fails to update both of them adequately.&lt;/p&gt;
+
+&lt;p&gt;The solution is simple: we need to rescale the input features before training. This is exactly what happened when we mysteriously divided by 100: we rescaled \(x_2\) to be comparable to \(x_1\). But we should work out a more methodical way of rescaling, rather than randomly dividing by 100.&lt;/p&gt;
+
+&lt;h2 id=&quot;rescaling-features&quot;&gt;Rescaling Features&lt;/h2&gt;
+
+&lt;p&gt;This wasn’t explored above, but there are really two ways that we potentially need to rescale features. Consider an example where \(x_1\) ranges between -1 and 1, but \x_2\) ranges between 99 and 101: both of these features have (at least approximately) the same &lt;a href=&quot;https://en.wikipedia.org/wiki/Standard_deviation&quot;&gt;standard deviation&lt;/a&gt;, but \(x_2\) has a much larger &lt;a href=&quot;https://en.wikipedia.org/wiki/Expected_value&quot;&gt;mean&lt;/a&gt;. On the other hand, consider an example where \(x_1\) still ranges between -1 and 1, but \(x_2\) ranges between -100 and 100. This time, they have the same mean, but \(x_2\) has a much larger standard deviation. Both of these situations can make gradient descent and related algorithms slower and less reliable. So, our goal is to ensure that all features have the same mean and standard deviation.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; There are other methods to measure how different features are, and then subsequently rescale them. For a look at more of them, feel free to consult the &lt;a href=&quot;https://en.wikipedia.org/wiki/Feature_scaling&quot;&gt;Wikipedia article&lt;/a&gt;. However, after implementing the technique presented here, any other technique is fairly similar and easy to implement if needed.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Wihtout digressing too far into statistics, let’s quickly review how to calculate the mean \(\mu\) and standard deviation \(\sigma\). Suppose we have already read in our data set in Python into a Numpy vector / matrix, and have all the values for the feature \(x_j\), for each \(j\). Mathematically, the mean for feature \(x_j\) is just the average:
+\[
+    \mu_j = \frac{\sum_{i=1}^m x_j^{(i)}}{m}
+\]
+In Numpy there is a convenient &lt;code class=&quot;highlighter-rouge&quot;&gt;np.mean()&lt;/code&gt; function we will use.&lt;/p&gt;
+
+&lt;p&gt;The standard deviation \(\sigma\) is a bit more tricky. We measure how far each point \(x_j^{(i)}\) is from the mean \(\mu_j\), square this, then take the mean of all of this, and finally square root it:
+\[
+    \sigma_j = \sqrt{\frac{\sum_{i=1}^m (x_j^{(i)} - \mu_j)^2 }{m}}
+\]
+Again, Numpy provides a convenient &lt;code class=&quot;highlighter-rouge&quot;&gt;np.std()&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Statistics nerds might point out that in the above equation we should divide by \(m - 1\) instead of \(m\) to obtain an unbiased estimate of the standard deviation. This might well be true, but in this usage it does not matter since we are only using this to rescale features relative to each other, and not make a rigorous statistical inference. To be more precise, doing so would involve multiplying each scaled feature by only a constant factor, and will not change any of their standard deviations or means relative to each other.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Once we have every mean \(\mu_j\) and standard devation \(\sigma_j\), rescaling is easy: we simply rescale every feature like so:&lt;/p&gt;
+
+&lt;p&gt;\[
+\begin{equation} \label{eq:scaling}
+    x_j’ = \frac{x_j - \mu_j}{\sigma_j}
+\end{equation}
+\]&lt;/p&gt;
+
+&lt;p&gt;This will force every feature to have a mean of 0 and a standard deviation of 1, and thus be scaled well relative to each other.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Be careful to make sure to perform the rescaling at both training time and prediction time. That is, we first have to perform the rescaling on the whole training data set, and then train the model so as to achieve good training performance. Once the model is trained and we have a new, never before seen input \(x\), we also need to rescale its features to \(x’\) because the trained model only understands inputs that have already been rescaled (because we trained it that way).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;implementation-and-experiments&quot;&gt;Implementation and Experiments&lt;/h2&gt;
+
+&lt;p&gt;Feature scaling can be applied to just about any multi-variable model. Since the only multi-variable model we have seen so far is multi-variable linear regression, we’ll look at implementing feature scaling in that context, but the ideas and the code are pretty much the same for other models. First let’s just copy-paste the original multi-variable linear regression code, and modify it to load the &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/code/linreg-scaling-synthetic.csv&quot;&gt;new synthetic data set&lt;/a&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# First we load the entire CSV file into an m x n matrix&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;linreg-scaling-synthetic.csv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;header&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Make a convenient variable to remember the number of input columns&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# We extract all rows and the first n columns into X_data&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Then we flip it&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transpose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# We extract all rows and the last column into y_data&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Then we flip it&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transpose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+
+
+&lt;span class=&quot;c&quot;&gt;# Define data placeholders&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define trainable variables&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;A&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;b&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define model output&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define the loss function&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduce_sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define optimizer object&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AdamOptimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Create a session and initialize variables&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;global_variables_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Main optimization loop&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;feed_dict&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;t = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, loss = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, A = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s, b = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;current_A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If you run this code right now, you might see output like the following:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
+t = 1995, loss = 0.505296, A = [[1.9920335  0.01292674]], b = 0.089939
+t = 1996, loss = 0.5042, A = [[1.9920422  0.01292683]], b = 0.0898404
+t = 1997, loss = 0.5031, A = [[1.9920509  0.01292691]], b = 0.0897419
+t = 1998, loss = 0.501984, A = [[1.9920596  0.01292699]], b = 0.0896435
+t = 1999, loss = 0.50089, A = [[1.9920683  0.01292707]], b = 0.0895451
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that if you run this code multiple times you will get different results each time due to the random initialization. The synthetic data was generated with the equation \(y = 2x_1 + 0.013x_2 + 0\). So after 2000 iterations of training we are getting close-ish to the correct values, but it’s not fully trained. So let’s implement feature scaling to fix this.&lt;/p&gt;
+
+&lt;p&gt;The first step is to compute the mean and standard deviation for each feature in the training data set. Add the following after &lt;code class=&quot;highlighter-rouge&quot;&gt;X_data&lt;/code&gt; is loaded:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;means&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;deviations&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Using &lt;code class=&quot;highlighter-rouge&quot;&gt;axis=1&lt;/code&gt; means that we compute the mean for each feature, averaged over all data points. That is, &lt;code class=&quot;highlighter-rouge&quot;&gt;X_data&lt;/code&gt; is a \(2 \times 400\) matrix, &lt;code class=&quot;highlighter-rouge&quot;&gt;means&lt;/code&gt; is a \(2 \times 1\) matrix (vector). If we had used &lt;code class=&quot;highlighter-rouge&quot;&gt;axis=0&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;means&lt;/code&gt; would be a \(1 \times 400\) matrix, which is not what we want.&lt;/p&gt;
+
+&lt;p&gt;Now that we know the means and standard deviations of each feature, we have to use them to transform the inputs via Equation \((\ref{eq:scaling})\). We have two options: we could implement the transformation directly using &lt;code class=&quot;highlighter-rouge&quot;&gt;numpy&lt;/code&gt; to transform &lt;code class=&quot;highlighter-rouge&quot;&gt;X_data&lt;/code&gt; before training, or we could include the transformation within the TensorFlow computations. But since we need to do the transformation again when we want to predict output given new inputs, including it in the TensorFlow computations will be a bit more convenient.&lt;/p&gt;
+
+&lt;p&gt;Just like before we setup &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; as a placeholder, so this code is identical:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Define data placeholders&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we want to transform &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; according to Equation \((\ref{eq:scaling})\). We can define a new TensorFlow value &lt;code class=&quot;highlighter-rouge&quot;&gt;x_scaled&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Apply the rescaling&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_scaled&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;means&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;deviations&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;One important concept is that when this line of code runs, &lt;code class=&quot;highlighter-rouge&quot;&gt;means&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;deviations&lt;/code&gt; have already been computed: they are actual matrices. So to TensorFlow they are &lt;strong&gt;constants&lt;/strong&gt;: they are neither trainable variables that will be updated during optimization, nor are they placeholders that need to be fed values later. They have already been computed, and TensorFlow just uses the already computed values directly.&lt;/p&gt;
+
+&lt;p&gt;Also, note that since &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;means&lt;/code&gt; are compatibly sized matrices, the subtraction (and division) will be done separately for each feature, automatically. So while Equation \((\ref{eq:scaling})\) technically says how to scale one feature individually, this single line of code scales all the features.&lt;/p&gt;
+
+&lt;p&gt;Now, everywhere that we use &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; in the model we should now use &lt;code class=&quot;highlighter-rouge&quot;&gt;x_scaled&lt;/code&gt; instead. For us the only code that needs to change is in defining the model’s prediction:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Define model output, using the scaled features&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_scaled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that when we run the session we do &lt;em&gt;not&lt;/em&gt; feed values to &lt;code class=&quot;highlighter-rouge&quot;&gt;x_scaled&lt;/code&gt;, because we want to feed unscaled values to &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; which will then automatically get scaled when &lt;code class=&quot;highlighter-rouge&quot;&gt;x_scaled&lt;/code&gt; is computed based on what is fed to &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt;. We instead continue to feed values to &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; as before.&lt;/p&gt;
+
+&lt;p&gt;That’s all that we need to implement for feature scaling, it’s really pretty easy. If we run this code now we should see:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;...
+t = 1995, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1996, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1997, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1998, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+t = 1999, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The fact that none of the trained weights are updating anymore and that the loss function is very small is a good sign that we have achieved convergence. But the weights are not the values we expect… shouldn’t we get &lt;code class=&quot;highlighter-rouge&quot;&gt;A = [[2, 0.013]], b = 0&lt;/code&gt;, since that is the equation that generated the synthetic data? Actually, the weights we got &lt;em&gt;are&lt;/em&gt; correct because the model is now being trained on the rescaled data set, so we get different weights at the end. See Challenge Problem 3 below to explore this more.&lt;/p&gt;
+
+&lt;h1 id=&quot;concluding-remarks&quot;&gt;Concluding Remarks&lt;/h1&gt;
+
+&lt;p&gt;We’ve seen how to implement feature scaling for a simple multi-variable linear regression model.  While this is a fairly simple model, the principles are basically the same for applying feature scaling to more complex models (which we will see very soon). In fact, the code is pretty much identical: just compute the means and standard deviations, apply the formula to &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; to compute &lt;code class=&quot;highlighter-rouge&quot;&gt;x_scaled&lt;/code&gt;, and anywhere you use &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; in the model, just use &lt;code class=&quot;highlighter-rouge&quot;&gt;x_scaled&lt;/code&gt; instead.&lt;/p&gt;
+
+&lt;p&gt;Whether or not feature scaling helps is dependent on the problem and the model. If you have having trouble getting your model to converge, you can always implement feature scaling and see how it affects the training. While it wasn’t used in this chapter, using TensorBoard (see &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html&quot;&gt;chapter 2.2&lt;/a&gt;) is a great way to run experiments to compare training with and without feature scaling.&lt;/p&gt;
+
+&lt;h1 id=&quot;challenge-problems&quot;&gt;Challenge Problems&lt;/h1&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Coding:&lt;/strong&gt; Take one of the challenge problems from the previous chapter &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html#challenge-problems&quot;&gt;the previous chapter&lt;/a&gt;, and implement it with and without feature scaling, and then compare how training performs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Coding:&lt;/strong&gt; Add TensorBoard support to the code from this chapter, and use it to explore for yourself the effect feature scaling has. Also, you can compare with different optimization algorithms.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Theory:&lt;/strong&gt; One problem with feature scaling is that we learn different model parameters. In this chapter, the original data set was generated with \(y = 2x_1 + 0.013x_2 + 0\), but the parameters that the model learned were \(a_1’ = 6.0697703, a_2’ = 3.9453504, b’ = 16.5\). Note that I have called these learned parameters \(a_1’\) rather than \(a_1\) to indicate that these learned parameters are for the &lt;em&gt;rescaled&lt;/em&gt; data.&amp;lt;p&amp;gt;One important use of linear regression is to explore and understand a data set, not just predict outputs. After doing a regression, one can understand through the learned weights how severely each feature affects the output. For example, if we have two features \(A\) and \(B\) which are used to predict rates of cancer, and the learned weight for \(A\) is much larger than the learned weight for \(B\), this indicates that occurrence of \(A\) is more correlated with cancer than occurrence of \(B\) is, which is interesting in its own right. Unfortunately, performing feature scaling destroys this: since we have rescaled the training data, the weight for \(A\) (\(a_1’\)) has lost its relevance to the values of \(A\) in the real world. But all is not lost, since we can actually recover the “not-rescaled” parameters from the learned parameters, which we will derive now.&amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;First, suppose that we have learned the “rescaled” parameters \(a_1’, a_2’, b’\). That is, we predict the output \(y\) to be: \[\begin{equation}\label{eq:start}y = a_1’ x_1’ + a_2’ x_2’ + b’\end{equation}\]where \(x_1’, x_2’\) are the rescaled features. Now, we &lt;em&gt;want&lt;/em&gt; a model that uses some (yet unknown) weights \(a_1, a_2, b\) to predict the same output \(y\), but using the not-rescaled features \(x_1, x_2\). That is, we want to find \(a_1, a_2, b\) such that this is true:\[\begin{equation}\label{eq:goal}y = a_1 x_1 + a_2 x_2 + b\end{equation}\]To go about doing this, substitute for \(x_1’\) and \(x_2’\) using Equation \((\ref{eq:scaling})\) into Equation \((\ref{eq:start})\), and then compare it to Equation \((\ref{eq:goal})\) to obtain 3 equations: one to relate each scaled and not-scaled parameter. Finally, you can use these equations to be able to compute the “not-scaled” parameters in terms of the learned parameters. You can check your work by computing the not-scaled parameters in terms of the learned parameters for the synthetic data set, and verify that they match the expected values.&amp;lt;/p&amp;gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&quot;complete-code&quot;&gt;Complete Code&lt;/h1&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/feature_scaling.py&quot;&gt;complete example code is available on GitHub&lt;/a&gt;, as well as directly here:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;tensorflow&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;matplotlib.pyplot&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plt&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# First we load the entire CSV file into an m x n matrix&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;D&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;read_csv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;linreg-scaling-synthetic.csv&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;header&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Make a convenient variable to remember the number of input columns&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# We extract all rows and the first n columns into X_data&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Then we flip it&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transpose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# We extract all rows and the last column into y_data&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Then we flip it&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;transpose&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# We compute the mean and standard deviation of each feature&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;means&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mean&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;deviations&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;axis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;means&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deviations&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# exit(0)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define data placeholders&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;placeholder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Apply the rescaling&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;x_scaled&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;means&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;deviations&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define trainable variables&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;A&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_variable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;b&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define model output, using the scaled features&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;matmul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x_scaled&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define the loss function&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduce_sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y_predicted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Define optimizer object&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;train&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AdamOptimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;learning_rate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;minimize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Create a session and initialize variables&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;global_variables_initializer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Main optimization loop&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;optimizer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;feed_dict&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y_data&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;t = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, loss = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g, A = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;s, b = &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;g&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_loss&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;current_A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current_b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+</content>
+ </entry>
  
  <entry>
    <title>Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization</title>
