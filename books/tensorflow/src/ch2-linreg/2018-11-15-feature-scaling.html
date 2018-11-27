@@ -585,7 +585,7 @@ Again, Numpy provides a convenient <code class="highlighter-rouge">np.std()</cod
   <p><strong>Note:</strong> Statistics nerds might point out that in the above equation we should divide by \(m - 1\) instead of \(m\) to obtain an unbiased estimate of the standard deviation. This might well be true, but in this usage it does not matter since we are only using this to rescale features relative to each other, and not make a rigorous statistical inference. To be more precise, doing so would involve multiplying each scaled feature by only a constant factor, and will not change any of their standard deviations or means relative to each other.</p>
 </blockquote>
 
-<p>Once we have every mean \(\mu_j\) and standard devation \(\sigma_j\), rescaling is easy: we simply rescale every feature like so:</p>
+<p>Once we have every mean \(\mu_j\) and standard deviation \(\sigma_j\), rescaling is easy: we simply rescale every feature like so:</p>
 
 <p>\[
 \begin{equation} \label{eq:scaling}

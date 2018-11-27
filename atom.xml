@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-11-26T18:45:03-08:00</updated>
+ <updated>2018-11-26T18:50:35-08:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -255,7 +255,7 @@ Again, Numpy provides a convenient &lt;code class=&quot;highlighter-rouge&quot;&
   &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Statistics nerds might point out that in the above equation we should divide by \(m - 1\) instead of \(m\) to obtain an unbiased estimate of the standard deviation. This might well be true, but in this usage it does not matter since we are only using this to rescale features relative to each other, and not make a rigorous statistical inference. To be more precise, doing so would involve multiplying each scaled feature by only a constant factor, and will not change any of their standard deviations or means relative to each other.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Once we have every mean \(\mu_j\) and standard devation \(\sigma_j\), rescaling is easy: we simply rescale every feature like so:&lt;/p&gt;
+&lt;p&gt;Once we have every mean \(\mu_j\) and standard deviation \(\sigma_j\), rescaling is easy: we simply rescale every feature like so:&lt;/p&gt;
 
 &lt;p&gt;\[
 \begin{equation} \label{eq:scaling}
