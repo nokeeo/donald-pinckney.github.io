@@ -23,7 +23,6 @@ deviations = X_data.std(axis=1)
 
 print(means)
 print(deviations)
-# exit(0)
 
 # Define data placeholders
 x = tf.placeholder(tf.float32, shape=(n, None))
