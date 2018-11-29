@@ -24,14 +24,15 @@ install:
   - gem install jekyll-seo-tag
   - wget -O "$HOME/bin/mdbook" https://donaldpinckney.com/public/files/build_cache/mdbook
   - chmod +x "$HOME/bin/mdbook"
+  - mdbook --version
   - # To update mdbook, uncomment below!
-  - # rm "$HOME/bin/mdbook"
-  - # curl https://sh.rustup.rs > temp.sh
-  - # chmod +x temp.sh
-  - # ./temp.sh -y
-  - # source $HOME/.cargo/env
-  - # rm temp.sh
-  - # cargo install mdbook
+  - rm "$HOME/bin/mdbook"
+  - curl https://sh.rustup.rs > temp.sh
+  - chmod +x temp.sh
+  - ./temp.sh -y
+  - source $HOME/.cargo/env
+  - rm temp.sh
+  - cargo install --git "https://github.com/donald-pinckney/mdBook" mdbook
 
 script: ./buildToMaster
 env:
