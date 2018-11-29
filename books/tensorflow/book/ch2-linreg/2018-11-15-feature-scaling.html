@@ -9,20 +9,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="../">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
-        <link rel="stylesheet" href="book.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-        <link rel="shortcut icon" href="favicon.png">
-
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         
@@ -31,9 +32,14 @@
         <!-- MathJax -->
         <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         
-
     </head>
     <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = "light";
+        </script>
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script type="text/javascript">
             try {
@@ -54,7 +60,7 @@
         <script type="text/javascript">
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
-            if (theme === null || theme === undefined) { theme = 'light'; }
+            if (theme === null || theme === undefined) { theme = default_theme; }
             document.body.className = theme;
             document.querySelector('html').className = theme + ' js';
         </script>
@@ -72,7 +78,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="ch2-linreg/2018-11-15-feature-scaling.html" class="active"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li><a href="ch2-linreg/nonlinear.html"><strong aria-hidden="true">2.5.</strong> Nonlinear Regression</a></li><li><a href="ch2-linreg/regularization.html"><strong aria-hidden="true">2.6.</strong> Regularization</a></li><li><a href="ch2-linreg/evaluation.html"><strong aria-hidden="true">2.7.</strong> Evaluation</a></li><li><a href="ch2-linreg/mle.html"><strong aria-hidden="true">2.8.</strong> Bonus: Why we square errors</a></li><li class="spacer"></li></ol></li><li><a href="https:/index.html">By Donald Pinckney</a></li></ol>
+            <ol class="chapter"><li><a href="../ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="../ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="../ch1-setup/linux.html"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="../ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="../ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="../ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="../ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="../ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="../ch2-linreg/2018-11-15-feature-scaling.html" class="active"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li><a href="../ch2-linreg/nonlinear.html"><strong aria-hidden="true">2.5.</strong> Nonlinear Regression</a></li><li><a href="../ch2-linreg/regularization.html"><strong aria-hidden="true">2.6.</strong> Regularization</a></li><li><a href="../ch2-linreg/evaluation.html"><strong aria-hidden="true">2.7.</strong> Evaluation</a></li><li><a href="../ch2-linreg/mle.html"><strong aria-hidden="true">2.8.</strong> Bonus: Why we square errors</a></li><li class="spacer"></li></ol></li><li><a href="../https:/index.html">By Donald Pinckney</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -89,7 +95,7 @@
                                 <i class="fa fa-paint-brush"></i>
                             </button>
                             <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -105,9 +111,10 @@
                         <h1 class="menu-title">Machine Learning with TensorFlow</h1> 
 
                         <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <a href="../print.html" title="Print this book" aria-label="Print this book">
                                 <i id="print-button" class="fa fa-print"></i>
                             </a>
+                            
                         </div>
                     </div>
                 </div>
@@ -141,9 +148,9 @@ MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#feature-scaling" id="feature-scaling"><h1>Feature Scaling</h1></a>
+<a class="header" href="#feature-scaling" id="feature-scaling"><h1>Feature Scaling</h1></a>
 <p>In chapters <a href="/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html">2.1</a>, <a href="/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html">2.2</a>, <a href="/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html">2.3</a> we used the gradient descent algorithm (or variants of) to minimize a loss function, and thus achieve a line of best fit. However, it turns out that the optimization in chapter 2.3 was much, much slower than it needed to be. While this isn’t a big problem for these fairly simple linear regression models that we can train in seconds anyways, this inefficiency becomes a much more drastic problem when dealing with large data sets and models.</p>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#example-of-the-problem" id="example-of-the-problem"><h2>Example of the Problem</h2></a>
+<a class="header" href="#example-of-the-problem" id="example-of-the-problem"><h2>Example of the Problem</h2></a>
 <p>First, let’s look at a concrete example of the problem, by again considering a synthetic data set. Like in chapter 2.3 I generated a simple <a href="/books/tensorflow/book/ch2-linreg/code/linreg-scaling-synthetic.csv">synthetic data set</a> consisting of 2 independent variables \(x_1\) and \(x_2\), and one dependent variable \(y = 2x_1 + 0.013x_2\). However, note that the range for \(x_1\) is 0 to 10, but the range for \(x_2\) is 0 to 1000. Let's call this data set \(D\). A few sample data points look like this:</p>
 <table><thead><tr><th> \(x_1\) </th><th> \(x_2\) </th><th> \(y\)</th></tr></thead><tbody>
 <tr><td>7.36</td><td>  1000</td><td>       34.25</td></tr>
@@ -184,7 +191,7 @@ MathJax.Hub.Config({
 <p>While training on \(D\) wasn't even close to done after 5000 iterations, training on \(D'\) seems to have completed nearly instantly. If we zoom in on the first 60 iterations, we can see the training more clearly:</p>
 <p><img src="/books/tensorflow/book/ch2-linreg/assets/scaling_plot3.png" alt="Training progress with scaling zoom" /></p>
 <p>So this incredibly simple data set transformation has changed a problem that was untrainable within 5000 iterations to one that can be trained practically instantly with 50 iterations. What is this black magic, and how does it work?</p>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#visualizing-gradient-descent-with-level-sets" id="visualizing-gradient-descent-with-level-sets"><h2>Visualizing Gradient Descent with Level Sets</h2></a>
+<a class="header" href="#visualizing-gradient-descent-with-level-sets" id="visualizing-gradient-descent-with-level-sets"><h2>Visualizing Gradient Descent with Level Sets</h2></a>
 <p>One of the best ways to gain insight in machine learning is by visualization. As seen in chapter 2.1 we can visualize loss functions using plots. Since we have 2 parameters <code>A[0]</code> and <code>A[1]</code> of the loss function, it would be a 3D plot. We used this for visualization in chapter 2.1, but frankly it's a bit messy looking. Instead, we will use <a href="https://en.wikipedia.org/wiki/Level_set">level sets</a> (also called contour plots), which use lines to indicate where the loss function has a constant value. An example is easiest, so here is the contour plot for the loss function for \(D'\), the one that converges quickly:</p>
 <p><img src="/books/tensorflow/book/ch2-linreg/assets/contour2.png" alt="Contour plot of D'" /></p>
 <p>Each ellipse border is where the loss function has a particular constant value (the innermost ones are labeled), and the red X marks the spot of the optimal values of <code>A[0]</code> and <code>A[1]</code>. By convention the particular constant values of the loss function are evenly spaced, which means that contour lines that are closer together indicate a &quot;steeper&quot; slope. In this plot, the center near the X is quite shallow, while far away is pretty steep. In addition, one diagonal axis of the ellipses is steeper than the other diagonal axis.</p>
@@ -211,7 +218,7 @@ Now if we differentiate \(L\) in the direction of \(a_1\) and \(a_2\) separately
 \]
 Here we can see the problem: the inner terms of the derivatives are the same, except one is multiplied by \(x_1^{(i)}\) and the other by \(x_2^{(i)}\). If \(x_2\) is on average 100 times bigger than \(x_1\) (which it is in the original data set), then we would expect \(\frac{\partial L}{\partial a_2}\) to be roughly 100 times bigger than \(\frac{\partial L}{\partial a_1}\). It isn't exactly 100 times larger, but with any reasonable data set it should be close. Since the derivatives in the directions of \(a_1\) and \(a_2\) are scaled completely differently, gradient descent fails to update both of them adequately.</p>
 <p>The solution is simple: we need to rescale the input features before training. This is exactly what happened when we mysteriously divided by 100: we rescaled \(x_2\) to be comparable to \(x_1\). But we should work out a more methodical way of rescaling, rather than randomly dividing by 100.</p>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#rescaling-features" id="rescaling-features"><h2>Rescaling Features</h2></a>
+<a class="header" href="#rescaling-features" id="rescaling-features"><h2>Rescaling Features</h2></a>
 <p>This wasn't explored above, but there are really two ways that we potentially need to rescale features. Consider an example where \(x_1\) ranges between -1 and 1, but \(x_2\) ranges between 99 and 101: both of these features have (at least approximately) the same <a href="https://en.wikipedia.org/wiki/Standard_deviation">standard deviation</a>, but \(x_2\) has a much larger <a href="https://en.wikipedia.org/wiki/Expected_value">mean</a>. On the other hand, consider an example where \(x_1\) still ranges between -1 and 1, but \(x_2\) ranges between -100 and 100. This time, they have the same mean, but \(x_2\) has a much larger standard deviation. Both of these situations can make gradient descent and related algorithms slower and less reliable. So, our goal is to ensure that all features have the same mean and standard deviation.</p>
 <blockquote>
 <p><strong>Note:</strong> There are other methods to measure how different features are, and then subsequently rescale them. For a look at more of them, feel free to consult the <a href="https://en.wikipedia.org/wiki/Feature_scaling">Wikipedia article</a>. However, after implementing the technique presented here, any other technique is fairly similar and easy to implement if needed.</p>
@@ -239,7 +246,7 @@ x_j' = \frac{x_j - \mu_j}{\sigma_j}
 <blockquote>
 <p><strong>Note:</strong> Be careful to make sure to perform the rescaling at both training time and prediction time. That is, we first have to perform the rescaling on the whole training data set, and then train the model so as to achieve good training performance. Once the model is trained and we have a new, never before seen input \(x\), we also need to rescale its features to \(x'\) because the trained model only understands inputs that have already been rescaled (because we trained it that way).</p>
 </blockquote>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#implementation-and-experiments" id="implementation-and-experiments"><h2>Implementation and Experiments</h2></a>
+<a class="header" href="#implementation-and-experiments" id="implementation-and-experiments"><h2>Implementation and Experiments</h2></a>
 <p>Feature scaling can be applied to just about any multi-variable model. Since the only multi-variable model we have seen so far is multi-variable linear regression, we'll look at implementing feature scaling in that context, but the ideas and the code are pretty much the same for other models. First let's just copy-paste the original multi-variable linear regression code, and modify it to load the <a href="/books/tensorflow/book/ch2-linreg/code/linreg-scaling-synthetic.csv">new synthetic data set</a>:</p>
 <pre><code class="language-python">import numpy as np
 import tensorflow as tf
@@ -331,10 +338,10 @@ t = 1998, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
 t = 1999, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
 </code></pre>
 <p>The fact that none of the trained weights are updating anymore and that the loss function is very small is a good sign that we have achieved convergence. But the weights are not the values we expect... shouldn't we get <code>A = [[2, 0.013]], b = 0</code>, since that is the equation that generated the synthetic data? Actually, the weights we got <em>are</em> correct because the model is now being trained on the rescaled data set, so we get different weights at the end. See Challenge Problem 3 below to explore this more.</p>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#concluding-remarks" id="concluding-remarks"><h1>Concluding Remarks</h1></a>
+<a class="header" href="#concluding-remarks" id="concluding-remarks"><h1>Concluding Remarks</h1></a>
 <p>We've seen how to implement feature scaling for a simple multi-variable linear regression model.  While this is a fairly simple model, the principles are basically the same for applying feature scaling to more complex models (which we will see very soon). In fact, the code is pretty much identical: just compute the means and standard deviations, apply the formula to <code>x</code> to compute <code>x_scaled</code>, and anywhere you use <code>x</code> in the model, just use <code>x_scaled</code> instead.</p>
 <p>Whether or not feature scaling helps is dependent on the problem and the model. If you have having trouble getting your model to converge, you can always implement feature scaling and see how it affects the training. While it wasn't used in this chapter, using TensorBoard (see <a href="/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html">chapter 2.2</a>) is a great way to run experiments to compare training with and without feature scaling.</p>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#challenge-problems" id="challenge-problems"><h1>Challenge Problems</h1></a>
+<a class="header" href="#challenge-problems" id="challenge-problems"><h1>Challenge Problems</h1></a>
 <!-- <ol>
     <li>**Coding:** Take one of the challenge problems from [the previous chapter](/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html#challenge-problems), and implement it with and without feature scaling, and then compare how training performs.</li>
 </ol> -->
@@ -343,7 +350,7 @@ t = 1999, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
 <li><strong>Coding:</strong> Add TensorBoard support to the code from this chapter, and use it to explore for yourself the effect feature scaling has. Also, you can compare with different optimization algorithms.</li>
 <li><strong>Theory:</strong> One problem with feature scaling is that we learn different model parameters. In this chapter, the original data set was generated with \(y = 2x_1 + 0.013x_2 + 0\), but the parameters that the model learned were \(a_1' = 6.0697703, a_2' = 3.9453504, b' = 16.5\). Note that I have called these learned parameters \(a_1'\) rather than \(a_1\) to indicate that these learned parameters are for the <em>rescaled</em> data.<br/><br />One important use of linear regression is to explore and understand a data set, not just predict outputs. After doing a regression, one can understand through the learned weights how severely each feature affects the output. For example, if we have two features \(A\) and \(B\) which are used to predict rates of cancer, and the learned weight for \(A\) is much larger than the learned weight for \(B\), this indicates that occurrence of \(A\) is more correlated with cancer than occurrence of \(B\) is, which is interesting in its own right. Unfortunately, performing feature scaling destroys this: since we have rescaled the training data, the weight for \(A\) (\(a_1'\)) has lost its relevance to the values of \(A\) in the real world. But all is not lost, since we can actually recover the &quot;not-rescaled&quot; parameters from the learned parameters, which we will derive now.<br/><br/>First, suppose that we have learned the &quot;rescaled&quot; parameters \(a_1', a_2', b'\). That is, we predict the output \(y\) to be: \[\begin{equation}\label{eq:start}y = a_1' x_1' + a_2' x_2' + b'\end{equation}\]where \(x_1', x_2'\) are the rescaled features. Now, we <em>want</em> a model that uses some (yet unknown) weights \(a_1, a_2, b\) to predict the same output \(y\), but using the not-rescaled features \(x_1, x_2\). That is, we want to find \(a_1, a_2, b\) such that this is true:\[\begin{equation}\label{eq:goal}y = a_1 x_1 + a_2 x_2 + b\end{equation}\]To go about doing this, substitute for \(x_1'\) and \(x_2'\) using Equation \((\ref{eq:scaling})\) into Equation \((\ref{eq:start})\), and then compare it to Equation \((\ref{eq:goal})\) to obtain 3 equations: one to relate each scaled and not-scaled parameter. Finally, you can use these equations to be able to compute the &quot;not-scaled&quot; parameters in terms of the learned parameters. You can check your work by computing the not-scaled parameters in terms of the learned parameters for the synthetic data set, and verify that they match the expected values.</li>
 </ol>
-<a class="header" href="ch2-linreg/2018-11-15-feature-scaling.html#complete-code" id="complete-code"><h1>Complete Code</h1></a>
+<a class="header" href="#complete-code" id="complete-code"><h1>Complete Code</h1></a>
 <p>The <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/feature_scaling.py">complete example code is available on GitHub</a>, as well as directly here:</p>
 <pre><code class="language-python">import numpy as np
 import tensorflow as tf
@@ -410,13 +417,13 @@ for t in range(2000):
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch2-linreg/2018-03-21-multi-variable.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../ch2-linreg/2018-03-21-multi-variable.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch2-linreg/nonlinear.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../ch2-linreg/nonlinear.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -428,13 +435,13 @@ for t in range(2000):
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="ch2-linreg/2018-03-21-multi-variable.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="../ch2-linreg/2018-03-21-multi-variable.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="ch2-linreg/nonlinear.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="../ch2-linreg/nonlinear.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -449,21 +456,18 @@ for t in range(2000):
         
 
         
-
-        
-        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
-        
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        
+
         
 
     </body>

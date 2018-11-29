@@ -1,5 +1,9 @@
 # Released under MIT License
 
+The content of all blog posts (files ending in .md contained in _posts/), all book content (files contained in books/), and other content files (files contained in public/files/) remain the sole property of Donald Pinckney, unless otherwise specified. The remaining source code used to format and display that content is licensed under the MIT license. In addition, any example source code (for example files ending in .py, .ml, etc.) is also licensed under the MIT license.
+
+Use of https://github.com/poole/hyde:
+
 Copyright (c) 2013 Mark Otto.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -10,7 +14,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 
-Use of https://github.com/ghiculescu/jekyll-table-of-contents
+Use of https://github.com/ghiculescu/jekyll-table-of-contents:
 
 Copyright (c) 2013 Alex Ghiculescu
 

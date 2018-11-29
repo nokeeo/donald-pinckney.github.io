@@ -9,20 +9,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="../">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
-        <link rel="stylesheet" href="book.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-        <link rel="shortcut icon" href="favicon.png">
-
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
         
@@ -31,9 +32,14 @@
         <!-- MathJax -->
         <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
         
-
     </head>
     <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = "light";
+        </script>
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script type="text/javascript">
             try {
@@ -54,7 +60,7 @@
         <script type="text/javascript">
             var theme;
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
-            if (theme === null || theme === undefined) { theme = 'light'; }
+            if (theme === null || theme === undefined) { theme = default_theme; }
             document.body.className = theme;
             document.querySelector('html').className = theme + ' js';
         </script>
@@ -72,7 +78,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html" class="active"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="ch2-linreg/2018-11-15-feature-scaling.html"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li><a href="ch2-linreg/nonlinear.html"><strong aria-hidden="true">2.5.</strong> Nonlinear Regression</a></li><li><a href="ch2-linreg/regularization.html"><strong aria-hidden="true">2.6.</strong> Regularization</a></li><li><a href="ch2-linreg/evaluation.html"><strong aria-hidden="true">2.7.</strong> Evaluation</a></li><li><a href="ch2-linreg/mle.html"><strong aria-hidden="true">2.8.</strong> Bonus: Why we square errors</a></li><li class="spacer"></li></ol></li><li><a href="https:/index.html">By Donald Pinckney</a></li></ol>
+            <ol class="chapter"><li><a href="../ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="../ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="../ch1-setup/linux.html" class="active"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="../ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="../ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="../ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="../ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="../ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="../ch2-linreg/2018-11-15-feature-scaling.html"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li><a href="../ch2-linreg/nonlinear.html"><strong aria-hidden="true">2.5.</strong> Nonlinear Regression</a></li><li><a href="../ch2-linreg/regularization.html"><strong aria-hidden="true">2.6.</strong> Regularization</a></li><li><a href="../ch2-linreg/evaluation.html"><strong aria-hidden="true">2.7.</strong> Evaluation</a></li><li><a href="../ch2-linreg/mle.html"><strong aria-hidden="true">2.8.</strong> Bonus: Why we square errors</a></li><li class="spacer"></li></ol></li><li><a href="../https:/index.html">By Donald Pinckney</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -89,7 +95,7 @@
                                 <i class="fa fa-paint-brush"></i>
                             </button>
                             <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
                                 <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
@@ -105,9 +111,10 @@
                         <h1 class="menu-title">Machine Learning with TensorFlow</h1> 
 
                         <div class="right-buttons">
-                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <a href="../print.html" title="Print this book" aria-label="Print this book">
                                 <i id="print-button" class="fa fa-print"></i>
                             </a>
+                            
                         </div>
                     </div>
                 </div>
@@ -136,15 +143,15 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="ch1-setup/linux.html#linux-ubuntu-setup" id="linux-ubuntu-setup"><h1>Linux (Ubuntu) Setup</h1></a>
+                        <a class="header" href="#linux-ubuntu-setup" id="linux-ubuntu-setup"><h1>Linux (Ubuntu) Setup</h1></a>
 <p>Without a doubt, Python 3 is the future of Python, and thus we will use Python 3 with TensorFlow. While I summarize the instructions to install TensorFlow with Python 3 here, the <a href="https://www.tensorflow.org/install/install_linux">official TensorFlow documentation</a> should always provide up-to-date and comprehensive instructions for installation as well. If you run into any installation problems, please file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,TensorFlow">here</a>. Note that Ubuntu is the only officially supported Linux distribution for TensorFlow, but with a bit of effort TensorFlow can likely be installed on other distributions as well.</p>
-<a class="header" href="ch1-setup/linux.html#optional-install-gpu-support" id="optional-install-gpu-support"><h2>Optional: Install GPU Support</h2></a>
+<a class="header" href="#optional-install-gpu-support" id="optional-install-gpu-support"><h2>Optional: Install GPU Support</h2></a>
 <p>On Linux TensorFlow has the ability to run your machine learning models on a GPU, which can make computation significantly faster. However, the speed difference is negligible until we start building extremely large models with massive amounts of data. So if you have a supported GPU, you could choose to install GPU support now, or just wait until later. To see if your GPU is supported and instructions for installing GPU support, see <a href="https://www.tensorflow.org/install/install_linux#nvidia_requirements_to_run_tensorflow_with_gpu_support">here</a>.</p>
-<a class="header" href="ch1-setup/linux.html#installing-pip-and-virtualenv" id="installing-pip-and-virtualenv"><h2>Installing Pip and Virtualenv</h2></a>
+<a class="header" href="#installing-pip-and-virtualenv" id="installing-pip-and-virtualenv"><h2>Installing Pip and Virtualenv</h2></a>
 <p>First, we need to install <code>pip</code>, and <code>virtualenv</code>. This should be easy using <code>apt-get</code>:</p>
 <pre><code class="language-bash">sudo apt-get install python3-pip python3-dev python-virtualenv
 </code></pre>
-<a class="header" href="ch1-setup/linux.html#installing-tensorflow-and-friends" id="installing-tensorflow-and-friends"><h2>Installing TensorFlow and friends</h2></a>
+<a class="header" href="#installing-tensorflow-and-friends" id="installing-tensorflow-and-friends"><h2>Installing TensorFlow and friends</h2></a>
 <p>Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using <code>virtualenv</code>, since this ensures that the installation will be self-contained, and will not affect the rest of your system. Now, we need to create a new virtualenv:</p>
 <pre><code class="language-bash"># In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
@@ -176,7 +183,7 @@ pip3 install --upgrade matplotlib # Used for plotting data, which is very useful
 pip3 install --upgrade pandas # Used for loading data sets
 </code></pre>
 <p>Once everything is installed, you can exit the virtualenv using the command <code>deactivate</code>.</p>
-<a class="header" href="ch1-setup/linux.html#testing-the-installation" id="testing-the-installation"><h2>Testing the installation</h2></a>
+<a class="header" href="#testing-the-installation" id="testing-the-installation"><h2>Testing the installation</h2></a>
 <p>Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate activate command from above. Then, run the <code>python</code> command, and type the following code into Python:</p>
 <pre><code class="language-python">import tensorflow as tf
 import numpy as np
@@ -190,7 +197,7 @@ print(sess.run(hello))
 <pre><code>Hello, TensorFlow!
 </code></pre>
 <p>If the above test produces errors, please see this list of <a href="https://www.tensorflow.org/install/install_linux#common_installation_problems">common TensorFlow installation problems</a> or Google it, and file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,Duplicate&amp;title=Installation%20error%20on%20Linux">here</a>.</p>
-<a class="header" href="ch1-setup/linux.html#optional-installing-an-ide" id="optional-installing-an-ide"><h2>Optional: Installing an IDE</h2></a>
+<a class="header" href="#optional-installing-an-ide" id="optional-installing-an-ide"><h2>Optional: Installing an IDE</h2></a>
 <p>At this point, everything we need for writing TensorFlow code is installed. We can write our Python code in a text editor of our choice, and run it using <code>python</code> from terminal. In the future I won't assume use of an IDE specifically, but rather assume that you can create new Python files and run them, either from terminal or an IDE. However, some people may prefer using an IDE, which can reduce the time spent in terminal, and help provide better syntax and semantic checking of Python code. Personally, I use and recommend PyCharm, which you can download for free <a href="https://www.jetbrains.com/pycharm/download/#section=linux">here</a>. I won't provide specific installation instructions, but I found it very easy to install and configure to use the <code>~/tensorflow</code> virtualenv.</p>
 
                     </main>
@@ -198,13 +205,13 @@ print(sess.run(hello))
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="ch1-setup/mac.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../ch1-setup/mac.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="ch1-setup/windows.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../ch1-setup/windows.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -216,13 +223,13 @@ print(sess.run(hello))
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="ch1-setup/mac.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="../ch1-setup/mac.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="ch1-setup/windows.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="../ch1-setup/windows.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -237,21 +244,18 @@ print(sess.run(hello))
         
 
         
-
-        
-        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
-        
-        
-        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
-        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
+        
+
         
 
     </body>
