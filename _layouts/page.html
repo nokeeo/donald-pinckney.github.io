@@ -1,20 +1,5 @@
 ---
-layout: default
+layout: default_page
 ---
 
-<div class="page">
-  {% if page.isEditable == true %}
-    <h1 class="post-title titular floating-box-left">{{ page.title }}</h1>
-  {% else %}
-    <h1 class="post-title titular">{{ page.title }}</h1>
-  {% endif %}
-  
-
-  {% if page.isEditable == true %}
-    <div class="edit-me floating-box-right">
-      <a href="{{site.repo}}/blob/src/{{page.path}}" target="_blank"><i class="fa fa-pencil"></i>Edit this page</a>
-    </div> 
-  {% endif %}
-  
-  {{ content }}
-</div>
+{{ content }}

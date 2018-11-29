@@ -1,7 +1,6 @@
 ---
-layout: page
+layout: default_page
 title: About Me
-sortBelow: true
 ---
 
 I'm a 1st year computer science PhD student at UMass Amherst, studying programming languages. Previously, I studied Math and Computer Science at UC Davis. In addition to programming languages research, I enjoy studying machine learning, computer vision, abstract algebra and topology.
