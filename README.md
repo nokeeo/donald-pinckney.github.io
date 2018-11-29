@@ -14,7 +14,7 @@ sudo gem install jekyll jekyll-paginate jekyll-gist github-pages jekyll-sitemap 
 
 # Install Rust and mdbook stuff
 curl https://sh.rustup.rs -sSf | sh # (follow direction, maybe have to setup PATH, and probably restart your shell)
-cargo install mdbook
+cargo install --git "https://github.com/donald-pinckney/mdBook" mdbook
 ```
 
 # How to build and run
