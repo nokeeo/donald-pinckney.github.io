@@ -15,4 +15,3 @@
     - [Evaluation](ch2-linreg/evaluation.md)
     - [Bonus: Why we square errors](ch2-linreg/mle.md)
 ---
-[Home](https://index)
