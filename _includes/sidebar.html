@@ -18,8 +18,6 @@
 
         <a class="horizontal-item sidebar-nav-item{% if page.url == bu %} active{% endif %}" href="{{ site.baseurl }}/">Home</a>
 
-        <a class="horizontal-item sidebar-nav-item{% if page.url == blog_bu or page.layout == 'post' or page.layout == 'bookpost' %} active{% endif %}" href="{{ site.baseurl }}/blog/">Blog Posts</a>
-
         {% comment %}
           The code below dynamically generates a sidebar nav of pages with
           `layout: page` in the front-matter. See readme for usage.
@@ -38,6 +36,8 @@
             {% endif %}
           {% endif %}
         {% endfor %}
+
+        <a class="horizontal-item sidebar-nav-item{% if page.url == blog_bu or page.layout == 'post' or page.layout == 'bookpost' %} active{% endif %}" href="{{ site.baseurl }}/blog/">Blog Posts</a>
 
         <a class="horizontal-item sidebar-nav-item" href="{{ site.baseurl }}/books/tensorflow/book">TensorFlow Guide</a>
 
