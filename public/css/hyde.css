@@ -31,6 +31,11 @@
  * Update the foundational and global aspects of the page.
  */
 
+ :root {
+  --main-bg-color: #598037;
+  --main-fg-color: #7EA95B;
+}
+
 html {
   font-family: "PT Sans", Helvetica, Arial, sans-serif;
 }
@@ -45,6 +50,10 @@ html {
   }
 }
 
+
+.social {
+  font-size: medium;
+}
 
 /*
  * Sidebar
@@ -301,17 +310,17 @@ a.sidebar-nav-item:focus {
 
 /* Green */
 .theme-base-0b .sidebar {
-  background-color: #598037;
+  background-color: var(--main-bg-color);
 }
 .theme-base-0b .content a:not(.titular) {
-  color: #7EA95B;
+  color: var(--main-fg-color);
 }
 /* 7EA95B */
 .theme-base-0b .titular {
-  color: #598037;
+  color: var(--main-bg-color);
 }
 .theme-base-0b .related-posts li a:hover {
-  color: #598037;
+  color: var(--main-bg-color);
 }
 
 /* Cyan */
