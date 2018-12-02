@@ -21,6 +21,7 @@ paginate_path:    "/blog/page:num/"
 social:
   github: donald-pinckney
   twitter: donald_pinckney
+  email: 'dpinckney@cs.umass.edu'
 
 # Gems
 gems:
@@ -37,3 +38,5 @@ sitemap:
 
 # Plugins
 plugins_dir: [jekyll-sitemap, jekyll-seo-tag]
+
+host: 0.0.0.0
