@@ -1,19 +1,110 @@
 ---
-layout: default_page
-title: About Me
+layout: blank_page
+title: Research Interests
 ---
 
-<div style="float: right;">
-    
-</div>
+<style>
+figure {
+    border: thin #c0c0c0 solid;
+    float: right;
+    padding: 5px;
+    width: 30%;
+    min-width: 180px;
+    margin: auto;
+    margin-left: 1em;
+}
+
+figcaption {
+    background-color: var(--main-bg-color);
+    color: #fff;
+    font-style: italic;
+    font-size: smaller;
+    padding: 3px;
+    /* margin-top: 0px; */
+    text-align: center;
+}
+
+p {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+img {
+    margin-bottom: 0.5rem;
+}
+</style>
+
+
+<figure>
+    <img src="public/donald2_small.jpg" alt="Donald in Yunnan">
+    <figcaption>Me visiting 蓝月谷</figcaption>
+</figure>
+
+<h1 id="interests" class="post-title titular">Research Interests</h1>
+
 <p>
-I'm a 1st year computer science PhD student at UMass Amherst, studying programming languages. Previously, I studied Math and Computer Science at UC Davis. In addition to programming languages research, I enjoy studying machine learning, computer vision, abstract algebra and topology.
+    My research interests center around programming languages and software engineering.
+    In my work I look to provide formal guarantees of program properties in a way that is meaningful for real-world application.
+</p>
+
+<h1 id="recents" class="clickable-header top-level-header">Recent Projects and News</h1>
+
+<ol>
+    <li>
+        <strong>Serverless Computing:</strong> My most recent (and first) research project at UMass Amherst 
+        <a href="https://plasma-umass.org">PLASMA lab</a> was to tackle some fundamental problems with serverless computing (e.g. AWS Lambda). 
+        Serverless functions are super exciting, but they pose some challenges with regards to concurrency and composability.
+        In particular, the underlying cloud platform (such as AWS Lambda) can perform quite complicated patterns of 
+        reusing and restarting of the containers inside which code is run.
+        This <em>should</em> be unnoticeable to programmers using the platform, but unfortunately may not be, 
+        especially when the serverless functions involve shared data storage. In our work we provide formal proofs specifying under what 
+        conditions the underlying mechanics of the serverless platform are indeed abstracted away from programmers. 
+        In addition, we improve the situation of composing serverless functions by providing a language based on 
+        <a href="http://www.cse.chalmers.se/~rjmh/afp-arrows.pdf" target="_blank">Arrows</a>, which can be used to specify pipelines of serverless functions.
+        A draft of the paper is <a href="{{site.baseurl}}/public/files/documents/foundations.pdf" target="_blank">available here</a>.
+    </li>
+</ol>
+
+<h1 id="bio" class="clickable-header top-level-header">About Me</h1>
+
+<p>
+    Currently, I'm a {{ site.school_year }} year computer science PhD student at UMass Amherst, 
+    where I study programming languages and software engineering. I'm advised by
+        <a href="https://people.cs.umass.edu/~arjun/home/" target="_blank">Arjun Guha</a> and
+        <a href="https://people.cs.umass.edu/~brun/" target="_blank">Yuriy Brun</a>, and a member of the 
+        <a href="https://plasma-umass.org" target="_blank">PLASMA</a> and 
+        <a href="http://laser.cs.umass.edu" target="_blank">LASER</a> labs. 
 </p>
 
 <p>
-Outside of school I enjoy practicing martial arts (in particular Tai Chi, Wing Chun, and Taekwondo), playing music, and of course coding.
+    However, I'm relatively new to Massachusetts, as I grew up for most of my life in California. 
+    For my undergraduate degree, I completed a double major in Math and Computer Science at UC Davis. 
+    Meanwhile, I interned in industry for 3 summers, once at 
+        <a href="https://www.filemaker.com" target="_blank">FileMaker</a>, and twice at Apple, where I worked on the 
+        <a href="https://developer.apple.com/documentation/appkit" target="_blank">AppKit user interface library</a> for macOS.
+    After interning in industry I decided to pursue a PhD in computer science, and specifically programming languages, 
+    so I can work to drive the field forward in creating correct, safe, and secure software more easily.
 </p>
 
+<figure>
+        <img src="public/jade.jpg" alt="Donald and Jingwen on mountain">
+        <figcaption>Jingwen and I on top of 玉龙雪山</figcaption>
+</figure>
+
 <p>
+    In addition to programming languages research, I enjoy dabbling in machine learning, as well as abstract algebra and topology on the pure math side. 
+    Outside of academics I enjoy practicing martial arts (in particular Tai Chi, Wing Chun, and Taekwondo), playing music, and archery.
+    I also love to travel with my amazing girlfriend 
+    <a href="https://www.linkedin.com/in/jingwen-lin-b0b1ba152/" target="_blank">Jingwen Lin</a> 
+    (a masters student in Food Science at UMass) to see awesome sights. 
+    Recently, we travelled all over China, seeing all sorts of both historic and scenic views, such as 玉龙雪山 
+    (<a href="https://en.wikipedia.org/wiki/Jade_Dragon_Snow_Mountain" target="_blank">Jade Dragon Snow Mountain</a>) pictured at right.
+    I would like to thank her and my mother Jane, who have and continue to support me to be the best I can be, and make my life truly wonderful
+</p>
+
+
+
+
+<!-- <p>
 Feel free to check out my work on [GitHub](https://github.com/{{ site.social.github}}), and connect with me on [Twitter](https://twitter.com/{{ site.social.twitter}}).
-</p>
+</p> -->

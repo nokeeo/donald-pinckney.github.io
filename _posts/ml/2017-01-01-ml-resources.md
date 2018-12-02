@@ -14,7 +14,7 @@ So, the most effective way to gain experience at machine learning is to experien
 
 I've consolidated the machine learning resources I am familiar with, both from school and outside, into a list below. I've marked each data set with what model(s) I used for the data set, but please experiment with any algorithm that interests you!
 
-## Regression
+# Regression
 * Predict food truck profit from city population. Download: [population_profit.csv](public/files/ml_data/population_profit.csv). Dataset from Andrew Ng's Coursera course. Models I used: linear regression.
 
 * Predict house prices from area and number of bedrooms. Download: [area_bedrooms_price.csv](public/files/ml_data/area_bedrooms_price.csv). Dataset from Andrew Ng's Coursera course. Models I used: linear regression.

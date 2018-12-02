@@ -12,6 +12,7 @@ repo:             https://github.com/donald-pinckney/donald-pinckney.github.io
 author:
   name:           'Donald Pinckney'
   email:          donald_pinckney@icloud.com
+school_year:      '1st'
 
 paginate:         5
 paginate_path:    "/blog/page:num/"
