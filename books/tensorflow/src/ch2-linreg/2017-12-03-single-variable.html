@@ -53,7 +53,10 @@
 
   <!-- MathJax -->
   <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script> -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script>
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script> -->
+  <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
@@ -432,13 +435,13 @@ We crafted \(L(a, b)\) so that it is smallest exactly when each predicted \(y’
 
 <p>The red dot marked on the plot of \(L\) shows where the desired minimum is. We need an algorithm to find this minimum. From calculus, we know that at the minimum \(L\) must be entirely flat, that is the derivatives are both \(0\):
 \[
-    \frac{\partial L}{\partial a} = \sum_{i=1}^m 2(ax_i + b - y_i)x_i = 0 \<br />
+    \frac{\partial L}{\partial a} = \sum_{i=1}^m 2(ax_i + b - y_i)x_i = 0 \\
     \frac{\partial L}{\partial b} = \sum_{i=1}^m 2(ax_i + b - y_i) = 0 <br />
 \]
 If you need to review this aspect of calculus, I would recommend <a href="https://www.khanacademy.org/math/differential-calculus/analyzing-func-with-calc-dc">Khan Academy videos</a>. Now, for this problem it is possible to solve for \(a\) and \(b\) using the equations above, like we would in a typical calculus course. But for more advanced machine learning this is impossible, so instead we will learn to use an algorithm called <strong><a href="https://en.wikipedia.org/wiki/Gradient_descent">gradient descent</a></strong> to find the minimum. The idea is intuitive: place a ball at an arbitrary location on the surface of \(L\), and it will naturally roll downhill towards the flat valley of \(L\) and thus find the minimum. We know the direction of “downhill” at any location since we know the derivatives of \(L\): the derivatives are the direction of greatest upward slope (this is known as the <a href="https://en.wikipedia.org/wiki/Gradient">gradient</a>), so the opposite (negative) derivatives are the most downhill direction. Therefore, if the ball is currently at location \((a, b)\), we can see where it would go by moving it to location \((a’, b’)\) like so:
 \[
-    a’ = a - \alpha \frac{\partial L}{\partial a} \<br />
-    b’ = b - \alpha \frac{\partial L}{\partial b} \<br />
+    a’ = a - \alpha \frac{\partial L}{\partial a} \\
+    b’ = b - \alpha \frac{\partial L}{\partial b} \\
 \]
 where \(\alpha\) is a constant called the <strong>learning rate</strong>, which we will talk about more later. If we repeat this process then the ball will continue to roll downhill into the minimum. An animation of this process looks like:</p>
 
@@ -706,17 +709,7 @@ But estimates – created from public health surveys and population models – s
 <ol>
   <li>Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \(x\) value you could create an artificial \(y\) value like so: \(y = ax + b + \epsilon \), where \(\epsilon\) is a random number that isn’t too big, and \(a\) and \(b\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \(a\) and \(b\).</li>
   <li>Run single variable linear regression on a data set of your choice. You can look at <a href="https://donaldpinckney.com/ml.html#regression">my list of regression data sets</a> for ideas, you can search <a href="https://www.kaggle.com/datasets">Kaggle</a>, or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.</li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td>Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \((y’ - y)^2\) to \(</td>
-          <td>y’ - y</td>
-          <td>\) (use <code class="highlighter-rouge">tf.abs(...)</code>), or really anything you can think of.</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
+  <li>Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \((y’ - y)^2\) to \(\mid y’ - y \mid \) (use <code class="highlighter-rouge">tf.abs(...)</code>), or really anything you can think of.</li>
 </ol>
 
 <h1 id="complete-code">Complete Code</h1>

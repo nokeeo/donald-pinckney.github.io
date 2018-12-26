@@ -53,7 +53,10 @@
 
   <!-- MathJax -->
   <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script> -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script>
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script> -->
+  <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
@@ -76,9 +79,9 @@
 <meta property="og:url" content="https://donaldpinckney.com/books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.html" />
 <meta property="og:site_name" content="Donald Pinckney" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2018-02-25T00:00:00-08:00" />
+<meta property="article:published_time" content="2018-03-21T00:00:00-07:00" />
 <script type="application/ld+json">
-{"description":"1st year programming languages PhD student at UMass Amherst.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.html","headline":"Multi Variable Linear Regression","dateModified":"2018-02-25T00:00:00-08:00","datePublished":"2018-02-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.html"},"@context":"http://schema.org"}</script>
+{"description":"1st year programming languages PhD student at UMass Amherst.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.html","headline":"Multi Variable Linear Regression","dateModified":"2018-03-21T00:00:00-07:00","datePublished":"2018-03-21T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.html"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -325,14 +328,14 @@
   
     <div class="edit-me floating-box-right">
       
-        <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/2017-02-25-multi-variable.md" target="_blank">
+        <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.md" target="_blank">
       
       <i class="fa fa-github"></i>Edit this page</a>
 
     </div> 
   
 
-  <span class="post-date">25 Feb 2018
+  <span class="post-date">21 Mar 2018
 
   <div class="post-categories">
   
@@ -457,7 +460,7 @@
             x^{(2)}, 
             \dots, 
             x^{(m)}
-    \end{bmatrix} \<br />
+    \end{bmatrix} \\
     D_y = \begin{bmatrix}
             y^{(1)},
             y^{(2)},
@@ -470,10 +473,10 @@
 \[
     x^{(i)} = \begin{bmatrix}
         x^{(i)}_1 \\ 
-        x^{(i)}_2 \<br />
-        \vdots \<br />
-        x^{(i)}_j \<br />
-        \vdots \<br />
+        x^{(i)}_2 \\
+        \vdots \\
+        x^{(i)}_j \\
+        \vdots \\
         x^{(i)}_n
     \end{bmatrix}
 \]
@@ -487,12 +490,12 @@ Note that the notation \(x^{(i)}_j\) denotes the \(j\)’th input variable in th
             \dots, 
             x^{(m)} \end{bmatrix}
         = \begin{bmatrix}
-            x^{(1)}_1 &amp; x^{(2)}_1  &amp; \dots &amp; x^{(i)}_1 &amp; \dots &amp; x^{(m)}_1 \<br />
-            x^{(1)}_2 &amp; x^{(2)}_2  &amp; \dots &amp; x^{(i)}_2 &amp; \dots &amp; x^{(m)}_2 \<br />
-            \vdots &amp; \vdots  &amp; \ddots &amp; \vdots &amp; \ddots &amp; \vdots \<br />
-            x^{(1)}_j &amp; x^{(2)}_j  &amp; \dots &amp; x^{(i)}_j &amp; \dots &amp; x^{(m)}_j \<br />
-            \vdots &amp; \vdots  &amp; \ddots &amp; \vdots &amp; \ddots &amp; \vdots \<br />
-            x^{(1)}_n &amp; x^{(2)}_n  &amp; \dots &amp; x^{(i)}_n &amp; \dots &amp; x^{(m)}_n \<br />
+            x^{(1)}_1 &amp; x^{(2)}_1  &amp; \dots &amp; x^{(i)}_1 &amp; \dots &amp; x^{(m)}_1 \\
+            x^{(1)}_2 &amp; x^{(2)}_2  &amp; \dots &amp; x^{(i)}_2 &amp; \dots &amp; x^{(m)}_2 \\
+            \vdots &amp; \vdots  &amp; \ddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+            x^{(1)}_j &amp; x^{(2)}_j  &amp; \dots &amp; x^{(i)}_j &amp; \dots &amp; x^{(m)}_j \\
+            \vdots &amp; \vdots  &amp; \ddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+            x^{(1)}_n &amp; x^{(2)}_n  &amp; \dots &amp; x^{(i)}_n &amp; \dots &amp; x^{(m)}_n \\
         \end{bmatrix}
 \]
 So, each column of \(D_x\) represents a single input data example. We don’t need to change the 1 x \(m\) vector \(D_y\), since we still only have 1 output variable.</p>
@@ -530,10 +533,10 @@ So, each column of \(D_x\) represents a single input data example. We don’t ne
             a_n
     \end{bmatrix} \begin{bmatrix}
         x^{(i)}_1 \\ 
-        x^{(i)}_2 \<br />
-        \vdots \<br />
-        x^{(i)}_j \<br />
-        \vdots \<br />
+        x^{(i)}_2 \\
+        \vdots \\
+        x^{(i)}_j \\
+        \vdots \\
         x^{(i)}_n
     \end{bmatrix} + b
     = a_1 x^{(i)}_1 + a_2 x^{(i)}_2 + \cdots + a_j x^{(i)}_j + \cdots + a_n x^{(i)}_n + b

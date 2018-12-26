@@ -53,7 +53,10 @@
 
   <!-- MathJax -->
   <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script> -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script>
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script> -->
+  <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
@@ -561,7 +564,7 @@ Here, \(a_1\) is in the role of <code class="highlighter-rouge">A[0]</code> and 
 \]
 Now if we differentiate \(L\) in the direction of \(a_1\) and \(a_2\) separately, we get:
 \[
-    \frac{\partial L}{\partial a_1} = \sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_1^{(i)} \<br />
+    \frac{\partial L}{\partial a_1} = \sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_1^{(i)} \\
     \frac{\partial L}{\partial a_2} = \sum_{i=1}^m 2(a_1 x_1^{(i)} + a_2 x_2^{(i)} - y^{(i)})x_2^{(i)}
 \]
 Here we can see the problem: the inner terms of the derivatives are the same, except one is multiplied by \(x_1^{(i)}\) and the other by \(x_2^{(i)}\). If \(x_2\) is on average 100 times bigger than \(x_1\) (which it is in the original data set), then we would expect \(\frac{\partial L}{\partial a_2}\) to be roughly 100 times bigger than \(\frac{\partial L}{\partial a_1}\). It isn’t exactly 100 times larger, but with any reasonable data set it should be close. Since the derivatives in the directions of \(a_1\) and \(a_2\) are scaled completely differently, gradient descent fails to update both of them adequately.</p>
