@@ -356,7 +356,7 @@ Feel free to complete as many of these as you wish, to get more practice with si
 
 1. Learn how to use numpy to generate an artificial data set that is appropriate for single variable linear regression, and then train a model on it. As a hint, for any \\(x\\) value you could create an artificial \\(y\\) value like so: \\(y = ax + b + \\epsilon \\), where \\(\\epsilon\\) is a random number that isn't too big, and \\(a\\) and \\(b\\) are fixed constants of your choice. If done correctly, your trained model should learn by itself the numbers you chose for \\(a\\) and \\(b\\).
 2. Run single variable linear regression on a data set of your choice. You can look at [my list of regression data sets](https://donaldpinckney.com/ml.html#regression) for ideas, you can search [Kaggle](https://www.kaggle.com/datasets), or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.
-3. Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \\((y' - y)^2\\) to \\(|y' - y|\\) (use `tf.abs(...)`), or really anything you can think of.
+3. Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \\((y' - y)^2\\) to \\(\\mid y' - y \\mid \\) (use `tf.abs(...)`), or really anything you can think of.
 
 # Complete Code
 

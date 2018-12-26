@@ -37,6 +37,6 @@ sitemap:
     - "/index.html"
 
 # Plugins
-plugins_dir: [jekyll-sitemap, jekyll-seo-tag]
+plugins_dir: [jekyll-sitemap, jekyll-seo-tag, _plugins]
 
 host: 0.0.0.0
