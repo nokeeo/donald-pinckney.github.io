@@ -325,14 +325,17 @@
     <h1 class="post-title titular floating-box-left">Regularization</h1>
   
   
-  
-    <div class="edit-me floating-box-right">
+    <div class="floating-box-right">
       
-        <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/regularization.md" target="_blank">
+        
+          <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/regularization.md" target="_blank">
+        
+        <i class="fa fa-github"></i>Edit this page</a><br />
       
-      <i class="fa fa-github"></i>Edit this page</a>
 
+      
     </div> 
+
   
 
   <span class="post-date">22 Jun 2018
