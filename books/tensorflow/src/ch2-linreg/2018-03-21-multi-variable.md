@@ -1,10 +1,10 @@
 ---
 layout: bookpost
 title: Multi Variable Linear Regression
-date: 2018-02-25
+date: 2018-03-21
 categories: TensorFlow
 isEditable: true
-editPath: books/tensorflow/src/ch2-linreg/2017-02-25-multi-variable.md
+editPath: books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.md
 ---
 
 # Multi Variable Regression

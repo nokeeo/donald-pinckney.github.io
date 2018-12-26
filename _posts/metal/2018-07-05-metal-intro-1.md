@@ -4,7 +4,7 @@ title: "Metal 3D Graphics Part 1: Basic Rendering"
 date: 2018-07-05
 categories: Metal
 isEditable: true
-editPath: _posts/metal/metal-intro-1.md
+editPath: _posts/metal/2018-07-05-metal-intro-1.md
 ---
 
 # What is Metal, and why use it?
