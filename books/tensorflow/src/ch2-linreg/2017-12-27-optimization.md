@@ -5,6 +5,7 @@ date: 2017-12-27
 categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/2017-12-27-optimization.md
+subscribeName: TensorFlow
 ---
 
 # Exploring Optimization Convergence

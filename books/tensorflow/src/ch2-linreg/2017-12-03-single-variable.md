@@ -5,6 +5,7 @@ date: 2017-12-03
 categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/2017-12-03-single-variable.md
+subscribeName: TensorFlow
 ---
 
 # Single Variable Regression

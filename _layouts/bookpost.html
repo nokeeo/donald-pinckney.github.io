@@ -12,17 +12,24 @@ layout: default
     <h1 class="post-title titular">{{ page.title }}</h1>
   {% endif %}
   
-  {% if page.isEditable == true %}
-    <div class="edit-me floating-box-right">
-      {% if page.editPath %}
-        <a href="{{site.repo}}/blob/src/{{page.editPath}}" target="_blank">
-      {% else %}
-        <a href="{{site.repo}}/blob/src/{{page.path}}" target="_blank">
+    <div class="floating-box-right">
+      {% if page.isEditable == true %}
+        {% if page.editPath %}
+          <a href="{{site.repo}}/blob/src/{{page.editPath}}" target="_blank">
+        {% else %}
+          <a href="{{site.repo}}/blob/src/{{page.path}}" target="_blank">
+        {% endif %}
+        <i class="fa fa-github"></i>Edit this page</a><br />
       {% endif %}
-      <i class="fa fa-github"></i>Edit this page</a>
 
+      {% if page.subscribeName %}
+        <a href="{{site.subscription_issues[page.subscribeName]}}" target="_blank">
+          <i class="fa fa-bullhorn"></i>Subscribe to new posts
+        </a>
+      {% endif %}
     </div> 
-  {% endif %}
+
+  
 
   <span class="post-date">{{ page.date | date_to_string }}
 

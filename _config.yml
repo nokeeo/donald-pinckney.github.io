@@ -39,4 +39,9 @@ sitemap:
 # Plugins
 plugins_dir: [jekyll-sitemap, jekyll-seo-tag, _plugins]
 
+# Subscription issues
+subscription_issues:
+  TensorFlow: https://github.com/donald-pinckney/donald-pinckney.github.io/issues/18
+  Metal: https://github.com/donald-pinckney/donald-pinckney.github.io/issues/17
+
 host: 0.0.0.0

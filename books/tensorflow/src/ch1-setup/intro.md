@@ -5,6 +5,7 @@ date: 2017-11-21
 categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch1-setup/intro.md
+subscribeName: TensorFlow
 ---
 
 # Introduction

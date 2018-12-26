@@ -5,6 +5,7 @@ date: 2018-07-05
 categories: Metal
 isEditable: true
 editPath: _posts/metal/2018-07-05-metal-intro-1.md
+subscribeName: Metal
 ---
 
 # What is Metal, and why use it?

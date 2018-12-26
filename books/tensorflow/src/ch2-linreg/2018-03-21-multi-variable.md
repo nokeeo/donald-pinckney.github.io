@@ -5,6 +5,7 @@ date: 2018-03-21
 categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.md
+subscribeName: TensorFlow
 ---
 
 # Multi Variable Regression

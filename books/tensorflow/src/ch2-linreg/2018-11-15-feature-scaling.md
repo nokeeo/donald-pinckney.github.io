@@ -5,6 +5,7 @@ date: 2018-11-15
 categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/2018-11-15-feature-scaling.md
+subscribeName: TensorFlow
 ---
 
 <script type="text/x-mathjax-config">
