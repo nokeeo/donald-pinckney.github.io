@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization"
-date: 2018-07-27
+date: 2018-07-29
 categories: Metal
 isEditable: true
 editPath: _posts/metal/2018-07-29-metal-intro-2.md
