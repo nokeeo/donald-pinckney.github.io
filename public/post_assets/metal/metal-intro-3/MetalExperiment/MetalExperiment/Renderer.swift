@@ -1,4 +1,3 @@
-
 import Foundation
 import Metal
 import MetalKit
@@ -63,8 +62,8 @@ class Renderer : NSObject, MTKViewDelegate {
     }
     
     func update(dt: CFTimeInterval) {
-        let ptr = fragmentUniformsBuffer.contents().bindMemory(to: FragmentUniforms.self, capacity: 1)
-        ptr.pointee.brightness = Float(0.5 * cos(currentTime) + 0.5)
+        let fragmentsUniform = fragmentUniformsBuffer.contents().bindMemory(to: FragmentUniforms.self, capacity: 1)
+        fragmentsUniform.pointee.brightness = Float(0.5 * cos(currentTime) + 0.5)
         
         currentTime += dt
     }

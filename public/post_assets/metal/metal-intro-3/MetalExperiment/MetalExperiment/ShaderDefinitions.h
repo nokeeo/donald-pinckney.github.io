@@ -1,4 +1,3 @@
-
 #ifndef ShaderDefinitions_h
 #define ShaderDefinitions_h
 
