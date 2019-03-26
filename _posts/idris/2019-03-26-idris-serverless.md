@@ -14,7 +14,7 @@ The fundamental abstraction of serverless computing are *serverless functions*, 
 
 # Writing Serverless Functions in Idris
 
-In this post I want to walk through how we can write serverless functions in Idris and deploy them to Google Cloud. First, you need to make sure you have the necessary toolchains installed.
+In this post I want to walk through how we can write serverless functions in Idris and deploy them to Google Cloud. To do so, you need to make sure you have the necessary toolchains installed.
 
 ## Installing Stuff
 
