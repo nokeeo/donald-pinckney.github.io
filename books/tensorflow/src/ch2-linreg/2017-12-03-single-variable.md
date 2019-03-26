@@ -10,7 +10,7 @@ subscribeName: TensorFlow
 
 # Single Variable Regression
 
-Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow [implementation](#implementation).
+Since this is the very first tutorial in this guide and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow [implementation](#implementation).
 
 ## Motivation
 
@@ -55,7 +55,7 @@ Recall that there are \\(m\\) examples in the data set, \\(x_i\\) is the i'th in
 > **Note:** The choice to square \\(y'(x_i, a, b) - y_i\\) is somewhat arbitrary. Though we need to make it positive, we could achieve this in many ways, such as taking the absolute value. In a sense, the choice of models and loss functions is one of the creative aspect of machine learning, and often a certain loss function is chosen simply because it produces satisfying results. Manipulating the loss function to achieve more satisfying results will be done in a later chapter.
 > However, there is also a concrete mathematical reason for why we specifically square it. It's too much to go into here, but it will be explored in [bonus chapter 2.8](/books/tensorflow/book/ch2-linreg/mle.html)
 
-Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.
+Creating loss functions (and this exact loss function) will continue to be used throughout this guide, from the most simple to more complex models.
 
 ### Optimizing the model
 
@@ -337,7 +337,7 @@ Lastly, we didn't use normal gradient descent for optimization in this tutorial.
 
 ## 5. Use the trained model
 
-Technically, using the trained model is the easiest part of machine learning: with the best parameters \\(a\\) and \\(b\\), you can simply plug new age values into \\(x\\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this book we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model. 
+Technically, using the trained model is the easiest part of machine learning: with the best parameters \\(a\\) and \\(b\\), you can simply plug new age values into \\(x\\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this guide we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model. 
 
 One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don't have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn't impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don't have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \\(1\\) year old homicides is even close to 980.
 
