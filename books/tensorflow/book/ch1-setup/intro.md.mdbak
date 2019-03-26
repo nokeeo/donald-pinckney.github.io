@@ -309,7 +309,7 @@
 
     <div class="sidebar-footnote">
       <p class="sidebar-footnote">
-        &copy; 2018 Donald Pinckney. All rights reserved.
+        &copy; 2019 Donald Pinckney. All rights reserved.
         <!-- <br />
         The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc. -->
       </p>
@@ -366,7 +366,7 @@
 
 # Introduction
 
-Welcome to *Machine Learning with TensorFlow*, an easy to follow book / blog about understanding machine learning concepts and their implementation in [Python](https://www.python.org) and [TensorFlow](https://www.tensorflow.org). My goal is to create an intuitive explanation of machine learning methods, paired with practical knowledge of implementation with TensorFlow. This book does assume some small working knowledge of programming, but Python specific syntax will be briefly introduced as needed.  In addition, some mathematics background will be useful, in particular linear algebra and calculus, but is not needed to follow the intuition and implementation. Resources to review relevant math concepts will be provided as required. Finally, this book is [open source on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/tree/src/books/tensorflow/src), and I would be happy to consider edits, both tiny and large. Feel free to open pull requests with changes to improve this book!
+Welcome to *Machine Learning with TensorFlow*, an easy to follow guide / blog about understanding machine learning concepts and their implementation in [Python](https://www.python.org) and [TensorFlow](https://www.tensorflow.org). My goal is to create an intuitive explanation of machine learning methods, paired with practical knowledge of implementation with TensorFlow. This guide does assume some small working knowledge of programming, but Python specific syntax will be briefly introduced as needed.  In addition, some mathematics background will be useful, in particular linear algebra and calculus, but is not needed to follow the intuition and implementation. Resources to review relevant math concepts will be provided as required. Finally, this guide is [open source on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/tree/src/books/tensorflow/src), and I would be happy to consider edits, both tiny and large. Feel free to open pull requests with changes to improve this guide!
 
 ## What exactly is machine learning?
 

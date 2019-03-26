@@ -4,13 +4,141 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2018-12-26T12:41:43-08:00</updated>
+ <updated>2019-03-26T16:18:33-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
    <email>donald_pinckney@icloud.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Coding Serverless Function in Idris</title>
+   <link href="https://donaldpinckney.com/idris/2019/03/26/idris-serverless.html"/>
+   <updated>2019-03-26T00:00:00-07:00</updated>
+   <id>https://donaldpinckney.com/idris/2019/03/26/idris-serverless</id>
+   <content type="html">&lt;h1 id=&quot;brief-intro-to-serverless-computing&quot;&gt;Brief Intro to Serverless Computing&lt;/h1&gt;
+
+&lt;p&gt;Serverless computing platforms such as &lt;a href=&quot;https://aws.amazon.com/lambda/&quot;&gt;AWS Lambda&lt;/a&gt; and &lt;a href=&quot;https://cloud.google.com/functions/&quot;&gt;Google Cloud Functions&lt;/a&gt; have recently become a hot trend for writing backend code. With serverless computing we don’t need to setup, configure and maintain servers ourselves as it is handled automatically by the platform. Likewise, the platform will also automatically scale our code to more instances as needed, saving us both money and development time.&lt;/p&gt;
+
+&lt;p&gt;The fundamental abstraction of serverless computing are &lt;em&gt;serverless functions&lt;/em&gt;, which is a piece of code that receives as input an HTTP request, and produces as output an HTTP response. If this is new to you, &lt;a href=&quot;https://medium.com/@BoweiHan/an-introduction-to-serverless-and-faas-functions-as-a-service-fb5cec0417b2&quot;&gt;check out this post&lt;/a&gt;. Most commonly these serverless functions are written in JavaScript or Python, the architecture of serverless functions make functional programming languages such as &lt;a href=&quot;https://www.haskell.org&quot;&gt;Haskell&lt;/a&gt; a really nice fit. With Haskell we can get some good guarantees about our code due to its quite powerful type system. However, since we often house critical business logic inside these serverless functions, it would be great if we can get absolute assurance that our code is correct. For this reason I think that dependently-typed programming languages, in particular &lt;a href=&quot;https://www.idris-lang.org&quot;&gt;Idris&lt;/a&gt;, are really interesting and promising languages for writing serverless functions.&lt;/p&gt;
+
+&lt;h1 id=&quot;writing-serverless-functions-in-idris&quot;&gt;Writing Serverless Functions in Idris&lt;/h1&gt;
+
+&lt;p&gt;In this post I want to walk through how we can write serverless functions in Idris and deploy them to Google Cloud. First, you need to make sure you have the necessary toolchains installed.&lt;/p&gt;
+
+&lt;h2 id=&quot;installing-stuff&quot;&gt;Installing Stuff&lt;/h2&gt;
+
+&lt;p&gt;First, Idris needs to be installed (see &lt;a href=&quot;https://www.idris-lang.org/download/&quot;&gt;here&lt;/a&gt; for more info). Assuming you already have Haskell and &lt;code class=&quot;highlighter-rouge&quot;&gt;cabal&lt;/code&gt; installed, it should be as easy as:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-idris&quot;&gt;cabal update
+cabal install idris
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In addition, for writing Idris code I highly recommend using the &lt;a href=&quot;https://atom.io&quot;&gt;Atom editor&lt;/a&gt; since Atom has a great Idris package &lt;code class=&quot;highlighter-rouge&quot;&gt;language-idris&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Since this tutorial specifically shows how to deploy to Google Cloud Functions, you need to make sure to have the Google Cloud SDK command line tools installed if you want to follow along directly. On the other hand, the techniques shown below will probably work just as well with AWS Lambda if you would rather use that, I just won’t give specific instructions since I haven’t tried it yet. If you want to setup Google Cloud Functions SDK, you can &lt;a href=&quot;https://cloud.google.com/functions/&quot;&gt;get started here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;writing-a-function-in-idris&quot;&gt;Writing a Function in Idris&lt;/h2&gt;
+
+&lt;p&gt;In this post we won’t be looking at using Idris to prove correctness of code, just how to get any code at all to run on Google Cloud Functions. We can start out by writing a simple hello world function in Idris by making a new file &lt;code class=&quot;highlighter-rouge&quot;&gt;function.idr&lt;/code&gt; and putting in the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-idris&quot;&gt;module MyFunction
+
+hello : String -&amp;gt; String
+hello req = &quot;Hello: &quot; ++ req
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All that this function does is take as input a string (&lt;code class=&quot;highlighter-rouge&quot;&gt;req&lt;/code&gt;), and concatenate at the beginning &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;Hello: &quot;&lt;/code&gt;. You can test that this works by opening the Idris REPL with this file in your terminal, and calling the function:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;idris &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;.idr
+     ____    __     _
+    /  _/___/ /____&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;_&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;____
+    / // __  / ___/ / ___/     Version 1.3.1-git:268db5dc2
+  _/ // /_/ / /  / &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;__  &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      http://www.idris-lang.org/
+ /___/&lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;_,_/_/  /_/____/       Type :? &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;help
+
+&lt;/span&gt;Idris is free software with ABSOLUTELY NO WARRANTY.
+For details &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt; :warranty.
+&lt;span class=&quot;k&quot;&gt;*function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; hello &lt;span class=&quot;s2&quot;&gt;&quot;Nancy&quot;&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;&quot;Hello: Nancy&quot;&lt;/span&gt; : String
+&lt;span class=&quot;k&quot;&gt;*function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;exporting-the-function-to-javascript&quot;&gt;Exporting the Function to JavaScript&lt;/h2&gt;
+
+&lt;p&gt;This is great, but we need a way to run this code on Google Cloud Functions. Fortunately, Idris provides a built-in compiler to JavaScript, so we can compile our Idris function above into JavaScript code, which Google Cloud Functions directly supports. However, we still need a way to access the incomming HTTP request object, and write a string to the response. Since both the request and response are actual JavaScript objects, the most convenient thing to do is write some wrapper JavaScript which calls our &lt;code class=&quot;highlighter-rouge&quot;&gt;hello&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;p&gt;But to do this we need to make sure that JavaScript code can call our &lt;code class=&quot;highlighter-rouge&quot;&gt;hello&lt;/code&gt; function. To do this we just need to add an &lt;code class=&quot;highlighter-rouge&quot;&gt;FFI_Export&lt;/code&gt; declaration to the Idris code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-idris&quot;&gt;module MyFunction
+
+export -- This is new
+hello : String -&amp;gt; String
+hello req = &quot;Hello: &quot; ++ req
+
+-- This is all new
+lib : FFI_Export FFI_JS &quot;&quot; []
+lib =
+    Fun hello &quot;hello&quot; $
+    End
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;At this point it’s a good idea to test that the compilation and exporting to JavaScript actually works. In your terminal first compile the function to JavaScript:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;idris &lt;span class=&quot;nt&quot;&gt;--codegen&lt;/span&gt; node &lt;span class=&quot;nt&quot;&gt;--interface&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;.idr &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;function&lt;/span&gt;.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;--codegen node&lt;/code&gt; options tells Idris to compile it to JavaScript rather than a binary, and the &lt;code class=&quot;highlighter-rouge&quot;&gt;--interface&lt;/code&gt; options tells Idris to create a node module with exports rather than a standalone executable script. If this compiles without problems, you can try loading the result in node and calling your &lt;code class=&quot;highlighter-rouge&quot;&gt;hello&lt;/code&gt; function from JavaScript. Assuming you have &lt;code class=&quot;highlighter-rouge&quot;&gt;node&lt;/code&gt; installed, you can try:&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;node
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; f &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; require&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'./function.js'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; hello: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Function: MyFunction__hello] &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; f.hello&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Larry&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;s1&quot;&gt;'Hello: Larry'&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;putting-the-pieces-together&quot;&gt;Putting the Pieces Together&lt;/h2&gt;
+
+&lt;p&gt;At this point we have a function written in Idris, which we can call from JavaScript. All that we need to do is write a simple JavaScript wrapper which will be the main entry point of the serverless function, and which will call the Idris &lt;code class=&quot;highlighter-rouge&quot;&gt;hello&lt;/code&gt; function. Make a new file &lt;code class=&quot;highlighter-rouge&quot;&gt;index.js&lt;/code&gt; with this code:&lt;/p&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'./function.js'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;gcf_main&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;gcf_main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;send&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;hello&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This code first loads &lt;code class=&quot;highlighter-rouge&quot;&gt;function.js&lt;/code&gt; which is the compiled version of our Idris code &lt;code class=&quot;highlighter-rouge&quot;&gt;function.idr&lt;/code&gt;, and then defines &lt;code class=&quot;highlighter-rouge&quot;&gt;gcf_main&lt;/code&gt; which is the main entry point of our serverless function. All this does is extract the HTTP request body as a string, call the &lt;code class=&quot;highlighter-rouge&quot;&gt;hello&lt;/code&gt; function, and send the result in the HTTP response body. There should probably be some checking for existence and content type of the body, but this suffices for a demo example.&lt;/p&gt;
+
+&lt;p&gt;This is all the code we need to write! You can deploy this to Google Cloud Functions with the command:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcloud functions deploy my-function-name &lt;span class=&quot;nt&quot;&gt;--entry-point&lt;/span&gt; gcf_main &lt;span class=&quot;nt&quot;&gt;--runtime&lt;/span&gt; nodejs6 &lt;span class=&quot;nt&quot;&gt;--trigger-http&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can put whatever you want for &lt;code class=&quot;highlighter-rouge&quot;&gt;my-function-name&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once it finishes deploying it should report an &lt;code class=&quot;highlighter-rouge&quot;&gt;httpsTrigger&lt;/code&gt; URL, something like:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;httpsTrigger:
+  url: https://MY-DOMAIN.cloudfunctions.net/my-function-name
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;At this point you can send an actual HTTP request and get a response by using &lt;code class=&quot;highlighter-rouge&quot;&gt;curl&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; POST https://MY-DOMAIN.cloudfunctions.net/my-function-name &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Content-Type:text/plain&quot;&lt;/span&gt;  &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'Suzie'&lt;/span&gt;
+Hello: Suzie
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This shows that our compiled Idris code was actually successfully executed on Google’s servers. Pretty cool!&lt;/p&gt;
+
+&lt;h1 id=&quot;whats-next&quot;&gt;What’s Next&lt;/h1&gt;
+
+&lt;p&gt;While easy to setup, the approach here does have a few problems. Most importantly, the Idris function doesn’t have very much control over accessing the HTTP request and response. For example, the Idris function has no way to return an HTTP status code other than 200, nor does it have a way to return content types other than plain text. In addition, the Idris function can’t branch on different request content types or other HTTP headers.&lt;/p&gt;
+
+&lt;p&gt;To improve this we can try and put more logic into the JavaScript code wrapper. However, the purpose of using Idris is to be able to verify correctness of our code, so the more code we move into the JavaScript, the more code we aren’t able to prove correctness of. A different approach is to write everything in Idris, discard the JavaScript wrapper, and use Idris’s JavaScript FFI to access the request and response objects directly. This approach is a lot more involved to setup, and unfortunately &lt;a href=&quot;https://github.com/idris-lang/Idris-dev/issues/4656&quot;&gt;currently triggers a bug in the compiler&lt;/a&gt;. However, as this bug is worked out and libraries are developed to make accessing the request and response objects more convenient, I think this approach will become more promising.&lt;/p&gt;
+
+&lt;p&gt;At the present, Idris provides a convenient way to write serverless functions in a dependently-typed language, giving you the ability to prove correctness of critical business logic. If you need to do a lot of manipulation of HTTP request and response objects then Idris might not be quite ready yet, but hopefully will be down the road. If you are a lighter user of HTTP APIs, then I suggest giving Idris a try, it’s quite fun!&lt;/p&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Feature Scaling</title>
@@ -1776,7 +1904,7 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
    <id>https://donaldpinckney.com/tensorflow/2017/12/27/optimization</id>
    <content type="html">&lt;h1 id=&quot;exploring-optimization-convergence&quot;&gt;Exploring Optimization Convergence&lt;/h1&gt;
 
-&lt;p&gt;In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn’t introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this book and just about any machine learning you do.&lt;/p&gt;
+&lt;p&gt;In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn’t introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this guide and just about any machine learning you do.&lt;/p&gt;
 
 &lt;p&gt;To explore optimization we are going to exactly copy the code from the previous chapter, and experiment with it. To review, let’s look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):&lt;/p&gt;
 
@@ -2122,7 +2250,7 @@ rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; /tmp/tensorflow/single_var_
    <id>https://donaldpinckney.com/tensorflow/2017/12/03/single-variable</id>
    <content type="html">&lt;h1 id=&quot;single-variable-regression&quot;&gt;Single Variable Regression&lt;/h1&gt;
 
-&lt;p&gt;Since this is the very first tutorial in this book and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow &lt;a href=&quot;#implementation&quot;&gt;implementation&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Since this is the very first tutorial in this guide and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow &lt;a href=&quot;#implementation&quot;&gt;implementation&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;/h2&gt;
 
@@ -2180,7 +2308,7 @@ Recall that there are \(m\) examples in the data set, \(x_i\) is the i’th inpu
 However, there is also a concrete mathematical reason for why we specifically square it. It’s too much to go into here, but it will be explored in &lt;a href=&quot;/books/tensorflow/book/ch2-linreg/mle.html&quot;&gt;bonus chapter 2.8&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Creating loss functions (and this exact loss function) will continue to be used throughout this book, from the most simple to more complex models.&lt;/p&gt;
+&lt;p&gt;Creating loss functions (and this exact loss function) will continue to be used throughout this guide, from the most simple to more complex models.&lt;/p&gt;
 
 &lt;h3 id=&quot;optimizing-the-model&quot;&gt;Optimizing the model&lt;/h3&gt;
 
@@ -2449,7 +2577,7 @@ t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 
 &lt;h2 id=&quot;5-use-the-trained-model&quot;&gt;5. Use the trained model&lt;/h2&gt;
 
-&lt;p&gt;Technically, using the trained model is the easiest part of machine learning: with the best parameters \(a\) and \(b\), you can simply plug new age values into \(x\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this book we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model.&lt;/p&gt;
+&lt;p&gt;Technically, using the trained model is the easiest part of machine learning: with the best parameters \(a\) and \(b\), you can simply plug new age values into \(x\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this guide we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model.&lt;/p&gt;
 
 &lt;p&gt;One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don’t have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn’t impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don’t have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \(1\) year old homicides is even close to 980.&lt;/p&gt;
 
