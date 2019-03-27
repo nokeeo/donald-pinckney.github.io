@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2019-03-26T16:18:33-07:00</updated>
+ <updated>2019-03-26T17:56:04-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -13,7 +13,7 @@
 
  
  <entry>
-   <title>Coding Serverless Function in Idris</title>
+   <title>Coding Serverless Functions in Idris</title>
    <link href="https://donaldpinckney.com/idris/2019/03/26/idris-serverless.html"/>
    <updated>2019-03-26T00:00:00-07:00</updated>
    <id>https://donaldpinckney.com/idris/2019/03/26/idris-serverless</id>
@@ -25,7 +25,7 @@
 
 &lt;h1 id=&quot;writing-serverless-functions-in-idris&quot;&gt;Writing Serverless Functions in Idris&lt;/h1&gt;
 
-&lt;p&gt;In this post I want to walk through how we can write serverless functions in Idris and deploy them to Google Cloud. First, you need to make sure you have the necessary toolchains installed.&lt;/p&gt;
+&lt;p&gt;In this post I want to walk through how we can write serverless functions in Idris and deploy them to Google Cloud. To do so, you need to make sure you have the necessary toolchains installed.&lt;/p&gt;
 
 &lt;h2 id=&quot;installing-stuff&quot;&gt;Installing Stuff&lt;/h2&gt;
 
