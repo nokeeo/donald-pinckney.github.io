@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Coding Serverless Function in Idris"
+title: "Coding Serverless Functions in Idris"
 date: 2019-03-26
 categories: Idris
 isEditable: false
