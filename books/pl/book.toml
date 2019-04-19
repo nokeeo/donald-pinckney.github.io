@@ -8,3 +8,6 @@ src = "src"
 [output.html]
 mathjax-support = true
 theme = "src/theme"
+
+[output.html.playpen]
+editable = true
