@@ -60,7 +60,7 @@ function main() {
     }
     GLOBALS.state = {
       // perplexity: +getParam('perplexity', 10),
-      epsilon: +getParam('epsilon', 0.5),
+      epsilon: +getParam('epsilon', 0.95),
       demo: +getParam('demo', 0),
       demoParams: getParam('demoParams', '10,15,300,2.0').split(',').map(Number)
     };
@@ -124,7 +124,7 @@ function main() {
   var tsneUI = document.getElementById('tsne-options');
   // var perplexitySlider = makeSlider(tsneUI, 'Perplexity', 2, 100,
   //     GLOBALS.state.perplexity);
-  var epsilonSlider = makeSlider(tsneUI, 'Epsilon', 0.01, 3.0,
+  var epsilonSlider = makeSlider(tsneUI, '\\(\\e\\)', 0.01, 3.0,
       GLOBALS.state.epsilon, 0.01, false);
 
   // GLOBALS.perplexitySlider = perplexitySlider

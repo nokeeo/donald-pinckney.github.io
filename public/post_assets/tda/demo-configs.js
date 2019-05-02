@@ -190,7 +190,7 @@ function gridData(size) {
 }
 
 // Gaussian cloud, symmetric, of given dimension.
-function gaussianData(n, dim) {
+function gaussianData(n, dim=2) {
   var points = [];
   for (var i = 0; i < n; i++) {
     var p = normalVector(dim);
@@ -200,7 +200,7 @@ function gaussianData(n, dim) {
 }
 
 // Elongated Gaussian ellipsoid.
-function longGaussianData(n, dim) {
+function longGaussianData(n, dim=2) {
   var points = [];
   for (var i = 0; i < n; i++) {
     var p = normalVector(dim);
@@ -212,10 +212,37 @@ function longGaussianData(n, dim) {
   return points;
 }
 
+function hslToRgb(h, s, l){
+  var r, g, b;
+
+  if(s == 0){
+      r = g = b = l; // achromatic
+  }else{
+      var hue2rgb = function hue2rgb(p, q, t){
+          if(t < 0) t += 1;
+          if(t > 1) t -= 1;
+          if(t < 1/6) return p + (q - p) * 6 * t;
+          if(t < 1/2) return q;
+          if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+      }
+
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+  }
+
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
 // Return a color for the given angle.
 function angleColor(t) {
   var hue = ~~(300 * t / (2 * Math.PI));
-  return 'hsl(' + hue + ',50%,50%)';
+  var rgb = hslToRgb(hue / 360.0, 0.5, 0.5);
+
+  return 'rgb(' + rgb[0] + ', ' + rgb[1] + ', ' + rgb[2] + ')';
 }
 
 // Data in a 2D circle, regularly spaced.
@@ -266,7 +293,7 @@ function twoDifferentClustersData2D(n) {
 }
 
 // Two clusters of the same size.
-function twoClustersData(n, dim) {
+function twoClustersData(n, dim=2) {
   dim = dim || 50;
   var points = [];
   for (var i = 0; i < n; i++) {
@@ -279,7 +306,7 @@ function twoClustersData(n, dim) {
 }
 
 // Two differently sized clusters, of arbitrary dimensions.
-function twoDifferentClustersData(n, dim, scale) {
+function twoDifferentClustersData(n, dim=2, scale) {
   dim = dim || 50;
   scale = scale || 10;
   var points = [];
@@ -310,7 +337,7 @@ function threeClustersData2d(n) {
 }
 
 // Three clusters, at different distances from each other, in any dimension.
-function threeClustersData(n, dim) {
+function threeClustersData(n, dim=2) {
   dim = dim || 50;
   var points = [];
   for (var i = 0; i < n; i++) {
@@ -327,7 +354,7 @@ function threeClustersData(n, dim) {
 }
 
 // One tiny cluster inside of a big cluster.
-function subsetClustersData(n, dim) {
+function subsetClustersData(n, dim=2) {
    dim = dim || 2;
   var points = [];
   for (var i = 0; i < n; i++) {
@@ -355,7 +382,7 @@ function simplexData(n, noise) {
 }
 
 // Uniform points from a cube.
-function cubeData(n, dim) {
+function cubeData(n, dim=2) {
   var points = [];
   for (var i = 0; i < n; i++) {
     var p = [];
@@ -429,13 +456,14 @@ function trefoilData(n) {
 // Two long, linear clusters in 2D.
 function longClusterData(n) {
   var points = [];
-  var s = .03 * n;
+  var s = .03 * n; // .03
+  var w = 0.13 * n; // 0.2
   for (var i = 0; i < n; i++) {
     var x1 = i + s * normal();
     var y1 = i + s * normal();
     points.push(new Point([x1, y1], blueColor()));
-    var x2 = i + s * normal() + n / 5;
-    var y2 = i + s * normal() - n / 5;
+    var x2 = i + s * normal() + w;
+    var y2 = i + s * normal() - w;
     points.push(new Point([x2, y2], orangeColor()));
   }
   return points;
@@ -456,7 +484,7 @@ function orthoCurve(n) {
 }
 
 // Random walk
-function randomWalk(n, dim) {
+function randomWalk(n, dim=2) {
   var points = [];
   var current = [];
   for (var i = 0; i < dim; i++) {
@@ -477,7 +505,7 @@ function randomWalk(n, dim) {
 
 // Random jump: a random walk with
 // additional noise added at each step.
-function randomJump(n, dim) {
+function randomJump(n, dim=2) {
   var points = [];
   var current = [];
   for (var i = 0; i < dim; i++) {
@@ -519,24 +547,24 @@ var demos = [
         min: 10, max: 1000, start: 300,
       },
       {
-        name: 'Expected number of drops',
+        name: 'Expected # of missing points',
         min: 0.0, max: 100.0, start: 2.0, step: 0.1,
       },
     ],
     generator: annulusData
   },
-  {
-    name: 'Grid',
-    description: 'A square grid with equal spacing between points. ' +
-        'Try convergence at different sizes.',
-    options: [
-      {
-        name: 'Points Per Side',
-        min: 2, max: 20, start: 10,
-      }
-    ],
-    generator: gridData
-  },
+  // {
+  //   name: 'Grid',
+  //   description: 'A square grid with equal spacing between points. ' +
+  //       'Try convergence at different sizes.',
+  //   options: [
+  //     {
+  //       name: 'Points Per Side',
+  //       min: 2, max: 20, start: 10,
+  //     }
+  //   ],
+  //   generator: gridData
+  // },
   {
     name: 'Two Clusters',
     description: 'Two clusters with equal numbers of points.',
@@ -544,10 +572,6 @@ var demos = [
       {
         name: 'Points Per Cluster',
         min: 1, max: 100, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 100, start: 2,
       }
     ],
     generator: twoClustersData
@@ -555,44 +579,35 @@ var demos = [
   {
     name: 'Three Clusters',
     description: 'Three clusters with equal numbers of points, but at ' +
-         'different distances from each other. Cluster distances are ' +
-         'only apparent at certain perplexities',
+         'different distances from each other.',
     options: [
       {
         name: 'Points Per Cluster',
         min: 1, max: 100, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 100, start: 2,
       }
     ],
     generator: threeClustersData
   },
-  {
-    name: 'Two Different-Sized Clusters',
-    description: 'Two clusters with equal numbers of points, but different ' +
-        'variances within the clusters. Cluster separation depends on perplexity.',
-    options: [
-      {
-        name: 'Points Per Cluster',
-        min: 1, max: 100, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 100, start: 2,
-      },
-      {
-        name: 'Scale',
-        min: 1, max: 10, start: 5,
-      }
-    ],
-    generator: twoDifferentClustersData
-  },
+  // {
+  //   name: 'Two Different-Sized Clusters',
+  //   description: 'Two clusters with equal numbers of points, but different ' +
+  //       'variances within the clusters. Cluster separation depends on perplexity.',
+  //   options: [
+  //     {
+  //       name: 'Points Per Cluster',
+  //       min: 1, max: 100, start: 50,
+  //     },
+  //     {
+  //       name: 'Scale',
+  //       min: 1, max: 10, start: 5,
+  //     }
+  //   ],
+  //   generator: twoDifferentClustersData
+  // },
   {
     name: 'Two Long Linear Clusters',
     description: 'Two sets of points, arranged in parallel lines that ' +
-        'are close to each other. Note curvature of lines.',
+        'are close to each other.',
     options: [
       {
         name: 'Points Per Cluster',
@@ -601,22 +616,18 @@ var demos = [
     ],
     generator: longClusterData
   },
-  {
-    name: 'Cluster In Cluster',
-    description: 'A dense, tight cluster inside of a wide, sparse cluster. ' +
-      'Perplexity makes a big difference here.',
-    options: [
-      {
-        name: 'Points Per Cluster',
-        min: 1, max: 100, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 100, start: 2,
-      }
-    ],
-    generator: subsetClustersData
-  },
+  // {
+  //   name: 'Cluster In Cluster',
+  //   description: 'A dense, tight cluster inside of a wide, sparse cluster. ' +
+  //     'Perplexity makes a big difference here.',
+  //   options: [
+  //     {
+  //       name: 'Points Per Cluster',
+  //       min: 1, max: 100, start: 50,
+  //     }
+  //   ],
+  //   generator: subsetClustersData
+  // },
   {
     name: 'Circle (Evenly Spaced)',
     description: 'Points evenly distributed in a circle. ' +
@@ -650,87 +661,38 @@ var demos = [
       {
         name: 'Number Of Points',
         min: 1, max: 500, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 100, start: 2,
       }
     ],
     generator: gaussianData
   },
   {
     name: 'Ellipsoidal Gaussian Cloud',
-    description: 'Points in an ellipsoidal Gaussian distribution. ' +
-     ' Dimension n has variance 1/n. Elongation is visible in plot.',
+    description: 'Points in an ellipsoidal Gaussian distribution. Elongation is visible in plot.',
     options: [
       {
         name: 'Number Of Points',
         min: 1, max: 500, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 100, start: 2,
       }
     ],
     generator: longGaussianData
   },
-  {
-    name: 'Trefoil Knot',
-    description: 'Points arranged in 3D, following a trefoil knot. ' +
-      'Different runs may give different results.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 1, max: 200, start: 50,
-      }
-    ],
-    generator: trefoilData
-  },
-  {
-    name: 'Linked Rings',
-    description: 'Points arranged in 3D, on two linked circles. ' +
-      'Different runs may give different results.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 1, max: 200, start: 50,
-      }
-    ],
-    generator: linkData
-  },
-  {
-    name: 'Unlinked Rings',
-    description: 'Points arranged in 3D, on two unlinked circles',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 1, max: 200, start: 50,
-      }
-    ],
-    generator: unlinkData
-  },
-  {
-    name: 'Orthogonal Steps',
-    description: 'Points related by mutually orthogonal steps. ' +
-      'Very similar to a random walk.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 1, max: 500, start: 50,
-      }
-    ],
-    generator: orthoCurve
-  },
+  // {
+  //   name: 'Orthogonal Steps',
+  //   description: 'Points related by mutually orthogonal steps. ' +
+  //     'Very similar to a random walk.',
+  //   options: [
+  //     {
+  //       name: 'Number Of Points',
+  //       min: 1, max: 500, start: 50,
+  //     }
+  //   ],
+  //   generator: orthoCurve
+  // },
   {
     name: 'Random Walk',
-    description: 'Random (Gaussian) walk. ' +
-      'Smoother than you might think.',
-      options: [{
+    description: 'Random (Gaussian) walk.',
+    options: [{
         name: 'Number Of Points',
-        min: 1, max: 1000, start: 100,
-      },
-      {
-        name: 'Dimension',
         min: 1, max: 1000, start: 100,
       }
     ],
@@ -743,40 +705,9 @@ var demos = [
       {
         name: 'Number Of Points',
         min: 1, max: 1000, start: 100,
-      },
-      {
-        name: 'Dimension',
-        min: 1, max: 1000, start: 100,
       }
     ],
     generator: randomJump
-  },
-  {
-    name: 'Equally Spaced',
-    description: 'A set of points, where distances between all pairs of ' +
-        'points are the same in the original space.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 2, max: 100, start: 50,
-      }
-    ],
-    generator: simplexData
-  },
-  {
-    name: 'Uniform Distribution',
-    description: 'Points uniformly distributed in a unit cube.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 2, max: 200, start: 50,
-      },
-      {
-        name: 'Dimensions',
-        min: 1, max: 10, start: 3,
-      }
-    ],
-    generator: cubeData
   }
 ];
 

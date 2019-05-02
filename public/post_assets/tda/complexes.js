@@ -1,10 +1,23 @@
 
-function d2(p1, p2) {
-    return (p1[0] - p2[0])**2 + (p1[1] - p2[1])**2;
-}
+
 
 function buildComplex(points, epsilon) {
     // var epsilon = 0.2;
+
+    if(points.length == 0) {
+        return [];
+    }
+
+    var dim = points[0].coords.length;
+
+    function d2(p1, p2) {
+        var sum = 0;
+        for(var i = 0; i < dim; i++) {
+            sum += (p1[i] - p2[i])**2;
+        }
+        return sum;
+    }
+
 
     var n = points.length;
     var simplices = [];

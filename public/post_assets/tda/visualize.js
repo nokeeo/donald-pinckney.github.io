@@ -96,7 +96,7 @@ function visualize(points, complex, canvas, message, no3d) {
     if(simplex.length == 3) {
       var col = simplexPoints[1].color;
       var rgb = col.substring(4, col.length-1).replace(/ /g, '').split(',');
-      console.log(rgb);
+      // console.log(rgb);
       g.fillStyle = 'rgba('+rgb[0]+','+rgb[1]+','+rgb[2]+',0.3)';
       // g.fillStyle = simplexPoints[1].color;
       // g.strokeStyle = null;
