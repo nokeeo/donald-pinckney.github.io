@@ -60,7 +60,7 @@ function main() {
     }
     GLOBALS.state = {
       // perplexity: +getParam('perplexity', 10),
-      epsilon: +getParam('epsilon', 0.95),
+      epsilon: +getParam('epsilon', 0.29),
       demo: +getParam('demo', 0),
       demoParams: getParam('demoParams', '10,15,300,2.0').split(',').map(Number)
     };
@@ -68,12 +68,14 @@ function main() {
   setStateFromParams();
 
   // Utility function for creating value sliders.
-  function makeSlider(container, name, min, max, start, step = 1, fresh = true) {
+  function makeSlider(container, name, min, max, start, step = 1, fresh = true, hideLabel = false) {
     var dis = d3.select(container)
     dis.append("span").classed("slider-label-" + name, true)
       .text(name + ' ')
-    var value = dis.append("span").classed("slider-value-" + name, true)
-      .text(start)
+    var value = null;
+    if(hideLabel === false) {
+      value = dis.append("span").classed("slider-value-" + name, true).text(start)
+    }
 
     var slider = dis.append("input")
       .attr("type", "range")
@@ -84,7 +86,9 @@ function main() {
       .on("change", function () {if(fresh){updateParameters(false)}})
       .on("input", function() {
         value.text(slider.node().value);
-        updateParameters(fresh);
+        if(hideLabel === false) {
+          updateParameters(fresh);
+        }
       })
     return slider.node();
   }
@@ -195,8 +199,9 @@ function main() {
       var value = initializeFromState ? GLOBALS.state.demoParams[i] : option.start;
       // function makeSlider(container, name, min, max, start, step = 1, fresh = true) {
       var step = option.step || 1;
+      var hideLabel = option.hideLabel || false;
       return makeSlider(dataOptionsArea, option.name,
-          option.min, option.max, value, step);
+          option.min, option.max, value, step, true, hideLabel);
     });
 
     menuDiv.selectAll(".demo-data")

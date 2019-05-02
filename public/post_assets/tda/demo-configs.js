@@ -265,6 +265,48 @@ function randomCircleData(numPoints) {
   return points;
 }
 
+function randomCircleData2(numPoints) {
+  var points = [];
+
+  // var numPoints = numPointsBoth / 2;
+  var c_x = 2.0;
+  var c_y = 2.0;
+  var r = 0.4;
+  
+  for (var i = 0; i < numPoints; i++) {
+    var t = 2 * Math.PI * Math.random();
+    points.push(new Point([Math.cos(t), Math.sin(t)], angleColor(t)));
+  }
+
+  for (var i = 0; i < numPoints; i++) {
+    var t = 2 * Math.PI * Math.random();
+    points.push(new Point([c_x + r*Math.cos(t), c_y + r*Math.sin(t)], angleColor(t)));
+  }
+
+  return points;
+}
+
+function randomCircleData3(numPoints) {
+  var points = [];
+
+  // var numPoints = numPointsBoth / 2;
+  var c_x = 2.0;
+  var c_y = 2.0;
+  var r = 0.15;
+  
+  for (var i = 0; i < numPoints; i++) {
+    var t = 2 * Math.PI * Math.random();
+    points.push(new Point([Math.cos(t), Math.sin(t)], angleColor(t)));
+  }
+
+  for (var i = 0; i < numPoints; i++) {
+    var t = 2 * Math.PI * Math.random();
+    points.push(new Point([c_x + r*Math.cos(t), c_y + r*Math.sin(t)], angleColor(t)));
+  }
+
+  return points;
+}
+
 // Clusters arranged in a circle.
 function randomCircleClusterData(numPoints) {
   var points = [];
@@ -543,8 +585,9 @@ var demos = [
         min: 4, max: 30, start: 15,
       },
       {
-        name: 'Number of samples',
+        name: 'Number of Samples',
         min: 10, max: 1000, start: 300,
+        hideLabel: true
       },
       {
         name: 'Expected # of missing points',
@@ -552,6 +595,43 @@ var demos = [
       },
     ],
     generator: annulusData
+  },
+  {
+    name: 'Circle',
+    description: 'Points randomly distributed in a circle. ' +
+        'Hue corresponds to angle in the circle.',
+    options: [
+      {
+        name: 'Number Of Samples',
+        min: 1, max: 100, start: 50,
+        hideLabel: true
+      }
+    ],
+    generator: randomCircleData
+  },
+  {
+    name: 'Two Circles of Different Size',
+    description: 'Two circles, one is large and one is medium-small',
+    options: [
+      {
+        name: 'Number Of Samples',
+        min: 1, max: 100, start: 50,
+        hideLabel: true
+      }
+    ],
+    generator: randomCircleData2
+  },
+  {
+    name: 'Two Circles of Very Different Size',
+    description: 'Two circles, one is large and one is very small',
+    options: [
+      {
+        name: 'Number Of Samples',
+        min: 1, max: 100, start: 50,
+        hideLabel: true
+      }
+    ],
+    generator: randomCircleData3
   },
   // {
   //   name: 'Grid',
@@ -628,30 +708,18 @@ var demos = [
   //   ],
   //   generator: subsetClustersData
   // },
-  {
-    name: 'Circle (Evenly Spaced)',
-    description: 'Points evenly distributed in a circle. ' +
-        'Hue corresponds to angle in the circle.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 1, max: 100, start: 50,
-      }
-    ],
-    generator: circleData
-  },
-  {
-    name: 'Circle (Randomly Spaced)',
-    description: 'Points randomly distributed in a circle. ' +
-        'Hue corresponds to angle in the circle.',
-    options: [
-      {
-        name: 'Number Of Points',
-        min: 1, max: 100, start: 50,
-      }
-    ],
-    generator: randomCircleData
-  },
+  // {
+  //   name: 'Circle (Evenly Spaced)',
+  //   description: 'Points evenly distributed in a circle. ' +
+  //       'Hue corresponds to angle in the circle.',
+  //   options: [
+  //     {
+  //       name: 'Number Of Points',
+  //       min: 1, max: 100, start: 50,
+  //     }
+  //   ],
+  //   generator: circleData
+  // },
   {
     name: 'Gaussian Cloud',
     description: 'Points in a unit Gaussian distribution. ' +
