@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2019-05-02T22:35:03-07:00</updated>
+ <updated>2019-05-03T00:04:55-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -244,7 +244,7 @@ The action of \(t\) is simply to shift each element up one gradation level by me
 
 &lt;h2 id=&quot;classification-theorem-for-mathbbn-persistence-modules&quot;&gt;Classification Theorem for \(\mathbb{N}\)-Persistence Modules&lt;/h2&gt;
 
-&lt;p&gt;By showing that persistence modules are in correspondence with graded modules over \(R[t]\) opens the door to applying well-know classification theorems of graded modules. Unfortunately there is no simple classification when \(R\) is not a field, but for \(R = F\) a field, there exists a nice result:&lt;/p&gt;
+&lt;p&gt;Showing that persistence modules are in correspondence with graded modules over \(R[t]\) opens the door to applying well-know classification theorems of graded modules. Unfortunately there is no simple classification when \(R\) is not a field, but for \(R = F\) a field, there exists a nice result:&lt;/p&gt;
 
 &lt;div class=&quot;theorem&quot; text=&quot;Graded Module Classification&quot;&gt;
    If \(M_*\) is a finitely generated graded \(F[t]\) module, then there exist integers \(\{i_1, \cdots, i_m\}\) and \(\{j_1, l_1, \cdots, j_n, l_n\}\) such that:
@@ -253,7 +253,7 @@ The action of \(t\) is simply to shift each element up one gradation level by me
    \]
    This classification is unique up to permutations of factors.
 &lt;/div&gt;
-&lt;p&gt;There are two components to the classification. On the left side of \(\oplus\), we have the free part which corresponds to elements of the persistence module that appear at index \(i_s\) and never disappear. On the right side we have the torsion part which corresponds to elements of the persistence module that appear at index \(j_r\) and die at index \(l_r\). This classification is the main result we are looking for, since this gives us a concrete computational tool with which to calculate \(p\)-persistence homology groups. In particular the torsion part above corresponds precisely to the \(p\)-persistence homology groups discussed previously. Note that using \(R = F\) a field means that rather than having persistence modules, we have persistence vector spaces. But to be able to apply this theorem we need to know that our graded modules over \(F[t]\) are finitely generated. The following theorem provides an exact condition:&lt;/p&gt;
+&lt;p&gt;There are two components to the classification. On the left side of \(\oplus\), we have the free part which corresponds to elements of the persistence module that appear at index \(i_s\) and never disappear. On the right side we have the torsion part which corresponds to elements of the persistence module that appear at index \(j_r\) and die at index \(j_r + l_r\). This classification is the main result we are looking for, since this gives us a concrete computational tool with which to calculate \(p\)-persistence homology groups. In particular the torsion part above corresponds precisely to the \(p\)-persistence homology groups discussed previously. Note that using \(R = F\) a field means that rather than having persistence modules, we have persistence vector spaces. But to be able to apply this theorem we need to know that our graded modules over \(F[t]\) are finitely generated. The following theorem provides an exact condition:&lt;/p&gt;
 
 &lt;div class=&quot;theorem&quot;&gt;
    Let \(\mathcal{V} = \{V^i, \phi^i\}\) be an \(\N\)-persistence vector space over a field \(F\). Then \(\alpha(\mathcal{V})\) (which is a graded module over \(F[t]\)) is finitely generated if and only if every \(V^n\) has finite dimension and there exists an \(n\) such that for all \(m \geq n, \phi^m : V^m \cong V^{m+1}\). In other words \(\mathcal{V}\) needs to be finite in both the interior dimension of each vector space and finite in the persistence. Such a \(\N\)-persistence vector space is called &lt;b&gt;tame.&lt;/b&gt;
