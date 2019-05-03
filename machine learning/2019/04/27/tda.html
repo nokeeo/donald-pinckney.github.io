@@ -629,9 +629,13 @@ The action of \(t\) is simply to shift each element up one gradation level by me
 
 <p>In order to apply the classification results we must choose \(R = F\) to be a field, such as \(\mathbb{Z}_2\), and then we have \(H_k(\C_\e(D); R)\) is an \(\N\)-persistence vector space over \(F\). In addition since \(D\) is finite each Čech Complex built from \(D\) will be finite and thus each \(H_k(\C_\e(D); F)\) will be finitely generated. Lastly, since we have only finitely many \(\e\), \(H_k(\C_\e(D); F)\) is tame. Therefore we can use the classification theorem above to compute persistent homology barcodes!</p>
 
+<h1 id="future-directions-of-persistent-homology">Future Directions of Persistent Homology</h1>
+
+<p>I’ve only outlined the most direct path for computing persistent homology from a point cloud. However, there are many other fascinating and important aspects to consider. In particular, studying the <strong>stability</strong> of persistent homology computations involves seeing if slightly altering the point cloud \(D\) will drastically affect the barcode result, while statistical approaches to persistent homology consider more carefully the underlying probility distribution from which a point cloud is sampled, thus turning a barcode into a probabilistic object. Chazal<sup id="fnref:chazal:1"><a href="#fn:chazal" class="footnote">5</a></sup> gives a survey of both of these directions of current research.</p>
+
 <h1 id="using-the-gudhi-python-library-to-compute-persistent-homology">Using the GUDHI Python Library to Compute Persistent Homology</h1>
 
-<p>I would like to conclude on a matter of practicality. Algorithms to compute persistent homology have been <a href="http://gudhi.gforge.inria.fr">implemented for Python in the GUDHI Library</a>. Using computing persistent homology via GUDHI is quite easy, and I believe can offer interesting and new insights for fields with data analysis. I won’t include a full tutorial, but a simple example of GUDHI in action should be sufficient to show how easy it is:</p>
+<p>I would like to conclude on a matter of practicality. While understanding the underlying math is insightful and fun, I believe that TDA can have a significant impact on a wide number of fields and applications. Fortunately, algorithms to compute persistent homology have been <a href="http://gudhi.gforge.inria.fr">implemented for Python in the GUDHI Library</a>. Using computing persistent homology via GUDHI is quite easy, and I believe can offer interesting and new insights for fields with data analysis. I won’t include a full tutorial, but a simple example of GUDHI in action should be sufficient to show how easy it is:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">gudhi</span> <span class="k">as</span> <span class="n">gd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
@@ -692,7 +696,7 @@ The action of \(t\) is simply to shift each element up one gradation level by me
       <p><a href="http://www.ams.org/journals/bull/2009-46-02/S0273-0979-09-01249-X/S0273-0979-09-01249-X.pdf" class="dont-break-out">http://www.ams.org/journals/bull/2009-46-02/S0273-0979-09-01249-X/S0273-0979-09-01249-X.pdf</a> <a href="#fnref:car" class="reversefootnote">&#8617;</a> <a href="#fnref:car:1" class="reversefootnote">&#8617;<sup>2</sup></a> <a href="#fnref:car:2" class="reversefootnote">&#8617;<sup>3</sup></a></p>
     </li>
     <li id="fn:chazal">
-      <p><a href="https://arxiv.org/abs/1710.04019" class="dont-break-out">https://arxiv.org/abs/1710.04019</a> <a href="#fnref:chazal" class="reversefootnote">&#8617;</a></p>
+      <p><a href="https://arxiv.org/abs/1710.04019" class="dont-break-out">https://arxiv.org/abs/1710.04019</a> <a href="#fnref:chazal" class="reversefootnote">&#8617;</a> <a href="#fnref:chazal:1" class="reversefootnote">&#8617;<sup>2</sup></a></p>
     </li>
     <li id="fn:distill">
       <p>Wattenberg, et al., “How to Use t-SNE Effectively”, Distill, 2016. <a href="http://doi.org/10.23915/distill.00002" class="dont-break-out">http://doi.org/10.23915/distill.00002</a> <a href="#fnref:distill" class="reversefootnote">&#8617;</a></p>
