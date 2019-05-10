@@ -20,7 +20,7 @@ In this post I want to walk through how we can write serverless functions in Idr
 
 First, Idris needs to be installed (see [here](https://www.idris-lang.org/download/) for more info). Assuming you already have Haskell and `cabal` installed, it should be as easy as:
 
-```idris
+```bash
 cabal update
 cabal install idris
 ```
@@ -33,7 +33,7 @@ Since this tutorial specifically shows how to deploy to Google Cloud Functions, 
 
 In this post we won't be looking at using Idris to prove correctness of code, just how to get any code at all to run on Google Cloud Functions. We can start out by writing a simple hello world function in Idris by making a new file `function.idr` and putting in the following:
 
-```idris
+```idris,norun
 module MyFunction
 
 hello : String -> String
@@ -63,7 +63,7 @@ This is great, but we need a way to run this code on Google Cloud Functions. For
 
 But to do this we need to make sure that JavaScript code can call our `hello` function. To do this we just need to add an `FFI_Export` declaration to the Idris code:
 
-```idris
+```idris,norun
 module MyFunction
 
 export -- This is new
@@ -109,6 +109,7 @@ exports.gcf_main = function gcf_main(req, res) {
 This code first loads `function.js` which is the compiled version of our Idris code `function.idr`, and then defines `gcf_main` which is the main entry point of our serverless function. All this does is extract the HTTP request body as a string, call the `hello` function, and send the result in the HTTP response body. There should probably be some checking for existence and content type of the body, but this suffices for a demo example.
 
 This is all the code we need to write! You can deploy this to Google Cloud Functions with the command:
+
 ```bash
 gcloud functions deploy my-function-name --entry-point gcf_main --runtime nodejs6 --trigger-http
 ```
@@ -116,12 +117,14 @@ gcloud functions deploy my-function-name --entry-point gcf_main --runtime nodejs
 You can put whatever you want for `my-function-name`.
 
 Once it finishes deploying it should report an `httpsTrigger` URL, something like:
+
 ```
 httpsTrigger:
   url: https://MY-DOMAIN.cloudfunctions.net/my-function-name
 ```
 
 At this point you can send an actual HTTP request and get a response by using `curl`:
+
 ```bash
 $ curl -X POST https://MY-DOMAIN.cloudfunctions.net/my-function-name -H "Content-Type:text/plain"  -d 'Suzie'
 Hello: Suzie

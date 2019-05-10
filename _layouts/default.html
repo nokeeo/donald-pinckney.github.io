@@ -11,5 +11,17 @@
       {{ content }}
     </div>
 
+    {% if page.runOrEdit == true %}
+    <script src="/books/pl/book/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/editor-setup.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/books/pl/book/mode-rust.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/books/pl/book/mode-idris.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/books/pl/book/theme-chrome.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/books/pl/book/theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script src="/books/pl/book/highlight.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/idris-setup.js" type="text/javascript" charset="utf-8"></script>
+    {% endif %}
   </body>
 </html>
