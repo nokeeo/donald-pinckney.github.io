@@ -4,7 +4,7 @@ Hello world!
 
 This is a code block for python:
 
-```python,mdbook-runnable
+```python
 print("hello")
 ```
 
@@ -35,21 +35,23 @@ axiom4 x = if True then x else x
 
 And for rust:
 
-```rust
+<!-- ```rust
 fn main() {
     let number = 5;
     print!("{}", number);
 }
-```
+``` -->
 
 Rust editable:
 
-```rust,editable
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<!-- ```rust,editable
 fn main() {
     let number = 5;
     print!("{}", number);
 }
-```
+``` -->
 
 This is an image:
 
