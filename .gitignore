@@ -1,3 +1,10 @@
+books/tensorflow/book/
+books/pl/book/
+_posts/tensorflow/
+_posts/pl/
+_drafts/tensorflow/
+_drafts/pl/
+
 # Ignore docs files
 _gh_pages
 _site
@@ -42,12 +49,6 @@ node_modules
 
 .sass-cache/
 Gemfile.lock
-travis_rsa
-books/tensorflow/book/
-books/pl/book/
-_posts/tensorflow/
-_drafts/tensorflow/
-
 travis_rsa
 
 
