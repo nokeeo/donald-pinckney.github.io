@@ -2,7 +2,6 @@
 layout: post
 title: "Testing!"
 date: 2019-05-08
-categories: Idris
 isEditable: false
 runOrEdit: true
 ---

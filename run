@@ -4,5 +4,5 @@
 books/build_all.sh
 
 # Build rest of site
-bundle exec jekyll serve 
+bundle exec jekyll serve "$@"
 
