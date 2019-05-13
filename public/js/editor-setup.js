@@ -17,6 +17,7 @@ window.editors = [];
         });
 
         editor.$blockScrolling = Infinity;
+        editor.setTheme("ace/theme/chrome");
 
         // editor.originalCode = editor.getValue();
 

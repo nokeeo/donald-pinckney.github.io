@@ -11,6 +11,9 @@
       {{ content }}
     </div>
 
+    <script type="text/javascript">
+      window.is_book_mode = false;
+    </script>
     {% if page.runOrEdit == true %}
     <script src="{{ site.baseurl }}/public/book_deps/js/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{ site.baseurl }}/public/js/editor-setup.js" type="text/javascript" charset="utf-8"></script>
@@ -21,7 +24,9 @@
 
 
     <script src="{{ site.baseurl }}/public/book_deps/js/highlight.js" type="text/javascript" charset="utf-8"></script>
+
     <script src="{{ site.baseurl }}/public/js/idris-setup.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ site.baseurl }}/public/js/code-snippets.js" type="text/javascript" charset="utf-8"></script>
     {% endif %}
   </body>
 </html>

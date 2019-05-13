@@ -33,7 +33,7 @@ Since this tutorial specifically shows how to deploy to Google Cloud Functions, 
 
 In this post we won't be looking at using Idris to prove correctness of code, just how to get any code at all to run on Google Cloud Functions. We can start out by writing a simple hello world function in Idris by making a new file `function.idr` and putting in the following:
 
-```idris,norun
+```idris,noplaypen
 module MyFunction
 
 hello : String -> String
@@ -63,7 +63,7 @@ This is great, but we need a way to run this code on Google Cloud Functions. For
 
 But to do this we need to make sure that JavaScript code can call our `hello` function. To do this we just need to add an `FFI_Export` declaration to the Idris code:
 
-```idris,norun
+```idris,noplaypen
 module MyFunction
 
 export -- This is new
