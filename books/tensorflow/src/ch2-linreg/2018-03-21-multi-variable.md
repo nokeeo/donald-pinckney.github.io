@@ -15,6 +15,7 @@ In [chapter 2.1](/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.ht
 ## Motivation
 
 Recall that a single variable linear regression model can learn to predict an output variable \\(y\\) under these conditions:
+
 1. There is only one input variable, \\(x\\)
 2. There is a linear relationship between \\(y\\) and \\(x\\), that is, \\(y \\approx ax + b\\)
 
@@ -52,9 +53,9 @@ Note that I have changed the notation compared to before. The notation \\(x^{(i)
 Alternatively, we can write \\(D\\) as 2 vectors of shape 1 x \\(m\\):
 \\[
     D_x = \\begin{bmatrix}
-            x^{(1)}, 
-            x^{(2)}, 
-            \\dots, 
+            x^{(1)},
+            x^{(2)},
+            \\dots,
             x^{(m)}
     \\end{bmatrix} \\\\
     D_y = \\begin{bmatrix}
@@ -68,7 +69,7 @@ Alternatively, we can write \\(D\\) as 2 vectors of shape 1 x \\(m\\):
 But now, we need each \\(x^{(i)}\\) example to contain multiple numbers, one for each input variable.  Let \\(n\\) be the number of input variables. Then the easiest way to write this is to let each \\(x^{(i)}\\) be a vector of shape \\(n\\) x 1. That is,
 \\[
     x^{(i)} = \\begin{bmatrix}
-        x^{(i)}_1 \\\\ 
+        x^{(i)}_1 \\\\
         x^{(i)}_2 \\\\
         \\vdots \\\\
         x^{(i)}_j \\\\
@@ -81,9 +82,9 @@ Note that the notation \\(x^{(i)}_j\\) denotes the \\(j\\)'th input variable in 
 Since each \\(x^{(i)}\\) has \\(n\\) rows, and \\(D_x\\) has \\(m\\) columns, each of which is an \\(x^{(i)}\\), we can write \\(D_x\\) as a massive \\(n \\times m\\) matrix:
 \\[
     D_x = \\begin{bmatrix}
-            x^{(1)}, 
-            x^{(2)}, 
-            \\dots, 
+            x^{(1)},
+            x^{(2)},
+            \\dots,
             x^{(m)} \\end{bmatrix}
         = \\begin{bmatrix}
             x^{(1)}_1 & x^{(2)}_1  & \\dots & x^{(i)}_1 & \\dots & x^{(m)}_1 \\\\
@@ -108,9 +109,9 @@ Since we want \\(y'^{(i)}\\) to depend linearly on each \\(x^{(i)}_j\\) for \\(1
 This is fine mathematically, but it's not very general. Suppose \\(n = 100\\): then we would have to literally write out 100 terms in our TensorFlow code. We can generalize this using linear algebra. Let \\(A\\) be a row vector of shape 1 x \\(n\\), containing each \\(a_j\\):
 \\[
     A = \\begin{bmatrix}
-            a_1, 
-            a_2, 
-            \\cdots, 
+            a_1,
+            a_2,
+            \\cdots,
             a_j,
             \\cdots,
             a_n
@@ -121,14 +122,14 @@ Now, let's see what happens if we compute \\(A x^{(i)}\\), as matrix multiplicat
 \\[
     A x^{(i)} + b
     = \\begin{bmatrix}
-            a_1, 
-            a_2, 
-            \\cdots, 
+            a_1,
+            a_2,
+            \\cdots,
             a_j,
             \\cdots,
             a_n
     \\end{bmatrix} \\begin{bmatrix}
-        x^{(i)}_1 \\\\ 
+        x^{(i)}_1 \\\\
         x^{(i)}_2 \\\\
         \\vdots \\\\
         x^{(i)}_j \\\\
@@ -152,7 +153,7 @@ With the more general linear algebra formulation of linear regression under our 
 
 ## Implementation
 
-As before, we need to: import data, define the model, define the loss function, run gradient descent, and finally make predictions. Many steps will be similar to the single variable case, but for completeness I will walk through them briefly. 
+As before, we need to: import data, define the model, define the loss function, run gradient descent, and finally make predictions. Many steps will be similar to the single variable case, but for completeness I will walk through them briefly.
 
 For building and testing the implementation we will use a synthetic data set consisting of \\(n=2\\) input variables. You can download [the synthetic data set here][synthetic-data]. By synthetic, I mean that I purposefully created a very nicely behaved data set so that we can practice implementing multi variable linear regression, and verify that we converged to the right answer. In fact, the synthetic data is generated as \\(y = 2x_1 + 1.3x_2 + 4 + \\varepsilon \\) where \\(\\varepsilon\\) is random noise. If we implement multi variable linear regression correctly, then we should obtain approximately \\(A = \\begin{bmatrix} 2, 1.3 \\end{bmatrix}, b = 4\\). This plot illustrates what the data looks like in 3 dimensions, essentially a plane in 3 dimensions with some random fluctuations:
 
@@ -207,6 +208,7 @@ As shown above, we want our model parameters to consist of a matrix \\(A\\) of s
 \\]
 
 First, we can define the input and correct output placeholders:
+
 ```python
 # Define data placeholders
 x = tf.placeholder(tf.float32, shape=(n, None))
@@ -214,6 +216,7 @@ y = tf.placeholder(tf.float32, shape=(1, None))
 ```
 
 And then we can define the trainable variables, the output prediction, and the loss function:
+
 ```python
 # Define trainable variables
 A = tf.get_variable("A", shape=(1, n))
@@ -252,6 +255,7 @@ First, we have a different learning rate than the learning rate used in single v
 Besides this, the only other conceptual difference is that at each step of the optimizer we are modifying the entire vector `A` (in addition to `b`), rather than just a single number. However, TensorFlow abstracts this away for us, and conceptually we just need to know that we are training the variable `A`.
 
 The final print statements should output something close to:
+
 ```
 t = 1994, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 t = 1995, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
@@ -262,11 +266,11 @@ t = 1999, loss = 1.44798e+06, A = [[ 2.00547647  1.3020972 ]], b = 3.95038
 ```
 
 At this point we have converged to our approximate solution of \\(A \\approx \\begin{bmatrix}
-            2.005, 
-            1.302 
+            2.005,
+            1.302
     \\end{bmatrix}, b \\approx 3.95\\). Note that this is not exactly the same as the expected answer of \\(A = \\begin{bmatrix}
-            2, 
-            1.3 
+            2,
+            1.3
     \\end{bmatrix}, b \\approx 4\\), primarily because some random noise was added to each point in the data set.
 
 The model is fully trained, so now given a new input \\(x\\) we could now predict the output \\(y' = Ax + b\\), using all the learned information from all input variables.
@@ -341,5 +345,6 @@ for t in range(2000):
     print("t = %g, loss = %g, A = %s, b = %g" % (t, current_loss, str(current_A), current_b))
 
 ```
+
 [synthetic-data]: /books/tensorflow/book/ch2-linreg/code/linreg-multi-synthetic-2.csv
 [scatter]: /books/tensorflow/book/ch2-linreg/assets/linreg-multi-synthetic-2.png

@@ -272,8 +272,6 @@ The problem of enforcing synchronization between the CPU and GPU is not unique t
 
 [semaphore]: https://en.wikipedia.org/wiki/Semaphore_(programming)
 
-
-
 [old_screen1]: /public/post_assets/metal/metal-intro-1/screen1.png
 [old_project_link]: /public/post_assets/metal/metal-intro-1/MetalIntro1.zip
 

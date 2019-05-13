@@ -24,16 +24,16 @@ First, let’s look at a concrete example of the problem, by again considering a
 
 | \\(x_1\\) | \\(x_2\\) | \\(y\\)
 |-----|---------------------|-|
-|7.36|	1000|		34.25|
-|9.47|	0|			19.24|
-|0.52|	315.78|		3.50|
-|1.57|	315.78|		11.02|
-|6.31|	263.15|		13.93|
-|1.57|	526.31|		10.21|
-|0.52|	105.26|		3.41|
-|4.21|	842.10|		16.27|
-|2.63|	894.73|		19.04|
-|3.68|	210.52|		4.60|
+|7.36|    1000|        34.25|
+|9.47|    0|            19.24|
+|0.52|    315.78|        3.50|
+|1.57|    315.78|        11.02|
+|6.31|    263.15|        13.93|
+|1.57|    526.31|        10.21|
+|0.52|    105.26|        3.41|
+|4.21|    842.10|        16.27|
+|2.63|    894.73|        19.04|
+|3.68|    210.52|        4.60|
 | ... | ... | ... |
 
 For simplification I have excluded a constant term from this synthetic data set, and when training models I "cheated" by not training the constant term \\(b\\) and just setting it to 0, so as to simplify visualization. The model that I used was simply:
@@ -52,16 +52,16 @@ Now let's do something rather strange: take the data set \\(D\\), and create a n
 
 | \\(x_1'\\) | \\(x_2'\\) | \\(y'\\)
 |-----|---------------------|-|
-|7.36|	10|		34.25|
-|9.47|	0|			19.24|
-|0.52|	3.1578|		3.50|
-|1.57|	3.1578|		11.02|
-|6.31|	2.6315|		13.93|
-|1.57|	5.2631|		10.21|
-|0.52|	1.0526|		3.41|
-|4.21|	8.4210|		16.27|
-|2.63|	8.9473|		19.04|
-|3.68|	2.1052|		4.60|
+|7.36|    10|        34.25|
+|9.47|    0|            19.24|
+|0.52|    3.1578|        3.50|
+|1.57|    3.1578|        11.02|
+|6.31|    2.6315|        13.93|
+|1.57|    5.2631|        10.21|
+|0.52|    1.0526|        3.41|
+|4.21|    8.4210|        16.27|
+|2.63|    8.9473|        19.04|
+|3.68|    2.1052|        4.60|
 | ... | ... | ... |
 
 A crucial note is that while \\(D'\\) is technically different from \\(D\\), it contains exactly the same information: one can convert between them freely, by dividing or multiplying the second column by 100. In fact, since this transformation is linear, and we are using a linear model, we can train our model on \\(D'\\) instead. We would just expect to obtain a value of 1.3 for `A[1]` rather than 0.013. So let's give it a try!
@@ -102,7 +102,7 @@ We can clearly see that gradient descent applies large updates to `A[1]` (a bit 
 
 Let's take a quick look at what is going on mathematically to see why this happens. The model we are using is:
 \\[
-    y'(x, A) = Ax = a_1 x_1 + a_2 x_2 
+    y'(x, A) = Ax = a_1 x_1 + a_2 x_2
 \\]
 Here, \\(a_1\\) is in the role of `A[0]` and \\(a_2\\) is `A[1]`. We substitute this into the loss function to get:
 \\[
@@ -349,7 +349,7 @@ for t in range(2000):
     })
     print("t = %g, loss = %g, A = %s, b = %g" % (t, current_loss, str(current_A), current_b))
 
-``` 
+```
 
 [synthetic-data]: /books/tensorflow/book/ch2-linreg/code/linreg-scaling-synthetic.csv
 [plot1]: /books/tensorflow/book/ch2-linreg/assets/scaling_plot1.png

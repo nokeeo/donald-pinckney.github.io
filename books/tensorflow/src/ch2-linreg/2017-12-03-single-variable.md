@@ -106,6 +106,7 @@ When coding this we will follow the exact same steps. So, create a new file `sin
 ### Importing the data
 
 First, we need to import all the modules we will need:
+
 ```python
 import numpy as np
 import tensorflow as tf
@@ -114,14 +115,17 @@ import matplotlib.pyplot as plt
 ```
 
 We use Pandas to easily load the CSV homicide data:
+
 ```python
 D = pd.read_csv("homicide.csv")
 x_data = np.matrix(D.age.values)
 y_data = np.matrix(D.num_homicide_deaths.values)
 ```
+
 Note that `x_data` and `y_data` are *not* single numbers, but are actually [vectors](https://en.wikipedia.org/wiki/Vector_space). The vectors are 30 numbers long, since there are 30 data points in the CSV file. So, `(x_data[0], y_data[0])` would be \\((x_1, y_1) = (21, 652)\\). When we look at multi variable regression later, we will have to work much more with vectors, matrices and linear algebra, but for now you can think of `x_data` and `y_data` just as lists of numbers. Also, we have to use `np.matrix(...)` to convert the array of numbers `D.age.values` to an actual numpy vector (likewise for `D.num_homicide_deaths.values`).
 
 Whenever possible, I would recommend plotting data, since this helps you verify that you loaded the data set correctly and gain visual intuition about the shape of the data. This is also pretty easy using matplotlib:
+
 ```python
 plt.plot(x_data.T, y_data.T, 'x') # The 'x' means that data points will be marked with an x
 plt.xlabel('Age')
@@ -129,6 +133,7 @@ plt.ylabel('US Homicide Deaths in 2015')
 plt.title('Relationship between age and homicide deaths in the US')
 plt.show()
 ```
+
 When we converted the data to vectors using `np.matrix()`, numpy created vectors with the shape 1 x 30. That is, `x_data` consists of only 1 row of numbers, and 30 columns. This is actually great for us when working with TensorFlow, but matplotlib wants vectors that have the shape 30 x 1 (30 rows and 1 column). Writing `x_data.T` calculates the [transpose](https://en.wikipedia.org/wiki/Transpose) of `x_data`, which flips it from a 1 x 30 vector to a 30 x 1 vector. It's fine if you don't understand this now, as we will learn more linear algebra later. Anyways, the plot should look like this:
 ![Homicide Plot][homicide]
 
@@ -156,23 +161,28 @@ Before, we thought of \\(x\\) and \\(y'\\) as single numbers. However, we just l
 \\]
 
 Fortunately, TensorFlow does the work for us of interpreting the simple equation \\(y' = ax + b\\) as the more complicated looking vector equation. We just have to tell TensorFlow which things are vectors (\\(x\\) and \\(y'\\)), and which are not vectors (\\(a\\) and \\(b\\)). First, we define \\(x\\):
+
 ```python
 x = tf.placeholder(tf.float32, shape=(1, None))
 ```
-This says that we create a **placeholder** that stores floating-point numbers, and has a **shape** of 1 x None. The shape of 1 x None tells TensorFlow that \\(x\\) is a vector with 1 row, and some unspecified number of columns. Although we don't tell TensorFlow the number of columns, this is enough to tell TensorFlow that \\(x\\) is a vector. 
+
+This says that we create a **placeholder** that stores floating-point numbers, and has a **shape** of 1 x None. The shape of 1 x None tells TensorFlow that \\(x\\) is a vector with 1 row, and some unspecified number of columns. Although we don't tell TensorFlow the number of columns, this is enough to tell TensorFlow that \\(x\\) is a vector.
 
 Secondly, note that we create a `tf.placeholder`: `x` does not have a numerical value right now. Instead, we will later feed the values of `x_data` into `x`. In short, use a `tf.placeholder` whenever there are values you wish to fill in later (usually data).
 
 Now, we define \\(a\\) and \\(b\\):
+
 ```python
 a = tf.get_variable("a", shape=())
 b = tf.get_variable("b", shape=())
 ```
+
 Unlike `x`, we create `a` and `b` to be a **variable**, instead of a placeholder. The main difference between a variable and a placeholder is that TensorFlow will automatically find the best values of variables by using gradient descent (later). In other words, a placeholder changes values whenever we choose to feed it different numeric values. A variable changes values continually and automatically during gradient descent. Use a variable for something that is **trainable**, that is, something whose optimal value will be found by an algorithm such as gradient descent.  Since the goal of linear regression is to find the best values of \\(a\\) and \\(b\\), the (only) TensorFlow variables in our model are `a` and `b`. The conceptual difference between a TensorFlow placeholder and variable is crucial to using TensorFlow properly.
 
 The parameters `("a", shape=())` indicate the name of the variable, and that `a` is a single number, *not* a vector. In comparison to `x`, note that a shape of `(1, None)` indicates a vector, while a shape of `()` indicates a single number.
 
 With `x`, `a` and  `b` defined, we can define \\(y'\\):
+
 ```python
 y_predicted = a*x + b
 ```
@@ -184,9 +194,11 @@ And that's it to define the model!
 ### Defining the loss function
 
 We have the model defined, so now we need to define the loss function. Recall that the loss function is how the model is evaluated (smaller loss values are better), and it is also the function that we need to minimize in terms of \\(a\\) and \\(b\\).  Since the loss function compares the model's output \\(y'\\) to the correct output \\(y\\) from the data set, we need to define \\(y\\) in TensorFlow. Since \\(y\\) consists of outside data (and we don't need to train it), we create it as a `tf.placeholder`:
+
 ```python
 y = tf.placeholder(tf.float32, shape=(1, None))
 ```
+
 Like `x`, `y` is also a vector, since after all `y` must store the correct output for each value stored in `x`.
 
 Now, we are ready to setup the loss function. Recall that the loss function is:
@@ -199,9 +211,11 @@ However, \\(y'\\) and \\(y\\) are now being interpreted as vectors. We can rewri
     L(a, b) = \\mathrm{sum}((y' - y)^2)
 \\]
 Note that since \\(y'\\) and \\(y\\) are vectors, \\(y' - y\\) is also a vector that just contains every number stored in \\(y'\\) minus every corresponding number in \\(y'\\). Likewise, \\((y' - y)^2\\) is also a vector, with every number individually squared.  Then, the \\(\\mathrm{sum}\\) function (which I just made up) adds up every number stored in the vector \\((y' - y)^2\\). This is the same as the original loss function, but is a vector interpretation of it instead. We can code this directly:
+
 ```python
 L = tf.reduce_sum((y_predicted - y)**2)
 ```
+
 The `tf.reduce_sum` function is an operation which adds up all the numbers stored in a vector. It is called "reduce" since it reduces a large vector down to a single number (the sum). The word "reduce" here has nothing to do with the fact that we will minimize the loss function.
 
 With just these two lines of code we have defined our loss function.
@@ -209,27 +223,36 @@ With just these two lines of code we have defined our loss function.
 ### Minimizing the loss function with gradient descent
 
 With our model and loss function defined, we are now ready to use the gradient descent algorithm to minimize the loss function, and thus find the optimal \\(a\\) and \\(b\\). Fortunately, TensorFlow as already implemented the gradient descent algorithm for us, we just need to use it. The algorithm acts almost like a ball rolling downhill into the minimum of the function, but it does so in discrete time steps. TensorFlow does not handle this aspect, we need to be responsible for performing each time step of gradient descent. So, roughly in pseudo-code we want to do this:
+
 ```python
 for t in range(10000):
     # Tell TensorFlow to do 1 time step of gradient descent
 ```
+
 We can't do this yet, since we don't yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\\(\\alpha)\\) of \\(0.2\\):
+
 ```python
 optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
 ```
+
 The `tf.train.AdamOptimizer` knows how to perform the gradient descent algorithm for us (actually a faster version of gradient descent). Note that this *does not yet minimize \\(L\\)*. This code only create an optimizer object which we will use later to minimize \\(L\\). For an explanation of the `learning_rate=0.2` parameter (and the `10000` loop iterations), see the end of this tutorial.
 
 The second problem we have is we don't know how to make TensorFlow run actual computations. Everything so far has been only *defining* things for TensorFlow, not computing things with concrete numbers. To do so, we also need to create a **session**:
+
 ```python
 session = tf.Session()
 ```
+
 A TensorFlow session is how we always have to perform actual computations with TensorFlow. We actually need to perform a computation right now, before doing gradient descent. Previously, we defined the variables `a` and `b`, but they don't have any numeric value right now. They need to have some initial value so gradient descent can work. To solve this, we have TensorFlow initialize `a` and `b` with random values:
+
 ```python
 session.run(tf.global_variables_initializer())
 ```
+
 The `session.run` function is how we always have to run computations with TensorFlow: the parameter is what computation we want to perform.
 
 Finally, we are ready to run the optimization loop pseudo-code that we originally wanted. Using `session.run` it looks like:
+
 ```python
 for t in range(10000):
     _, current_loss, current_a, current_b = session.run([optimizer, L, a, b], feed_dict={
@@ -238,13 +261,16 @@ for t in range(10000):
     })
     print("t = %g, loss = %g, a = %g, b = %g" % (t, current_loss, current_a, current_b))
 ```
-Let's break this down. We use `session.run`, but we pass it an array of computations that we want to perform. Specifically, we want to perform 4 computations: 
+
+Let's break this down. We use `session.run`, but we pass it an array of computations that we want to perform. Specifically, we want to perform 4 computations:
+
 1. `optimizer`: performs 1 time step of gradient descent, and updates `a` and `b`
 2. `L`: returns the current value of the loss function
 3. `a`: returns the current value of `a`
-4. `b`: likewise returns the current value of `b`. 
+4. `b`: likewise returns the current value of `b`.
 
 Of these computations, only the `optimizer` does not return a value. So, `session.run` will return 3 values for us, which we store into variables using the syntax:
+
 ```python
 _, current_loss, current_a, current_b = session.run([optimizer, L, a, b], ...)
 ```
@@ -254,6 +280,7 @@ Ok, but what is all of this `feed_dict` stuff? Recall that `x` and `y` are place
 Finally, the last line of the loop prints out the current values of `t`, `L`, `a` and `b`. We don't need to print these values out, but it is helpful to observe how the training is progressing.
 
 What we want to see from the print statements is that the gradient descent algorithm **converged**, which means that the algorithm stopped making significant progress because it found the minimum location of the loss function. When the last few print outputs look like:
+
 ```
 t = 9992, loss = 39295.8, a = -17.271, b = 997.281
 t = 9993, loss = 39295.8, a = -17.271, b = 997.282
@@ -264,6 +291,7 @@ t = 9997, loss = 39295.8, a = -17.2711, b = 997.284
 t = 9998, loss = 39295.9, a = -17.2711, b = 997.284
 t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 ```
+
 then we can tell that we have achieved convergence, and therefore found the best values of \\(a\\) and \\(b\\).
 
 ### Using the trained model to make predictions
@@ -274,11 +302,14 @@ At this point we have a fully trained model, and know the best values of \\(a\\)
 \\]
 
 The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use `x_data` as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. Outside of the training `for` loop, we can use the numpy function `linspace` to create a bunch of evenly spaced values between 20 and 55:
+
 ```python
 # x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]
 x_test_data = np.matrix(np.linspace(20, 55))
 ```
+
 Then, we can feed `x_test_data` into the `x` placeholder, and save the outputs of the prediction in `y_test_data`:
+
 ```python
 y_test_data = session.run(y_predicted, feed_dict={
     x: x_test_data
@@ -286,6 +317,7 @@ y_test_data = session.run(y_predicted, feed_dict={
 ```
 
 Finally, we can plot the original data and the line together:
+
 ```python
 plt.plot(x_data.T, y_data.T, 'x')
 plt.plot(x_test_data.T, y_test_data.T)
@@ -294,6 +326,7 @@ plt.ylabel('US Homicide Deaths in 2015')
 plt.title('Age and homicide death linear regression')
 plt.show()
 ```
+
 This yields a plot like:
 
 ![Homicide Linear Regression Plot][homicide_fit]
@@ -301,6 +334,7 @@ This yields a plot like:
 # Concluding Remarks
 
 Through following this post you have learned two main concepts. First, you learned the *general form of supervised machine learning workflows*:
+
 1. Get your data set
 2. Define your model (the mechanism for how outputs will be predicted from inputs)
 3. Define your loss function
@@ -324,11 +358,13 @@ For single variable regression, the loss function we used, \\(L = \\sum (y' - y)
 ## 4. Minimizing the loss functions
 
 Recall that we created and used the optimizer like so:
+
 ```python
 optimizer = tf.train.AdamOptimizer(learning_rate=0.2).minimize(L)
 for t in range(10000):
     # Run one step of optimizer
 ```
+
 You might be wondering what the magic numbers of `learning_rate=0.2` (\\( \\alpha \\)) and `10000` are.  Let's start with the learning rate. In each iteration, gradient descent (and variants of it) take one small step that is determined by the derivative of the loss function. The learning rate is just the relative size of the step. So to take larger steps, we can use a larger learning rate. A larger learning rate can help us to converge more quickly, since we cover more distance in each iteration. But a learning rate too large can cause gradient descent to diverge that is, it won't reliably find the minimum.
 
 So, once you have chosen a learning rate, then you need to run the optimizer for enough iterations so it actually converges to the minimum. The easiest way to make sure it runs long enough is just to monitor the value of the loss function, as we did in this tutorial.
@@ -337,14 +373,14 @@ Lastly, we didn't use normal gradient descent for optimization in this tutorial.
 
 ## 5. Use the trained model
 
-Technically, using the trained model is the easiest part of machine learning: with the best parameters \\(a\\) and \\(b\\), you can simply plug new age values into \\(x\\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this guide we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model. 
+Technically, using the trained model is the easiest part of machine learning: with the best parameters \\(a\\) and \\(b\\), you can simply plug new age values into \\(x\\) to predict new homicide rates. However, trusting that these predictions are correct is another matter entirely. Later in this guide we can look at various statistical techniques that can help determine how much we can trust a trained model, but for now consider some oddities with our trained homicide rate model.
 
 One rather weird thing is that it accepts negative ages: according to the model, 1083 people who are -5 years old die from homicide every year in the US. Now, clearly this makes no sense since people don't have negative ages. So perhaps we should only let the model be valid for people with positives ages. Ok, so then 980 people who are 1 year old die from homicide every year. While this isn't impossible, it does seem pretty high compared to the known data of 652 for 21 year olds. It might seem possible (likely even) that fewer homicides occur for 1 year olds than 21 year olds: but we don't have the data for that, and even if we did, our model could not predict it correctly since it only models straight lines. Without more data, we have no basis to conclude that the number of \\(1\\) year old homicides is even close to 980.
 
 While this might seem like a simple observation in this case, this problem manifests itself continually in machine learning, causing a variety of ethical problems. For example, in 2016 Microsoft released a chatbot on Twitter and [it quickly learned to say fairly horrible and racist things](https://www.theverge.com/2016/3/24/11297050/tay-microsoft-chatbot-racist). More seriously, machine learning is now being used to predict and guide police in cracking down on crime. While the concept might be well-intentioned, the results are despicable, as shown in [an article by The Conversation](https://theconversation.com/why-big-data-analysis-of-police-activity-is-inherently-biased-72640):
 
-> Our recent study, by Human Rights Data Analysis Group’s Kristian Lum and William Isaac, found that predictive policing vendor PredPol’s purportedly race-neutral algorithm targeted black neighborhoods at roughly twice the rate of white neighborhoods when trained on historical drug crime data from Oakland, California. 
-> [...] 
+> Our recent study, by Human Rights Data Analysis Group’s Kristian Lum and William Isaac, found that predictive policing vendor PredPol’s purportedly race-neutral algorithm targeted black neighborhoods at roughly twice the rate of white neighborhoods when trained on historical drug crime data from Oakland, California.
+> [...]
 > But estimates – created from public health surveys and population models – suggest illicit drug use in Oakland is roughly equal across racial and income groups. If the algorithm were truly race-neutral, it would spread drug-fighting police attention evenly across the city.
 
 With examples like these, we quickly move from a technical discussion about machine learning to a discussion about ethics. While the study of machine learning is traditionally heavily theoretical, I strongly believe that to effectively and *fairly* apply machine learning in society, we must spend significant effort evaluating the ethics of machine learning models.
@@ -440,7 +476,7 @@ plt.xlabel('Age')
 plt.ylabel('US Homicide Deaths in 2015')
 plt.title('Age and homicide death linear regression')
 plt.show()
-``` 
+```
 
 # References
 

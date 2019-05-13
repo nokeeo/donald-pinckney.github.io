@@ -2,6 +2,37 @@ require "redcarpet"
 require "rouge"
 require "rouge/plugins/redcarpet"
 
+class String
+    # colorization
+    def colorize(color_code)
+      "\e[#{color_code}m#{self}\e[0m"
+    end
+  
+    def red
+      colorize(31)
+    end
+  
+    def green
+      colorize(32)
+    end
+  
+    def yellow
+      colorize(33)
+    end
+  
+    def blue
+      colorize(34)
+    end
+  
+    def pink
+      colorize(35)
+    end
+  
+    def light_blue
+      colorize(36)
+    end
+end
+
 class Runnable < Redcarpet::Render::HTML
     include Rouge::Plugins::Redcarpet
     # def image(link, title, alt)
@@ -12,6 +43,43 @@ class Runnable < Redcarpet::Render::HTML
     #     caption = title ? "<figcaption>#{title}</figcaption>" : ""
     #     return "<figure>#{figure}#{caption}</figure>"
     # end
+
+    def postprocess(doc)
+        # puts doc
+        if doc.include? "```"
+            raise "\nERROR: fenced code block not properly parsed!"
+            # return nil
+        end
+        return doc
+    end
+
+    def generate_id(str)
+        gen_id = basic_generate_id(str)
+        gen_id = 'section' if gen_id.empty?
+        @used_ids ||= {}
+        if @used_ids.key?(gen_id)
+            gen_id += "-#{@used_ids[gen_id] += 1}"
+        else
+            @used_ids[gen_id] = 0
+        end
+        return gen_id
+    end
+
+    # The basic version of the ID generator, without any special provisions for empty or unique
+    # IDs.
+    def basic_generate_id(str)
+        gen_id = str.gsub(/^[^a-zA-Z]+/, '')
+        gen_id.tr!('^a-zA-Z0-9 -', '')
+        gen_id.tr!(' ', '-')
+        gen_id.downcase!
+        gen_id
+    end
+
+    def header(text, level)
+        theId = generate_id(text)
+        tag = "h#{level}"
+        "<#{tag} id=\"#{theId}\">#{text}</#{tag}>"
+    end
 
     RE_PATH = %r{path=(?<path>[^,]+)}
     RE_SLICE = %r{slice=(?<slice>\d+)}

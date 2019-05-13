@@ -15,67 +15,84 @@ Without a doubt, Python 3 is the future of Python, and thus we will use Python 3
 ## Installing Python 3
 
 macOS does not come installed with Python 3 (only Python 2.7), so we need to install it ourselves. The first step is to open terminal (Terminal.app on your Mac), and install the [Homebrew](https://brew.sh) package manager for macOS, if you haven't already installed it before. Just paste the appropriate command into terminal, and follow Homebrew's installation prompts:
+
 * If you use `bash, ksh, zsh, csh`, etc.
+
 ```bash
 # For bash, ksh, zsh, csh, and other shells:
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
+
 * If you are awesome and use `fish`:
+  
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/master/install" | /usr/bin/ruby
 ```
 
 Now that Homebrew is installed, we need to install Python 3:
+
 ```bash
 brew install python3
 ```
 
 You can test that `python3` installed correctly by running the command `python3`. You should see output similar to:
-```
+
+```bash
 ~ $ python3
-Python 3.6.3 (default, Nov 20 2017, 14:17:35) 
+Python 3.6.3 (default, Nov 20 2017, 14:17:35)
 [GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.38)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
+
 The Python version should be 3.x.y instead of 2.x.y. Once this is confirmed, quit Python by entering the code `exit()`.
 
 ## Installing TensorFlow and friends
 
 Installing Python 3 (`python3`) also installs the Python 3 package manager (`pip3`). We can use `pip3` to install a Python utility called `virtualenv` (stands for virtual environment). Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using `virtualenv`, since this ensures that the installation will be self-contained, and will not affect the rest of your system. So, first we need to install `virtualenv`:
+
 ```bash
 pip3 install --upgrade virtualenv
 ```
 
 Now, create a new virtualenv:
+
 ```bash
-# In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
+# In this command, ~/tensorflow is the destination directory where the virtualenv will be created.
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
 python3 -m venv --system-site-packages ~/tensorflow
 ```
 
 Then, we need to activate the virtualenv so we can install things inside it:
+
 * If you are using `bash, sh, ksh, zsh`:
+
 ```bash
 source ~/tensorflow/bin/activate
 ```
+
 * If you are using `csh, tcsh`:
+
 ```bash
 source ~/tensorflow/bin/activate.csh
 ```
+
 * If you are cool and use `fish`:
+
 ```bash
 source ~/tensorflow/bin/activate.fish
 ```
 
 After activating the virtualenv, your command prompt should change to look like: `(tensorflow)$`. At this point, we are finally ready to install TensorFlow:
+
 ```bash
-pip3 install --upgrade tensorflow 
+pip3 install --upgrade tensorflow
 ```
 
 In addition, we also install a few other Python packages that are useful for machine learning:
+
 ```bash
-pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
+pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
 ```
@@ -85,6 +102,7 @@ Just so you know, you can always exit the virtualenv using the command `deactiva
 ## Testing the installation
 
 Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate `source` command from above. Then, run the `python` command, and type the following code into Python:
+
 ```python
 import tensorflow as tf
 import numpy as np
@@ -94,7 +112,9 @@ hello = tf.constant('Hello, TensorFlow!')
 sess = tf.Session()
 print(sess.run(hello))
 ```
+
 If everything is installed correctly, you should see the output:
+
 ```
 Hello, TensorFlow!
 ```

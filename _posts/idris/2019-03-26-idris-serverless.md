@@ -59,7 +59,7 @@ For details type :warranty.
 
 ## Exporting the Function to JavaScript
 
-This is great, but we need a way to run this code on Google Cloud Functions. Fortunately, Idris provides a built-in compiler to JavaScript, so we can compile our Idris function above into JavaScript code, which Google Cloud Functions directly supports. However, we still need a way to access the incomming HTTP request object, and write a string to the response. Since both the request and response are actual JavaScript objects, the most convenient thing to do is write some wrapper JavaScript which calls our `hello` function. 
+This is great, but we need a way to run this code on Google Cloud Functions. Fortunately, Idris provides a built-in compiler to JavaScript, so we can compile our Idris function above into JavaScript code, which Google Cloud Functions directly supports. However, we still need a way to access the incoming HTTP request object, and write a string to the response. Since both the request and response are actual JavaScript objects, the most convenient thing to do is write some wrapper JavaScript which calls our `hello` function.
 
 But to do this we need to make sure that JavaScript code can call our `hello` function. To do this we just need to add an `FFI_Export` declaration to the Idris code:
 

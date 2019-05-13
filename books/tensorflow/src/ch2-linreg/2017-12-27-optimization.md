@@ -33,13 +33,14 @@ for t in range(10000):
 ```
 
 The main unanswered questions to address are:
+
 1. I said that the learning rate affects how large of steps the optimization algorithm takes in one unit of time. But how do we choose an appropriate value for the learning rate, such as `0.2`?
 2. What is this `AdamOptimizer` exactly, are there other choices for optimizers, and how do they differ?
 3. Currently this code runs for `10000` iterations, and that seems good enough to fully optimize `L`. But how do we choose this appropriate amount of time for training?
 
 There aren't exact or easy answers to the above questions, but answering these questions is made even harder by the fact that we can not effectively visualize the training progress with the code we have.  Currently we have some `print(...)` statements, which is good enough to see that the training error is decreasing, but not much more than that. Let's start with learning how to visualize training, since this will help us address the other questions and give us a deeper intuition about optimization.
 
-## How to visualize training progress?
+## How to visualize training progress
 
 ### Extracting hyperparameters
 
@@ -247,11 +248,12 @@ By trying learning rates of 10 and 50, we finally achieve convergence:
 
 Qualitatively, this looks like convergence (with a learning rate of 10, and certainly with a learning rate of 50) since the progress that Adagrad is making on decreasing `L` (and adjusting `a` and `b`) has hit a brick wall: no matter how long we run Adagrad, we can't seem to get a loss function value lower than about \\(3.9296 \\cdot 10^4 \\), and similarly for the values of `a` and `b`. We've finally trained our model completely.
 
-Unfortunately, I don't know of an easy way to intuitively understand the differences between Adagrad, Adam, and other first-order methods. [This blog post](http://ruder.io/optimizing-gradient-descent/index.html) does give some mathematical analysis that explains what each algorithm tries to improve upon, and some reasoning for choosing an algorithm, but it can be tricky to apply to real problems. In general, you can always start with the simplest algorithm (gradient descent), and if it isn't converging quickly enough for you, then you can switch to a more sophisticated algorithm, such as Adagrad, Adam, or others. 
+Unfortunately, I don't know of an easy way to intuitively understand the differences between Adagrad, Adam, and other first-order methods. [This blog post](http://ruder.io/optimizing-gradient-descent/index.html) does give some mathematical analysis that explains what each algorithm tries to improve upon, and some reasoning for choosing an algorithm, but it can be tricky to apply to real problems. In general, you can always start with the simplest algorithm (gradient descent), and if it isn't converging quickly enough for you, then you can switch to a more sophisticated algorithm, such as Adagrad, Adam, or others.
 
 # Concluding Remarks
 
 The experimental nature of this chapter should illustrate the practicalities of machine learning: a lot of cutting-edge machine learning currently involves running multiple experiments to try to find the best combination of hyperparameters. There isn't a golden rule for choosing the optimization algorithm and hyperparameters, but hopefully this chapter demonstrates how to alter the algorithm and hyperparameters in TensorFlow and monitor convergence using TensorBoard. The most important takeaways are:
+
 1. Learning how to use TensorBoard
 2. Recognizing convergence
 3. Recognizing the symptoms of too small of a learning rate
@@ -263,14 +265,16 @@ In future chapters I won't include the code specifically for TensorBoard (unless
 
 1. Experiment on your own with a few other built-in TensorFlow optimization algorithms, and try different learning rates. If you prefer a more focused goal, try to beat my configuration of an Adagrad optimizer with a learning rate of 50, and converge faster. Also note that some optimization algorithms have additional hyperparameters other than the learning rate. See the TensorFlow documentation for information about these.
 2. One other cause of slow convergence for the homicide rate linear regression is the somewhat extreme scaling of the problem. The \\(y\\) variable is a whole order of magnitude greater than the \\(x\\) variable, and this affects optimization. We will actually look at this problem specifically in chapter 2.4, but for now you can experiment on your own with one solution: instead of using the \\(x\\) and \\(y\\) data directly from the data set, modify them first to rescale them. A quick, hacky way is to modify the code that loads the data, so that \\(x\\) and \\(y\\) vary between 0 and 1:
+
 ```python
 # Load the data, and convert to 1x30 vectors
 D = pd.read_csv("homicide.csv")
 # 21 and 50 are the min and max of x_data
-x_data = (np.matrix(D.age.values) - 21.0) / (50.0 - 21.0) 
+x_data = (np.matrix(D.age.values) - 21.0) / (50.0 - 21.0)
 # 196 and 653 are the min and max of y_data
 y_data = (np.matrix(D.num_homicide_deaths.values) - 196.0) / (653.0 - 196.0)
 ```
+
 On your own, add this code and see if you can achieve convergence using only gradient descent. You can also see how quickly you can achieve convergence using a more advanced algorithm such as Adam.
 
 # Complete Code

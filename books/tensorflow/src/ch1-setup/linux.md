@@ -19,6 +19,7 @@ On Linux TensorFlow has the ability to run your machine learning models on a GPU
 ## Installing Pip and Virtualenv
 
 First, we need to install `pip`, and `virtualenv`. This should be easy using `apt-get`:
+
 ```bash
 sudo apt-get install python3-pip python3-dev python-virtualenv
 ```
@@ -26,22 +27,29 @@ sudo apt-get install python3-pip python3-dev python-virtualenv
 ## Installing TensorFlow and friends
 
 Virtualenv is an extremely easy and convenient way to install Python packages in a local and contained manner. The recommended way to install TensorFlow is by using `virtualenv`, since this ensures that the installation will be self-contained, and will not affect the rest of your system. Now, we need to create a new virtualenv:
+
 ```bash
-# In this command, ~/tensorflow is the destination directory where the virtualenv will be created. 
+# In this command, ~/tensorflow is the destination directory where the virtualenv will be created.
 # You can choose a different location if you prefer, but the rest of the installation tutorial will assume ~/tensorflow
 python3 -m venv --system-site-packages ~/tensorflow
 ```
 
 Then, we need to activate the virtualenv so we can install things inside it:
+
 * If you are using `bash, sh, ksh, zsh`:
+
 ```bash
 source ~/tensorflow/bin/activate
 ```
+
 * If you are using `csh, tcsh`:
+
 ```bash
 source ~/tensorflow/bin/activate.csh
 ```
+
 * If you are cool and use `fish`:
+
 ```bash
 source ~/tensorflow/bin/activate.fish
 ```
@@ -56,7 +64,7 @@ pip3 install --upgrade tensorflow-gpu # If installing WITH GPU support
 In addition, we also install a few other Python packages that are useful for machine learning:
 
 ```bash
-pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow 
+pip3 install --upgrade numpy # Used for linear algebra. Essential for using TensorFlow
 pip3 install --upgrade matplotlib # Used for plotting data, which is very useful for machine learning
 pip3 install --upgrade pandas # Used for loading data sets
 ```
@@ -66,6 +74,7 @@ Once everything is installed, you can exit the virtualenv using the command `dea
 ## Testing the installation
 
 Let's just quickly test the installation, to verify everything is installed and ready to go! If it isn't currently activated, activate your virtualenv with the appropriate activate command from above. Then, run the `python` command, and type the following code into Python:
+
 ```python
 import tensorflow as tf
 import numpy as np
@@ -75,7 +84,9 @@ hello = tf.constant('Hello, TensorFlow!')
 sess = tf.Session()
 print(sess.run(hello))
 ```
+
 If everything is installed correctly, you should see the output:
+
 ```
 Hello, TensorFlow!
 ```
