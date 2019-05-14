@@ -1,0 +1,3 @@
+[submodule "nonsite/deps/mdBook"]
+	path = nonsite/deps/mdBook
+	url = https://github.com/donald-pinckney/mdBook
