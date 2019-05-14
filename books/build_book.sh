@@ -17,7 +17,9 @@ done
 
 # Build book with mdbook
 # mdbook build
-../../../mdBook/target/debug/mdbook build
+pushd ../../nonsite/deps/mdBook/; cargo build; popd
+../../nonsite/deps/mdBook/target/debug/mdbook build
+
 
 # Delete buggy output of mdbook
 rm -rf src/http:/

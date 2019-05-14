@@ -7,7 +7,7 @@ description:      '1st year programming languages PhD student at UMass Amherst.'
 url:              https://donaldpinckney.com
 baseurl:          ""
 timezone:         America/Los_Angeles
-exclude:          [deploy, nonsite]
+exclude:          ['deploy', 'nonsite']
 repo:             https://github.com/donald-pinckney/donald-pinckney.github.io
 author:
   name:           'Donald Pinckney'
