@@ -28,9 +28,9 @@ SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
 # Copy Build Cache to temp dir
-export PATH="$PATH:$binTemp"
-git checkout master
-cp .build_cache/* "$binTemp"
+# export PATH="$PATH:$binTemp"
+# git checkout master
+# cp .build_cache/* "$binTemp"
 
 # Commit to src branch if needed
 git checkout src
@@ -64,8 +64,8 @@ rm -rf *
 # Copy in built files
 cp -R $dest/* .
 
-# Copy in build cache
-cp "$(which mdbook)" public/files/build_cache/mdbook
+# # Copy in build cache
+# cp "$(which mdbook)" public/files/build_cache/mdbook
 
 rm travis_rsa
  

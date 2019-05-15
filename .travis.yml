@@ -22,6 +22,7 @@ install:
   - gem install github-pages
   - gem install jekyll-sitemap
   - gem install jekyll-seo-tag
+  - gem install redcarpet
   - wget -O "$HOME/bin/mdbook" https://github.com/donald-pinckney/mdBook/releases/latest/download/mdbook
   - chmod +x "$HOME/bin/mdbook"
   - mdbook --version
