@@ -175,17 +175,6 @@ function playpen_get_lang(playpen) {
         var files = [file1, file2];
 
         var data = new FormData();
-
-        // data.append("username", "Groucho");
-        // data.append("accountnum", 123456); // number 123456 is immediately converted to a string "123456"
-
-        // var content = '<a id="a"><b id="b">hey!</b></a>'; // the body of the new file...
-        // var blob = new Blob([content], { type: "text/xml"});
-        // data.append("webmasterfile", blob);
-
-        // data.append('files[]', file1, file1.name);
-        // data.append('files[]', file2, file2.name);
-        
         for(const f of files) {
             data.append('files[]', f, f.name);
         }
