@@ -5,8 +5,6 @@ _posts/pl/
 _drafts/tensorflow/
 _drafts/pl/
 
-nonsite/deps/mdBook/
-
 # Ignore docs files
 _gh_pages
 _site
