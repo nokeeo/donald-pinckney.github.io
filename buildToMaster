@@ -27,24 +27,8 @@ REPO=`git config remote.origin.url`
 SSH_REPO=${REPO/https:\/\/github.com\//git@github.com:}
 SHA=`git rev-parse --verify HEAD`
 
-# Copy Build Cache to temp dir
-# export PATH="$PATH:$binTemp"
-# git checkout master
-# cp .build_cache/* "$binTemp"
-
-# Commit to src branch if needed
+# Checkout src branch
 git checkout src
-# if [[ `git status --porcelain` ]]; then
-# 	if test "$#" -ne 1; then
-#     	>&2 echo "Commit message required!"
-#     	exit 1
-# 	fi
-#     git add .
-#     git commit -qm "$1"
-# fi
-# git push -q
-
-
 
 
 # Build books
@@ -52,7 +36,6 @@ books/build_all.sh
 
 # Build to temp directory
 bundle exec jekyll build -qd $dest
-
 
 
 
@@ -64,8 +47,11 @@ rm -rf *
 # Copy in built files
 cp -R $dest/* .
 
-# # Copy in build cache
-# cp "$(which mdbook)" public/files/build_cache/mdbook
+# Verify index.html exists
+if [ ! -f index.html ]; then
+    echo "index.html not found. ABORT!!!"
+    exit 1
+fi
 
 rm travis_rsa
  
