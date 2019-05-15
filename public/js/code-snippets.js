@@ -180,9 +180,6 @@ function playpen_get_lang(playpen) {
         }
 
         return fetch_with_timeout("https://us-central1-idrisrunner.cloudfunctions.net/idrisrunner", {
-            // headers: {
-            //     'Content-Type': 'multipart/form-data',
-            // },
             method: 'POST',
             mode: 'cors',
             body: data
