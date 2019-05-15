@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <!-- <link href="https://gmpg.org/xfn/11" rel="profile"> -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="/public/fonts/abril_pt.css">
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface"> -->
+
+  
+
+
+  <!-- CMU Fonts -->
+  <style type="text/css">
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunss.otf');
+    }
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunsx.otf');
+      font-weight: bold;
+    }
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunsi.otf');
+      font-style: italic, oblique;
+    }
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunbxo.otf');
+      font-weight: bold;
+      font-style: italic, oblique;
+    }
+    @font-face {
+      font-family: "Classical Computer Modern";
+      src: url('/public/fonts/cmunci.otf');
+      /* font-style: italic, oblique; */
+    }
+  </style>
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- <link rel="stylesheet" href="/public/book_deps/FontAwesome/css/font-awesome.css"> -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <!-- MathJax -->
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script> -->
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script> -->
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
+      MathJax.Hub.Insert(MathJax.InputJax.TeX.Definitions.macros,{
+        cancel: ["Extension","cancel"],
+        bcancel: ["Extension","cancel"],
+        xcancel: ["Extension","cancel"],
+        cancelto: ["Extension","cancel"]
+      });
+    });
+  </script> -->
+
+  <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- jQuery -->
+  <script src="/public/js/jquery.js"></script>
+
+  <!-- TOC -->
+  <script src="/public/js/toc.js"></script>
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization | Donald Pinckney</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization" />
+<meta name="author" content="Donald Pinckney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Recap" />
+<meta property="og:description" content="Recap" />
+<link rel="canonical" href="https://donaldpinckney.com/metal/2018/07/27/metal-intro-2.html" />
+<meta property="og:url" content="https://donaldpinckney.com/metal/2018/07/27/metal-intro-2.html" />
+<meta property="og:site_name" content="Donald Pinckney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-07-27T00:00:00-07:00" />
+<script type="application/ld+json">
+{"description":"Recap","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/metal/2018/07/27/metal-intro-2.html","headline":"Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization","dateModified":"2018-07-27T00:00:00-07:00","datePublished":"2018-07-27T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/metal/2018/07/27/metal-intro-2.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0b">
+
+    <div class="sidebar">
+  <div class="container">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          Donald Pinckney
+        </a>
+      </h1>
+      <p class="lead">1st year programming languages PhD student at UMass Amherst.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="horizontal-block">
+        <div class="horizontal-item">
+        </div>
+        
+        
+
+        <a class="horizontal-item sidebar-nav-item" href="/">Home</a>
+
+        
+
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+              
+              <a class="horizontal-item sidebar-nav-item " href="/publications.html">Publications</a>
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+        
+          
+            
+          
+        
+          
+        
+          
+        
+
+        <a class="horizontal-item sidebar-nav-item active" href="/blog/">Blog Posts</a>
+
+        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book/ch1-setup/intro.html">TensorFlow Guide</a>
+
+        <div class="horizontal-item">
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="horizontal-block">
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+
+
+        <a href="https://github.com/donald-pinckney" class="sidebar-nav-item horizontal-item social" target="_blank">
+          <i class="fa fa-github"></i><span class="only-desktop"> donald-pinckney</span>
+        </a>
+        <a href="https://twitter.com/donald_pinckney" class="sidebar-nav-item horizontal-item social" target="_blank">
+          <i class="fa fa-twitter"></i><span class="only-desktop">@donald_pinckney</span>
+        </a>
+        <a href="mailto:dpinckney@cs.umass.edu" class="sidebar-nav-item horizontal-item social" target="_blank">
+          <i class="fa fa-envelope"></i>&nbsp;<span class="only-desktop">dpinckney@cs.umass.edu</span>
+        </a>
+        <a href="/public/files/documents/resume.pdf" class="sidebar-nav-item horizontal-item social" target="_blank">
+            <i class="fa fa-file"></i>&nbsp;<span>Curriculum vitae</span>
+        </a>
+
+      </div>
+    </nav>
+
+    <div class="sidebar-footnote">
+      <p class="sidebar-footnote">
+        &copy; 2019 Donald Pinckney. All rights reserved.
+        <!-- <br />
+        The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc. -->
+      </p>
+    </div>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+
+  
+    <h1 class="post-title titular floating-box-left">Metal 3D Graphics Part 2: Animated Uniform Data with Synchronization</h1>
+  
+  
+    <div class="floating-box-right">
+      
+        
+          <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/_posts/metal/2018-07-29-metal-intro-2.md" target="_blank">
+        
+        <i class="fa fa-github"></i>Edit this page</a><br />
+      
+
+
+      
+        <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/17" target="_blank">
+          <i class="fa fa-bullhorn"></i>Subscribe to new posts
+        </a>
+      
+    </div> 
+
+  <span class="post-date">27 Jul 2018. Categories: 
+  <!-- <div class="post-categories"> -->
+  
+  
+  <a href="/categories/#Metal">Metal</a>
+  
+  
+<!-- </div> -->
+
+</span>
+
+
+
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+
+
+<h1 id="recap">Recap</h1>
+<p>In the <a href="/metal/2018/07/05/metal-intro-1.html">previous post</a> we setup the necessary basic code to render a multi-colored triangle using <a href="https://developer.apple.com/metal/">Metal</a>. By doing so we learned about the fundamental concepts of the Metal API:</p>
+
+<ul>
+<li>A <a href="https://developer.apple.com/documentation/metal/mtldevice">MTLDevice</a> represents the actual GPU.</li>
+<li>A <a href="https://developer.apple.com/documentation/metal/MTLRenderPipelineDescriptor">MTLRenderPipelineDescriptor</a> / <a href="https://developer.apple.com/documentation/metal/MTLRenderPipelineState">MTLRenderPipelineState</a> describes what the render pipeline consists of. In particular, this is where we specify what vertex and fragment shaders to use. A <code>MTLRenderPipelineState</code> is just a compiled version of a <code>MTLRenderPipelineDescriptor</code>.</li>
+<li>A <a href="https://developer.apple.com/documentation/metal/MTLCommandQueue">MTLCommandQueue</a> keeps track of many <code>MTLCommandBuffer</code>s that are waiting in line to be executed.</li>
+<li>A <a href="https://developer.apple.com/documentation/metal/MTLCommandBuffer">MTLCommandBuffer</a> represents the entire set of information the GPU needs to execute this pipeline: it contains the pipeline info itself, as well as vertex data and drawing commands that will be fed into the pipeline by the GPU. </li>
+<li>A <a href="https://developer.apple.com/documentation/metal/MTLRenderPassDescriptor">MTLRenderPassDescriptor</a> is used to configure the interface of the pipeline, but not the interior of the pipeline. It is like the 2 openings of the pipe. For example, a <code>MTLRenderPassDescriptor</code> contains information such as the destination resolution to render to. This information is included in each <code>MTLCommandBuffer</code>.</li>
+<li>A <a href="https://developer.apple.com/documentation/metal/MTLRenderCommandEncoder">MTLRenderCommandEncoder</a> is used to prepare the vertex data and drawing commands that will be fed into the pipeline.</li>
+<li>A <a href="https://developer.apple.com/documentation/metal/MTLBuffer">MTLBuffer</a> represents a chunk of data which can be accessed by either the CPU and GPU. We used a <code>MTLBuffer</code> to create the vertex data on the CPU, and let the GPU access it in the shader code.</li>
+</ul>
+
+<p>We managed to render a triangle, which looks like this:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-1/screen1.png" alt="Colored Triangle"></p>
+
+<p>This post will build on top of the last post by adding what is called <strong>uniform data</strong> (or just <strong>uniforms</strong>) to the rendering process. Use your code from the previous post, or feel free to <a href="/public/post_assets/metal/metal-intro-1/MetalIntro1.zip">download my code</a> and use it.</p>
+<h1 id="what-is-a-uniform-and-what-is-it-good-for">What is a uniform, and what is it good for?</h1>
+<p>Right now we can render a triangle, but the output of the rendering is always identical. Having the rendering output be different each frame is necessary for almost any real-time graphics application: for example, every 3D video game needs to move the camera around. In future posts we will actually look at moving the camera around in a 3D scene, but for now we will settle for something more modest; a triangle that changes brightness overtime:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/screen1.gif" alt="Colored Triangle with Changing Brightness"></p>
+
+<p>Let&#39;s brainstorm how we could accomplish this effect.  We currently have a <code>MTLBuffer</code> that contains the vertex data for drawing the triangle. Each vertex data contains the position and color. The vertex data we currently have in it is:</p>
+
+<table><thead>
+<tr>
+<th>Color</th>
+<th>Position</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>(1, 0, 0, 1)</td>
+<td>(-1, -1)</td>
+</tr>
+<tr>
+<td>(0, 1, 0, 1)</td>
+<td>(0, 1)</td>
+</tr>
+<tr>
+<td>(0, 0, 1, 1)</td>
+<td>(1, -1)</td>
+</tr>
+</tbody></table>
+
+<p>Since we are describing the color of each vertex in this buffer, what we could do is modify the color of each vertex during every new frame. For example, during the second frame we could change the vertex buffer data to:</p>
+
+<table><thead>
+<tr>
+<th>Color</th>
+<th>Position</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>(0.9, 0, 0, 1)</td>
+<td>(-1, -1)</td>
+</tr>
+<tr>
+<td>(0, 0.9, 0, 1)</td>
+<td>(0, 1)</td>
+</tr>
+<tr>
+<td>(0, 0, 0.9, 1)</td>
+<td>(1, -1)</td>
+</tr>
+</tbody></table>
+
+<p>to make the triangle a bit darker, and so on. Now, this strategy can work, but it&#39;s a poor way to go about it. Consider what happens if we have a ton of vertices to render complex shapes. To adjust the brightness of the complex shapes we would need to change the color data for all of the vertices using the CPU. The amount of work the CPU has to do grows linearly with the number of vertices, which is bad news when you want to have a complex scene with lots of vertices.</p>
+
+<p>We can instead achieve this effect by modifying our shader code to make it a bit more general. How can we mathematically make a color darker or brighter? Since bright red is <code>(1, 0, 0, 1)</code> and the darkest red (that is, pure black) is <code>(0, 0, 0, 1)</code>, we can simply multiply our color by a number between 0 and 1:
+\[
+    \tilde{c} = c \cdot brightness, \;\; brightness \in [0, 1] 
+\]</p>
+
+<p>For example, if \(c = (1, 0, 0)\), and \(brightness = 0.9\), then the final color output would be the almost fully-bright red \(\tilde{c} = (0.9, 0, 0)\).</p>
+
+<p>Now, this \(brightness\) variable is what we call a <strong>uniform</strong>. Like vertex data we use it in our shaders to affect the final pixel color, but it is <em>uniform</em> across all the vertices. While there are 3 vertices, each with different position and color data, there is only 1 \(brightness\) value. I like to think of it as a knob on the control panel of our shader: our shader will take in the vertex data and accordingly render a triangle, and the \(brightness\) know provides a way to adjust the brightness of the rendering output. And who is responsible for turning the knob? The CPU is.</p>
+
+<p>Each frame the CPU can update the brightness, a single floating point number, to affect the rendering of the entire triangle. Much more efficient than modifying every vertex&#39;s color data!</p>
+<h1 id="adding-uniform-parameters-to-the-shader-code">Adding uniform parameters to the shader code</h1>
+<p>Enough talk, let&#39;s get on with the code! We will start by first adding the code for our brightness uniform to the shaders. In pseduo-Metal-code, we want to write something like this for our fragment shader:</p>
+<div class="highlight"><pre class="highlight cpp"><code><span class="n">fragment</span> <span class="n">float4</span> <span class="nf">fragmentShader</span><span class="p">(</span><span class="n">VertexOut</span> <span class="n">interpolated</span> <span class="p">[[</span><span class="n">stage_in</span><span class="p">]])</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">brightness</span> <span class="o">*</span> <span class="n">interpolated</span><span class="p">.</span><span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>However, this isn&#39;t quite right for 2 reasons: the first is obvious, we need to define the variable <code>brightness</code>. The second reason will be discussed soon. So how do we define <code>brightness</code>? That is, how does the CPU pass data (the value of <code>brightness</code>) to the GPU? It works in essentially the same way as vertex data: we use a <code>MTLBuffer</code> on the CPU side, and a <code>[[buffer(0)]]</code> on the GPU side, just like the vertex buffer data that is passed to the vertex shader. First, crack open <code>ShaderDefinitions.h</code> and add the following <code>struct</code> definition:</p>
+<div class="highlight"><pre class="highlight cpp"><code><span class="k">struct</span> <span class="n">FragmentUniforms</span> <span class="p">{</span>
+    <span class="kt">float</span> <span class="n">brightness</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p>This is a <code>struct</code> that will hold all of the uniforms that will be passed to our fragment shader. Right now it only contains one uniform, <code>brightness</code>. Then we can add it as a buffer parameter to the fragment shader, and use the <code>brightness</code> member of the struct to do the multiplication:</p>
+<div class="highlight"><pre class="highlight cpp"><code><span class="n">fragment</span> <span class="n">float4</span> <span class="nf">fragmentShader</span><span class="p">(</span><span class="n">VertexOut</span> <span class="n">interpolated</span> <span class="p">[[</span><span class="n">stage_in</span><span class="p">]],</span> <span class="n">constant</span> <span class="n">FragmentUniforms</span> <span class="o">&amp;</span><span class="n">uniforms</span> <span class="p">[[</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)]])</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">float4</span><span class="p">(</span><span class="n">uniforms</span><span class="p">.</span><span class="n">brightness</span> <span class="o">*</span> <span class="n">interpolated</span><span class="p">.</span><span class="n">color</span><span class="p">.</span><span class="n">rgb</span><span class="p">,</span> <span class="n">interpolated</span><span class="p">.</span><span class="n">color</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>While this code isn&#39;t entirely foreign looking since it is similar to the vertex buffer parameter, there are some differences to walk through. Most importantly, we declare the buffer parameter to be <code>constant</code> instead of <code>device</code> because each pixel that is rendered will access the same memory location of the buffer (just the since <code>brightness</code> member). We also have the parameter be a reference (<code>&amp;</code>) instead of a pointer (<code>*</code>). They are quite similar and both perform the role of referencing a location in memory, but references can&#39;t be used to reference an <em>array</em> of structs, just a single struct. We will not have an array of <code>FragmentUniforms</code>, unlike for the vertex buffer where we did have an array of 3 <code>Vertex</code> structs. Since we don&#39;t have an array here, we are free to use either a pointer or a reference or a pointer.</p>
+
+<p>Finally, the multiplication is a bit more convoluted than just doing <code>uniforms.brightness * interpolated.color</code>. This is because the colors are in <code>(r, g, b, a)</code> format, and we want to make the color darker by decreasing <code>r</code>, <code>g</code> and <code>b</code>, but we want to leave <code>a</code> (the alpha value) alone. So we grab just the <code>rgb</code> components of the interpolated color, multiply those by <code>uniforms.brightness</code>, and repack the result into a <code>float4</code> with the original alpha value.</p>
+
+<p>This is all the shader code we need to write. If we run this now, we get the following crash:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>validateFunctionArguments:3332: failed assertion `Fragment Function(fragmentShader): missing buffer binding at index 0 for uniforms[0].'
+</code></pre></div>
+<p>This is perfect, Metal tells us directly that the fragment shader is expecting a buffer to be bound at index 0, and we didn&#39;t do that yet. Let&#39;s get to it!</p>
+<h1 id="creating-and-binding-a-uniform-buffer">Creating and binding a uniform buffer</h1>
+<p>Open up <code>Renderer.swift</code>, and first define a new buffer in the class:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="k">let</span> <span class="nv">fragmentUniformsBuffer</span><span class="p">:</span> <span class="kt">MTLBuffer</span>
+</code></pre></div>
+<p>Now in the initializer we need to setup this buffer. The buffer will contain the data for only one <code>FragmentUniforms</code> struct, so we don&#39;t use an array but just a direct pointer. Add this below the initialization of the vertex data buffer:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="c1">// Create our uniform buffer, and fill it with an initial brightness of 1.0</span>
+<span class="k">var</span> <span class="nv">initialFragmentUniforms</span> <span class="o">=</span> <span class="kt">FragmentUniforms</span><span class="p">(</span><span class="nv">brightness</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">fragmentUniformsBuffer</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeBuffer</span><span class="p">(</span><span class="nv">bytes</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">initialFragmentUniforms</span><span class="p">,</span> <span class="nv">length</span><span class="p">:</span> <span class="kt">MemoryLayout</span><span class="o">&lt;</span><span class="kt">FragmentUniforms</span><span class="o">&gt;.</span><span class="n">stride</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[])</span><span class="o">!</span>
+</code></pre></div>
+<p>It&#39;s important to note that <code>initialFragmentUniforms</code> is just a temporary instance of <code>FragmentUniforms</code>: we create it and then copy the data of it into the <code>fragmentUniformsBuffer</code>, but once the initializer finishes, the actual memory of <code>initialFragmentUniforms</code> will be gone forever. </p>
+
+<blockquote>
+<p>Side remark about mutability in Swift: we need <code>initialFragmentUniforms</code> to be mutable (use <code>var</code> instead of <code>let</code>) since a pointer of it is passed to <code>makeBuffer(...)</code>. Metal <em>could</em> modify <code>initialFragmentUniforms</code> via this pointer, so we have to mark <code>initialFragmentUniforms</code> as mutable. Of course Metal doesn&#39;t do this, it just benignly copies the data somewhere else, but Swift doesn&#39;t know that.</p>
+</blockquote>
+
+<p>Now we need to bind our <code>fragmentUniformsBuffer</code> to the fragment shader. Just like the vertex data, we perform this binding every frame using the <code>renderEncoder</code>. Inside <code>draw(in view: MTKView)</code> we currently have the code:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="c1">// What vertex buffer data to use</span>
+<span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setVertexBuffer</span><span class="p">(</span><span class="n">vertexBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">// And what to draw</span>
+<span class="n">renderEncoder</span><span class="o">.</span><span class="nf">drawPrimitives</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="o">.</span><span class="n">triangle</span><span class="p">,</span> <span class="nv">vertexStart</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">vertexCount</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<p>This is where we bind the vertex buffer to the buffer at index 0 in the vertex shader. We do the same thing, but with the fragment shader and fragment uniforms by adding the following line before the <code>drawPrimitives</code> call:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="c1">// Bind the fragment uniforms</span>
+<span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setFragmentBuffer</span><span class="p">(</span><span class="n">fragmentUniformsBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+<p>And now, if we run the app, we get a triangle that looks identical to before. It is the same as before since we used an initial brightness of <code>1.0</code>. We can quickly test that <code>brightness</code> actually works by manually changing the initial value from <code>1.0</code> to <code>0.5</code>, which should give a darker looking triangle:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/screen2.png" alt="Darker Triangle"></p>
+
+<p>Once you are done experiment with it, set the initial value back to <code>1.0</code>.</p>
+<h1 id="animating-the-brightness">Animating the brightness</h1><h2 id="keeping-track-of-time">Keeping track of time</h2>
+<p>Right now we have uniform data being initialized on the CPU, and passed to the GPU. But what we really want to do is animate the brightness of the triangle, which means we want to modify the brightness uniform on each frame. The first thing we need to do is start keeping track of time, so that we can base the brightness off of the current time. Our strategy is:</p>
+
+<ol>
+<li>Keep track of our app&#39;s time with a variable <code>currentTime</code>.</li>
+<li>On each frame compute the difference in time between the current frame and the previous frame. To do so we will have to store the system time of the previous frame in a variable <code>lastRenderTime</code>.</li>
+<li>Use the time difference to update <code>currentTime</code>.</li>
+</ol>
+
+<p>We start by adding these instance variables to the <code>Renderer</code> class:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="c1">// This keeps track of the system time of the last render</span>
+<span class="k">var</span> <span class="nv">lastRenderTime</span><span class="p">:</span> <span class="kt">CFTimeInterval</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="c1">// This is the current time in our app, starting at 0, in units of seconds</span>
+<span class="k">var</span> <span class="nv">currentTime</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div>
+<p>Now at the top of <code>draw(in view: MTKView)</code> we compute the time difference, save the system time to <code>lastRenderTime</code>, and then use the time difference to update the state:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="c1">// Compute dt</span>
+<span class="k">let</span> <span class="nv">systemTime</span> <span class="o">=</span> <span class="kt">CACurrentMediaTime</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">timeDifference</span> <span class="o">=</span> <span class="p">(</span><span class="n">lastRenderTime</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">)</span> <span class="p">?</span> <span class="mi">0</span> <span class="p">:</span> <span class="p">(</span><span class="n">systemTime</span> <span class="o">-</span> <span class="n">lastRenderTime</span><span class="o">!</span><span class="p">)</span>
+<span class="c1">// Save this system time</span>
+<span class="n">lastRenderTime</span> <span class="o">=</span> <span class="n">systemTime</span>
+
+<span class="c1">// Update state</span>
+<span class="nf">update</span><span class="p">(</span><span class="nv">dt</span><span class="p">:</span> <span class="n">timeDifference</span><span class="p">)</span> <span class="c1">// TODO: We need to implement this function!</span>
+</code></pre></div><h2 id="updating-state">Updating state</h2>
+<p>Now we just need to implement this <code>update</code> function to update the <code>currentTime</code>, and change the brightness:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">update</span><span class="p">(</span><span class="nv">dt</span><span class="p">:</span> <span class="kt">CFTimeInterval</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">ptr</span> <span class="o">=</span> <span class="n">fragmentUniformsBuffer</span><span class="o">.</span><span class="nf">contents</span><span class="p">()</span><span class="o">.</span><span class="nf">bindMemory</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="kt">FragmentUniforms</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">capacity</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ptr</span><span class="o">.</span><span class="n">pointee</span><span class="o">.</span><span class="n">brightness</span> <span class="o">=</span> <span class="kt">Float</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="nf">cos</span><span class="p">(</span><span class="n">currentTime</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">currentTime</span> <span class="o">+=</span> <span class="n">dt</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>First, we access the memory location of the uniform buffer via <code>.contents()</code>, and then tell Swift to interpret the memory location as a pointer to a <code>FragmentUniforms</code> struct (which it is). Then, we write to the <code>brightness</code> field, setting the brightness to be a cosine wave based on the current time. Using a cosine wave makes the brightness start at 1, and then smoothly animate between 1 and 0:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/cosine.png" alt="cosine wave"></p>
+
+<p>Finally, we update the <code>currentTime</code> by adding the time difference. If you run this code now, you should see exactly what we were hoping for, a triangle with smoothly animating brightness:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/screen1.gif" alt="animating triangle"></p>
+<h2 id="synchronizing-the-cpu-and-gpu">Synchronizing the CPU and GPU</h2>
+<p>Unfortunately, the code we currently have is subtly bugged. The output looks fine, but there is actually a race condition that may or may not manifest itself in the future. It&#39;s actually an easy fix, but we need to understand what is happening in terms of CPU and GPU coordination. </p>
+
+<p>Each time <code>draw(in view: MTKView)</code> is called (60 times per second), we use the CPU to update the uniform data, and then tell the GPU to go and render using that uniform data <em>asynchronously</em>. Let&#39;s lay the rendering of the first 3 frames in a timeline:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/timeline1.png" alt="timeline1"></p>
+
+<p>This is fine, and there are not really any problems with this. But what happens if our rendering starts to take too long? Something like this:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/timeline2.png" alt="timeline2"></p>
+
+<p>In the red highlighted areas, there is a big problem. The GPU is reading from the uniforms buffer while the CPU is simultaneously writing to it (remember, they both share the same physical memory). What exactly will happen here is anyone&#39;s guess: it could crash (though this would be far too forgiving), subtly introduce incorrectly rendered pixels, or have no visible effect. It&#39;s hard to predict, and hard to track down later. Ignoring this bug that isn&#39;t immediately affecting us is the embodiment of this meme:</p>
+
+<p><img src="/public/post_assets/metal/metal-intro-2/fine.jpg" alt="dog in burning house"></p>
+
+<p>(Image credit: KC Green, The Nib). The solution is to synchronize the CPU and GPU. What we want to ensure is that the writing to the uniforms buffer by the CPU can not overlap with the GPU&#39;s rendering. We accomplish this by using a <a href="https://en.wikipedia.org/wiki/Semaphore_(programming)">semaphore</a>. Let&#39;s code it really fast, and then explain how the code works. Add this instance variable to the <code>Renderer</code> class:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="k">let</span> <span class="nv">gpuLock</span> <span class="o">=</span> <span class="kt">DispatchSemaphore</span><span class="p">(</span><span class="nv">value</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p>This creates the semaphore we will use. Then at the very top of <code>draw(in view: MTKView)</code> add:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="n">gpuLock</span><span class="o">.</span><span class="nf">wait</span><span class="p">()</span>
+</code></pre></div>
+<p>Finally, just before <code>commandBuffer.commit()</code>, add:</p>
+<div class="highlight"><pre class="highlight swift"><code><span class="n">commandBuffer</span><span class="o">.</span><span class="n">addCompletedHandler</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span>
+    <span class="k">self</span><span class="o">.</span><span class="n">gpuLock</span><span class="o">.</span><span class="nf">signal</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>That&#39;s all the code we need to add. Let&#39;s walk through how this exactly works. We first initialize the semaphore with a value of <code>1</code>. Then, when we call <code>wait</code> one of two things happen:</p>
+
+<ol>
+<li>If the semaphore value is greater than 0, it is decremented by 1, and execution continues.</li>
+<li>If the semaphore value is 0, then the CPU waits until the value is greater than 0, after which it will decrement it and continue executing.</li>
+</ol>
+
+<p>So when <code>draw(in view: MTKView)</code> is called the first time, the value is 1, so <code>wait</code> changes the value to 0 and moves on. We then update uniforms and encode the drawing. Before the GPU starts drawing (<code>commandBuffer.commit()</code>), we add a completion handler that will call <code>signal</code> when the GPU is done drawing. All <code>signal</code> does is increment the semaphore&#39;s value by 1.</p>
+
+<p>This means that the next time <code>draw(in view: MTKView)</code> is called the CPU will wait to start modifying the uniforms until the previous rendering is complete, which ensures that we do not read and write to the uniforms simultaneously.</p>
+
+<p>The problem of enforcing synchronization between the CPU and GPU is not unique to uniform data: anytime that one of them is reading and the other one is writing (or they are both writing), then you must enforce synchronization. This is almost always the case with uniform data, but is not necessarily the case with vertex data. As always, the complete source code is <a href="/public/post_assets/metal/metal-intro-2/MetalFinal.zip">available for download</a>.</p>
+<h1 id="challenges-1">Challenges</h1>
+<ol>
+<li>We are currently computing the <code>brightness</code> using <code>cos()</code> on the CPU, and passing this to the GPU. Instead, try to pass the <code>currentTime</code> to the GPU, and compute the <code>brightness</code> on the GPU.</li>
+<li>I wrote this post as passing the <code>brightness</code> uniform to the fragment shader. But we can accomplish the exact same thing by passing the <code>brightness</code> uniform to the vertex shader instead, and in the vertex shader modify the vertex colors before interpolation. Implement it this way instead.</li>
+<li>In challenge #2 you achieved the exact same effect by modifying the vertex colors in the vertex shader instead of the fragment shader. Will this always be the case? As an example, try taking the <code>sqrt()</code> of each RGB color component in the vertex shader and compare to doing it in the fragment shader. Are they identical?</li>
+<li>Use a time uniform to cause the triangle to grow and shrink. (Hint: what happens if you multiply the vertex positions by a number less than 1 or greater than 1?)</li>
+</ol>
+
+</div>
+
+
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/machine%20learning/2019/05/02/tda.html" class="titular">
+            Topological Data Analysis and Persistent Homology
+            <small>02 May 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/idris/2019/03/26/idris-serverless.html" class="titular">
+            Coding Serverless Functions in Idris
+            <small>26 Mar 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/tensorflow/2018/11/15/feature-scaling.html" class="titular">
+            Feature Scaling
+            <small>15 Nov 2018</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+    </div>
+
+    <script type="text/javascript">
+      window.is_book_mode = false;
+    </script>
+    
+  </body>
+</html>
