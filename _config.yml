@@ -30,7 +30,7 @@ gems:
   - github-pages
   - jekyll-sitemap
   - jekyll-seo-tag
-  - redcarpet
+  # - redcarpet
 
 # Sitemap stuff
 sitemap:
