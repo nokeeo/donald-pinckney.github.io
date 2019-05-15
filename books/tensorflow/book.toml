@@ -7,4 +7,3 @@ src = "src"
 
 [output.html]
 mathjax-support = true
-theme = "src/theme"

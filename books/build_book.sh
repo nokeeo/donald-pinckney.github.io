@@ -16,9 +16,7 @@ done
 
 
 # Build book with mdbook
-# mdbook build
-pushd ../../../mdBook/; cargo build; popd
-../../../mdBook/target/debug/mdbook build
+mdbook build
 
 
 # Delete buggy output of mdbook
