@@ -162,20 +162,10 @@ function playpen_get_lang(playpen) {
         }).then(response => response.json()).then(response => response.result);
     }
 
-    function run_idris_code(code) {
-        // return Promise.resolve("Idris not yet implemented! " + code);
-
-        var file1 = new File(["test_code1"], "foo1.idr", {
-            type: "text/plain"
-        });
-        var file2 = new File(["test_code2"], "foo2.idr", {
-            type: "text/plain"
-        });
-
-        var files = [file1, file2];
-
+    // @codeFiles: an array of File objects
+    function run_idris_files(codeFiles) {
         var data = new FormData();
-        for(const f of files) {
+        for(const f of codeFiles) {
             data.append('files[]', f, f.name);
         }
 
@@ -184,6 +174,16 @@ function playpen_get_lang(playpen) {
             mode: 'cors',
             body: data
         }).then(response => response.text());
+    }
+
+    function run_idris_code(code) {
+        // return Promise.resolve("Idris not yet implemented! " + code);
+
+        var file1 = new File([code], "Main.idr", {
+            type: "text/plain"
+        });
+        
+        return run_idris_files([file1]);
     }
 
     function run_playpen_code(code_block, lang) {
