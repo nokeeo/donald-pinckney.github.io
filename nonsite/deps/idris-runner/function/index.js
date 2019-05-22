@@ -5,20 +5,28 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 var mkdirp = require('mkdirp');
+const processing = require('./file-processing');
+var rimraf = require("rimraf");
 
-// var cmd = 'cabal-bin/idris -v';
+function getDirPath(filePath) {
+    const idx = filePath.lastIndexOf("/");
+    if(idx == -1) {
+        return null;
+    } else {
+        return filePath.substring(0, idx + 1);
+    }
+}
 
-// prelude is?: /home/donald_pinckney/.cabal/share/x86_64-linux-ghc-8.0.2/idris-1.3.1/
 
+
+
+var tmpdir_count = 0;
 
 exports.idrisrunner = (req, res) => {
     // let message = req.query.message || req.body.message || 'Hello World!';
     // let cmd = req.body;
 
-    // exec(cmd, function(error, stdout, stderr) {
-    //     // command output is in stdout
-    //     res.status(200).send(stdout);
-    // });
+
 
     res.set('Access-Control-Allow-Origin', '*');
 
@@ -32,15 +40,10 @@ exports.idrisrunner = (req, res) => {
     }
 
 
+    const busboy = new Busboy({headers: req.headers, preservePath: true});
+    const tmpdir = path.join(os.tmpdir(), `src${tmpdir_count}/`);
+    tmpdir_count++;
 
-    // if (req.method !== 'POST') {
-    //     // Return a "method not allowed" error
-    //     return res.status(405).end();
-    // }
-
-    const busboy = new Busboy({headers: req.headers});
-    const tmpdir = path.join(os.tmpdir(), 'src/');
-    mkdirp(tmpdir, function(err) {
         // This object will accumulate all the fields, keyed by their name
         const fields = {};
 
@@ -51,10 +54,16 @@ exports.idrisrunner = (req, res) => {
 
         // This code will process each non-file field in the form.
 
+        var command = null;
+
         busboy.on('field', (fieldname, val) => {
             // TODO(developer): Process submitted field values here
             logStr += `Processed field ${fieldname}: ${val}.`;
             fields[fieldname] = val;
+
+            if(fieldname == "command") {
+                command = JSON.parse(val);
+            }
         });
 
         const fileWrites = [];
@@ -63,13 +72,20 @@ exports.idrisrunner = (req, res) => {
         busboy.on('file', (fieldname, file, filename) => {
             // Note: os.tmpdir() points to an in-memory file system on GCF
             // Thus, any files in it must fit in the instance's memory.
-            // logStr += `Processed file ${filename}`;
+            // logStr += `Processed file: ${filename}`;
+
             const filepath = path.join(tmpdir, filename);
+            const fileDir = getDirPath(filepath);
+            
             // uploads[fieldname] = filepath;
             uploads.push(filepath)
 
-            const writeStream = fs.createWriteStream(filepath);
-            file.pipe(writeStream);
+            mkdirp.sync(fileDir);
+
+            // mkdirp(fileDir, function(err) {
+                const writeStream = fs.createWriteStream(filepath);
+                file.pipe(writeStream);
+            // });
 
             // File was processed by Busboy; wait for it to be written to disk.
             const promise = new Promise((resolve, reject) => {
@@ -87,24 +103,37 @@ exports.idrisrunner = (req, res) => {
         busboy.on('finish', () => {
             Promise.all(fileWrites).then(() => {
                 // Process files
-                for(const idx in uploads) {
-                    const filepath = uploads[idx];
-                    const contents = fs.readFileSync(filepath, 'utf8');
-                    logStr += `Filepath ${filepath}, contents: ${contents}\n`
-                }
+                // for(const idx in uploads) {
+                //     const filepath = uploads[idx];
+                //     const contents = fs.readFileSync(filepath, 'utf8');
+                //     // logStr += `Filepath ${filepath}, contents: ${contents}\n`
+                // }
 
-                // Delete all the temp files
+                var relUploads = [];
                 for (const idx in uploads) {
                     const filepath = uploads[idx];
-                    fs.unlinkSync(filepath);
+                    relUploads.push(filepath.replace(tmpdir, ""));
                 }
-                res.status(200).send(logStr);
+
+                processing.processUploads(relUploads, tmpdir, command, retVal => {
+                    // Delete all the temp files
+                    for (const idx in uploads) {
+                        const filepath = uploads[idx];
+                        fs.unlinkSync(filepath);
+                    }
+                    rimraf.sync(tmpdir);
+                    rimraf.sync("/tmp/ibc");
+
+                    res.status(200).send(retVal);
+                });
+
+                
             });
         });
 
         busboy.end(req.rawBody);
 
-    });
+    // });
 
     // var desc = {body: req.body, method: req.method, query: req.query, headers: req.headers};
 

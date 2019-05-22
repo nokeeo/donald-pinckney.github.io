@@ -1,5 +1,15 @@
 "use strict";
 
+function get_editor(playpen) {
+    let code_block = playpen.querySelector("code");
+
+    if (window.ace && code_block.classList.contains("editable")) {
+        let editor = window.ace.edit(code_block);
+        return editor;
+    } else {
+        return null;
+    }
+}
 
 function playpen_text(playpen) {
     let code_block = playpen.querySelector("code");
@@ -135,13 +145,27 @@ function playpen_get_lang(playpen) {
             new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
         ]);
     }
-    
+
+    function get_result_block(code_block) {
+        var result_block = code_block.querySelector(".result");
+        if (!result_block) {
+            result_block = document.createElement('code');
+            result_block.className = 'result hljs language-bash';
+
+            code_block.append(result_block);
+        }
+        return result_block;
+    }
+
+
     var language_dispatch_table = {
         "language-rust": run_rust_code,
-        "language-idris": run_idris_code
+        "language-idris": idris_typecheck
     };
 
-    function run_rust_code(code) {
+    function run_rust_code(block) {
+        let code = playpen_text(block);
+
         var params = {
             version: "stable",
             optimize: "0",
@@ -163,50 +187,138 @@ function playpen_get_lang(playpen) {
     }
 
     // @codeFiles: an array of File objects
-    function run_idris_files(codeFiles) {
+    function run_idris_files(codeFiles, commandDict) {
         var data = new FormData();
         for(const f of codeFiles) {
             data.append('files[]', f, f.name);
         }
 
+        data.append("command", JSON.stringify(commandDict));
+
         return fetch_with_timeout("https://us-central1-idrisrunner.cloudfunctions.net/idrisrunner", {
             method: 'POST',
             mode: 'cors',
             body: data
-        }).then(response => response.text());
+        }, 60000).then(response => response.json());
     }
 
-    function run_idris_code(code) {
-        // return Promise.resolve("Idris not yet implemented! " + code);
+    // function run_idris_code(block) {
+    //     let code = playpen_text(block);
 
-        var file1 = new File([code], "Main.idr", {
+    //     var fileName = "somedir/Main.idr";
+    //     var file1 = new File([code], fileName, {
+    //         type: "text/plain"
+    //     });
+        
+    //     return run_idris_files([file1], {action: "check", file: fileName});
+    // }
+
+    function get_idris_token(editor) {
+        let cursor = editor.getCursorPosition();
+        let token = editor.getSession().getTokenAt(cursor.row, cursor.column);
+        if(token.type == "entity.name.function.idris" 
+            || token.type == "support.constant.prelude.idris" 
+            || token.type == "support.type.prelude.idris" 
+            || token.type == "text" 
+            || token.type == "meta.parameter.named.idris"
+            || token.type == "meta.function.type-signature.idris"
+            || token.type == "constant.language.bottom.idris") {
+            return token.value.trim();
+        } else {
+            return null;
+        }
+    }
+
+
+    function handle_idris_result(code_block, result_block, result) {
+        if(result == null || result.idrisOutput == null || result.idrisOutput == "") {
+            // result_block.style.display = 'none';
+            result_block.innerText = 'No type errors.';
+        } else {
+            result_block.innerText = result.idrisOutput;
+        }
+    }
+
+    function idris_action(code_block, editor, actionFn) {
+        var result_block = get_result_block(code_block);
+
+        // result_block.style.display = 'block';
+        result_block.innerText = "Typechecking...";
+
+        actionFn(code_block, editor)
+            .then(result => handle_idris_result(code_block, result_block, result))
+            .catch(error => result_block.innerText = "Playground Communication: " + error.message);
+    }
+
+    function idris_typecheck(block, editor = null) {
+        let code = playpen_text(block);
+
+        var fileName = "somedir/Main.idr";
+        var file1 = new File([code], fileName, {
             type: "text/plain"
         });
         
-        return run_idris_files([file1]);
+        return run_idris_files([file1], {action: "check", file: fileName});
     }
 
-    function run_playpen_code(code_block, lang) {
-        var result_block = code_block.querySelector(".result");
-        if (!result_block) {
-            result_block = document.createElement('code');
-            result_block.className = 'result hljs language-bash';
-
-            code_block.append(result_block);
+    function idris_typeof(block, editor) {
+        let code = editor.getValue();
+        let token = get_idris_token(editor);
+        if(token == null) {
+            return;
         }
 
-        let text = playpen_text(code_block);
+        var fileName = "somedir/Main.idr";
+        var file1 = new File([code], fileName, {
+            type: "text/plain"
+        });
+        
+        return run_idris_files([file1], {action: "typeof", file: fileName, expr: token});
+    }
+
+    
+
+    
+
+
+    function run_playpen_code(code_block, lang) {
+        var result_block = get_result_block(code_block);
 
         result_block.innerText = "Running...";
 
         var runFunc = language_dispatch_table[lang];
-        if(runFunc === undefined) {
-            result_block.innerText = "Error: can't run " + lang;
-        } else {
-            runFunc(text)
+        if(lang == "language-idris") {
+            let editor = get_editor(code_block);
+            idris_action(editor.container.parentNode, editor, idris_typecheck);  
+        } else if(runFunc !== undefined) {
+            runFunc(code_block)
                 .then(result => result_block.innerText = result)
                 .catch(error => result_block.innerText = "Playground Communication: " + error.message);
+        } else {
+            result_block.innerText = "Error: can't run " + lang;
         }
+    }
+
+    function configure_idris_editor(editor) {
+        editor.commands.addCommand({
+            name: 'typecheck',
+            bindKey: {win: 'Ctrl-Alt-R', mac: 'Ctrl-Alt-R'},
+            exec: function(editor) {
+                idris_action(editor.container.parentNode, editor, idris_typecheck);
+                // idris_typecheck(editor.container.parentNode, editor);
+            },
+            readOnly: true,
+        });
+
+        editor.commands.addCommand({
+            name: 'typeof',
+            bindKey: {win: 'Ctrl-Alt-T', mac: 'Ctrl-Alt-T'},
+            exec: function(editor) {
+                idris_action(editor.container.parentNode, editor, idris_typeof);
+                // idris_typeof(editor.container.parentNode, editor);
+            },
+            readOnly: true,
+        });
     }
 
     // Syntax highlighting Configuration
@@ -236,6 +348,10 @@ function playpen_get_lang(playpen) {
 
                     if(cls.includes('readonly')) {
                         editor.setReadOnly(true);
+                    }
+
+                    if(lang == "idris") {
+                        configure_idris_editor(editor);
                     }
                 }
 
@@ -297,19 +413,28 @@ function playpen_get_lang(playpen) {
             pre_block.insertBefore(buttons, pre_block.firstChild);
         }
 
+        var lang = playpen_get_lang(pre_block);
+
+        var faClass = 'fa-play';
+        if(lang == "language-idris") {
+            faClass = 'fa-check';
+        }
+
         var runCodeButton = document.createElement('button');
-        runCodeButton.className = 'fa fa-play play-button';
+        runCodeButton.className = `fa ${faClass} play-button`;
         runCodeButton.hidden = true;
         runCodeButton.title = 'Run this code';
         runCodeButton.setAttribute('aria-label', runCodeButton.title);
 
         buttons.insertBefore(runCodeButton, buttons.firstChild);
 
-        var lang = playpen_get_lang(pre_block);
         if(lang !== undefined) {
             runCodeButton.addEventListener('click', function (e) {
                 run_playpen_code(pre_block, lang);
             });
+            runCodeButton.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+            })
         }
 
     });
