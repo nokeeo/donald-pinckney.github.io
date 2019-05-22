@@ -202,16 +202,6 @@ function playpen_get_lang(playpen) {
         }, 60000).then(response => response.json());
     }
 
-    // function run_idris_code(block) {
-    //     let code = playpen_text(block);
-
-    //     var fileName = "somedir/Main.idr";
-    //     var file1 = new File([code], fileName, {
-    //         type: "text/plain"
-    //     });
-        
-    //     return run_idris_files([file1], {action: "check", file: fileName});
-    // }
 
     function get_idris_token(editor) {
         let cursor = editor.getCursorPosition();
@@ -250,30 +240,33 @@ function playpen_get_lang(playpen) {
             .catch(error => result_block.innerText = "Playground Communication: " + error.message);
     }
 
-    function idris_typecheck(block, editor = null) {
+    function package_idris_files(block) {
         let code = playpen_text(block);
 
-        var fileName = "somedir/Main.idr";
+        let fileName = block.getAttribute("data-path") || "Main.idr";
         var file1 = new File([code], fileName, {
             type: "text/plain"
         });
+        return {files: [file1], activeFilename: fileName};
+    }
+
+    function idris_typecheck(block, editor = null) {
+        let pkg = package_idris_files(block);
+        let files = pkg.files;
         
-        return run_idris_files([file1], {action: "check", file: fileName});
+        return run_idris_files(files, {action: "check", file: pkg.activeFilename});
     }
 
     function idris_typeof(block, editor) {
-        let code = editor.getValue();
+        let pkg = package_idris_files(block);
+        let files = pkg.files;
+
         let token = get_idris_token(editor);
         if(token == null) {
             return;
         }
 
-        var fileName = "somedir/Main.idr";
-        var file1 = new File([code], fileName, {
-            type: "text/plain"
-        });
-        
-        return run_idris_files([file1], {action: "typeof", file: fileName, expr: token});
+        return run_idris_files(files, {action: "typeof", file: pkg.activeFilename, expr: token});
     }
 
     
