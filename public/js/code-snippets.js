@@ -267,7 +267,7 @@ function playpen_get_lang(playpen) {
 
         if(result.displayAction == "insert") {
             let sess = editor.getSession();
-            sess.insert({row: result.line, column: 0}, result.toInsert);
+            sess.insert({row: result.line, column: 0}, result.toInsert + "\n");
 
             result_block.style.display = 'none';
         } else if(result.displayAction == "replace") {
