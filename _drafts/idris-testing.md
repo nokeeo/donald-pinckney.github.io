@@ -42,7 +42,7 @@ axiom3 : (x : PNat) -> (N x) = O -> Void
 axiom3 _ Refl impossible
 
 axiom4 : Nat -> Nat
-axiom4 x = if True then x else x
+axiom4 x = ?easdfasdf
 ```
 
 No path:

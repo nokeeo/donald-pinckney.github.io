@@ -204,39 +204,98 @@ function playpen_get_lang(playpen) {
 
 
     function get_idris_token(editor) {
+        let sess = editor.getSession();
         let cursor = editor.getCursorPosition();
-        let token = editor.getSession().getTokenAt(cursor.row, cursor.column);
-        if(token.type == "entity.name.function.idris" 
-            || token.type == "support.constant.prelude.idris" 
-            || token.type == "support.type.prelude.idris" 
-            || token.type == "text" 
-            || token.type == "meta.parameter.named.idris"
-            || token.type == "meta.function.type-signature.idris"
-            || token.type == "constant.language.bottom.idris") {
-            return token.value.trim();
+        let line = sess.getLine(cursor.row);
+
+        function isLeftWord(c) {
+            return (65 <= c && c <= 90)     // A-Z
+                || (97 <= c && c <= 122)    // a-z
+                || (48 <= c && c <= 57)     // 0-9
+                || c == 95;                 // _
+        }
+        function isRightWord(c) {
+            return isLeftWord(c);
+        }
+
+        // var start = Math.max(cursor.column - 1, 0);
+        var start = cursor.column;
+        while (start > 0 && isLeftWord(line.charCodeAt(start-1))) {
+            start--;
+        }
+
+        var endInc = cursor.column - 1;
+        while (endInc < line.length - 1 && isRightWord(line.charCodeAt(endInc+1))) {
+            endInc++;
+        }
+
+        let tok = line.substring(start, endInc + 1);
+        // alert(`"${tok}"`);
+
+        return tok;
+
+        // let token = editor.getSession().getTokenAt(cursor.row, cursor.column);
+        // if(token.type == "entity.name.function.idris" 
+        //     || token.type == "support.constant.prelude.idris" 
+        //     || token.type == "support.type.prelude.idris" 
+        //     || token.type == "text" 
+        //     || token.type == "meta.parameter.named.idris"
+        //     || token.type == "meta.function.type-signature.idris"
+        //     || token.type == "constant.language.bottom.idris") {
+        //     return token.value.trim();
+        // } else {
+        //     return null;
+        // }
+    }
+
+//     var res = {
+//         displayAction: "showtext",
+//         text: stdout
+//     };
+// } else {
+//     var res = {
+//         displayAction: "insert",
+//         toInsert: stdout,
+//         line: command.n
+//     };
+
+    function handle_idris_result(code_block, result_block, editor, result) {
+        if(result == null || result.displayAction == null) {
+            result_block.innerText = "Communication error.";
+            return;
+        }
+
+        if(result.displayAction == "insert") {
+            let sess = editor.getSession();
+            sess.insert({row: result.line, column: 0}, result.toInsert);
+
+            result_block.style.display = 'none';
+        } else if(result.displayAction == "replace") {
+            let sess = editor.getSession();
+            let line = sess.getLine(result.line - 1);
+            let replaceRange = new ace.Range(result.line - 1, 0, result.line - 1, line.length);
+            sess.replace(replaceRange, result.toReplace);
+
+            result_block.style.display = 'none';
+        } else if(result.displayAction == "showtext") {
+            if(result.text == null || result.text == "") {
+                result_block.innerText = 'No type errors.';
+            } else {
+                result_block.innerText = result.text;
+            }
         } else {
-            return null;
+            result_block.innerText = "Unknown display action: " + result.displayAction;
         }
     }
 
-
-    function handle_idris_result(code_block, result_block, result) {
-        if(result == null || result.idrisOutput == null || result.idrisOutput == "") {
-            // result_block.style.display = 'none';
-            result_block.innerText = 'No type errors.';
-        } else {
-            result_block.innerText = result.idrisOutput;
-        }
-    }
-
-    function idris_action(code_block, editor, actionFn) {
+    function idris_action(code_block, editor, waiting_text, actionFn) {
         var result_block = get_result_block(code_block);
 
-        // result_block.style.display = 'block';
-        result_block.innerText = "Typechecking...";
+        result_block.style.display = 'block';
+        result_block.innerText = waiting_text;
 
         actionFn(code_block, editor)
-            .then(result => handle_idris_result(code_block, result_block, result))
+            .then(result => handle_idris_result(code_block, result_block, editor, result))
             .catch(error => result_block.innerText = "Playground Communication: " + error.message);
     }
 
@@ -269,6 +328,32 @@ function playpen_get_lang(playpen) {
         return run_idris_files(files, {action: "typeof", file: pkg.activeFilename, expr: token});
     }
 
+    function idris_add_def(block, editor) {
+        let pkg = package_idris_files(block);
+        let files = pkg.files;
+
+        let token = get_idris_token(editor);
+        if(token == null) {
+            return;
+        }
+
+        let lineNumber = editor.getCursorPosition().row + 1;
+        return run_idris_files(files, {action: "addclause", file: pkg.activeFilename, n: lineNumber, f: token});
+    }
+
+    function idris_case_split(block, editor) {
+        let pkg = package_idris_files(block);
+        let files = pkg.files;
+
+        let token = get_idris_token(editor);
+        if(token == null) {
+            return;
+        }
+
+        let lineNumber = editor.getCursorPosition().row + 1;
+        return run_idris_files(files, {action: "casesplit", file: pkg.activeFilename, n: lineNumber, x: token});
+    }
+
     
 
     
@@ -282,7 +367,7 @@ function playpen_get_lang(playpen) {
         var runFunc = language_dispatch_table[lang];
         if(lang == "language-idris") {
             let editor = get_editor(code_block);
-            idris_action(editor.container.parentNode, editor, idris_typecheck);  
+            idris_action(editor.container.parentNode, editor, "Typechecking...", idris_typecheck);  
         } else if(runFunc !== undefined) {
             runFunc(code_block)
                 .then(result => result_block.innerText = result)
@@ -297,8 +382,7 @@ function playpen_get_lang(playpen) {
             name: 'typecheck',
             bindKey: {win: 'Ctrl-Alt-R', mac: 'Ctrl-Alt-R'},
             exec: function(editor) {
-                idris_action(editor.container.parentNode, editor, idris_typecheck);
-                // idris_typecheck(editor.container.parentNode, editor);
+                idris_action(editor.container.parentNode, editor, "Typechecking...", idris_typecheck);
             },
             readOnly: true,
         });
@@ -307,10 +391,27 @@ function playpen_get_lang(playpen) {
             name: 'typeof',
             bindKey: {win: 'Ctrl-Alt-T', mac: 'Ctrl-Alt-T'},
             exec: function(editor) {
-                idris_action(editor.container.parentNode, editor, idris_typeof);
-                // idris_typeof(editor.container.parentNode, editor);
+                idris_action(editor.container.parentNode, editor, "Finding type...", idris_typeof);
             },
             readOnly: true,
+        });
+
+        editor.commands.addCommand({
+            name: 'addclause',
+            bindKey: {win: 'Ctrl-Alt-A', mac: 'Ctrl-Alt-A'},
+            exec: function(editor) {
+                idris_action(editor.container.parentNode, editor, "Adding clause...", idris_add_def);
+            },
+            readOnly: false,
+        });
+
+        editor.commands.addCommand({
+            name: 'casesplit',
+            bindKey: {win: 'Ctrl-Alt-C', mac: 'Ctrl-Alt-C'},
+            exec: function(editor) {
+                idris_action(editor.container.parentNode, editor, "Splitting case...", idris_case_split);
+            },
+            readOnly: false,
         });
     }
 

@@ -23,6 +23,16 @@ function processUploads(uploads, tmpdir, command, callback) {
             idrisCommand = `${command.file}`;
             replCommand = `:t ${command.expr}`;
         }
+    } else if (command.action == "addclause") {
+        if(command.file !== undefined && command.f !== undefined && command.n !== undefined) {
+            idrisCommand = `${command.file}`;
+            replCommand = `:ac ${command.n} ${command.f}`;
+        }
+    } else if (command.action == "casesplit") {
+        if(command.file !== undefined && command.x !== undefined && command.n !== undefined) {
+            idrisCommand = `${command.file}`;
+            replCommand = `:cs ${command.n} ${command.x}`;
+        }
     }
 
     if(idrisCommand === null) {
@@ -39,9 +49,28 @@ function processUploads(uploads, tmpdir, command, callback) {
     exec(cmd, function(error, stdout, stderr) {
         // command output is in stdout
         // res.status(200).send(stdout);
-        var res = {
-            idrisOutput: stdout
-        };
+        stdout = stdout.trim();
+        let numLines = stdout.split("\n").length;
+        
+        if(command.action == "addclause" && numLines == 1) {
+            var res = {
+                displayAction: "insert",
+                toInsert: stdout,
+                line: command.n
+            };
+        } else if(command.action == "casesplit") {
+            var res = {
+                displayAction: "replace",
+                toReplace: stdout,
+                line: command.n
+            };
+        } else {
+            var res = {
+                displayAction: "showtext",
+                text: stdout
+            };
+        }
+        
         callback(JSON.stringify(res));
     });
 
