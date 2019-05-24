@@ -42,6 +42,12 @@ function playpen_get_lang(playpen) {
 
 (function codeSnippets() {
 
+    var filesToSlices = {};
+
+    function defaultIdrisPath() {
+        return "Main.idr"
+    }
+
     // Hide Rust code lines prepended with a specific character
     var hiding_character = "#";
 
@@ -302,11 +308,30 @@ function playpen_get_lang(playpen) {
     function package_idris_files(block) {
         let code = playpen_text(block);
 
-        let fileName = block.getAttribute("data-path") || "Main.idr";
-        var file1 = new File([code], fileName, {
-            type: "text/plain"
-        });
-        return {files: [file1], activeFilename: fileName};
+        let activeFileName = block.getAttribute("data-path") || defaultIdrisPath();
+
+        var files = [];
+        for(var fileNameProp in filesToSlices) {
+            let slices = filesToSlices[fileNameProp];
+            var slicePairs = [];
+            for(var sliceProp in slices) {
+                slicePairs.push([sliceProp, slices[sliceProp].getValue()]);
+            }
+            slicePairs = slicePairs.sort((a, b) => a[0] - b[0]);
+
+            var fileContents = [];
+            for(var sliceIdx in slicePairs) {
+                fileContents.push(slicePairs[sliceIdx][1]);
+            }
+            var fileContent = fileContents.join("\n");
+
+            files.push(new File([fileContent], fileNameProp, {type: "text/plain"}));
+        }
+
+        // var file1 = new File([code], fileName, {
+        //     type: "text/plain"
+        // });
+        return {files: files, activeFilename: activeFileName};
     }
 
     function idris_typecheck(block, editor = null) {
@@ -377,7 +402,33 @@ function playpen_get_lang(playpen) {
         }
     }
 
-    function configure_idris_editor(editor) {
+    function configure_idris_editor(editor, block) {
+        // Record filename and slice here...
+        var cls = Array.from(block.classList);
+
+        var pathCls = cls.filter(cl => cl.startsWith("path="));
+        var path;
+        if(pathCls.length == 1) {
+            path = pathCls[0].replace("path=", "");
+        } else {
+            path = defaultIdrisPath();
+        }
+
+        var sliceCls = cls.filter(cl => cl.startsWith("slice="));
+        var slice;
+        if(sliceCls.length == 1) {
+            slice = sliceCls[0].replace("slice=", "");
+        } else {
+            slice = "0";
+        }
+
+        if(filesToSlices[path] === undefined) {
+            filesToSlices[path] = {};
+        }
+
+        filesToSlices[path][slice] = editor;
+
+
         editor.commands.addCommand({
             name: 'typecheck',
             bindKey: {win: 'Ctrl-Alt-R', mac: 'Ctrl-Alt-R'},
@@ -445,7 +496,7 @@ function playpen_get_lang(playpen) {
                     }
 
                     if(lang == "idris") {
-                        configure_idris_editor(editor);
+                        configure_idris_editor(editor, block);
                     }
                 }
 

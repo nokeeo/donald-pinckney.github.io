@@ -17,7 +17,7 @@ Idris is based strongly on Haskell, so learning Idris will also involve learning
 
 I don't want to introduce Idris by talking about the theory of dependent types, rather I want to show it via demonstration by developing a simple binary tree insertion algorithm.
 
-## How to Represent a Binary Search Tree
+## Representing a Binary Search Tree
 
 First we need a way to represent a binary (search) tree. Recall that in a binary tree each node of the tree contains a value (say a natural number), and possible contains left and / or right subtrees. We can represent this in Idris as the following type:
 
