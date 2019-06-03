@@ -1,0 +1,6 @@
+package bst
+
+modules = BST
+    , NatOrder
+
+pkgs = contrib

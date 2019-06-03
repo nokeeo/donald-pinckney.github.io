@@ -34,7 +34,7 @@ Concretely, this says that a binary tree takes exactly 2 forms:
 1. It is just `Empty` (no tree), 
 2. Or it contains a value (a natural number, or `Nat`) at the root node, and has a left and right subtree. 
 
-In fact, `Empty` and `HasValue` are called **data constructors**, meaning that they are functions which let you construct `BinaryTree` values. We can see this interactively by putting our cursor on `HasValue` in the above code, and hitting `Ctrl-Alt-T`. The result tells you that `HasValue` is a function which takes as input one `Nat` and 2 `BinaryTree`s and returns a new `BinaryTree`. Similarly, inspecting the type of `Empty` tells you that it simply returns a `BinaryTree` given no arguments.
+In fact, `Empty` and `HasValue` are called **data constructors**, meaning that they are functions which let you construct `BinaryTree` values. We can see this interactively by putting our cursor on `HasValue` in the above code, and hitting **Ctrl-Alt-T**. The result tells you that `HasValue` is a function which takes as input one `Nat` and 2 `BinaryTree`s and returns a new `BinaryTree`. Similarly, inspecting the type of `Empty` tells you that it simply returns a `BinaryTree` given no arguments.
 
 As an example, we can use `Empty` and `HasValue` to build binary trees like so:
 
@@ -55,11 +55,11 @@ tree1 corresponds to this tree:
 -}
 ```
 
-To explain some syntax, first `tree1 : BinaryTree` declares that `tree1` will have *type* `BinaryTree`, and then the following line gives the definition of the *value* of `tree1`. Also note that in Idris functions (such as `HasValue`) are called without parentheses and commas such as in many popular languages, but that we do need to use parentheses to indicate grouping of arguments. That is, `(HasValue 3 Empty Empty)` is the entire 2nd argument to the outermost `HasValue` call. To check your understanding, complete this exercise:
+To explain some syntax, first `tree1 : BinaryTree` declares that `tree1` will have *type* `BinaryTree`, and then the following line gives the definition of the *value* of `tree1`. Also note that in Idris functions (such as `HasValue`) are called without parentheses and commas such as in many popular languages, but that we do need to use parentheses to indicate grouping of arguments. That is, `(HasValue 3 Empty Empty)` is the entire 2nd argument to the outermost `HasValue` call. Finally, note that `tree1` is not a *variable*, as it is not possible to modify the value of it later. To check your understanding, complete this exercise:
 
 ```idris,editable,path=BST.idr,slice=2
 {-
-Define tree2 such that it corresponds to this tree:
+Exercise: Define tree2 such that it corresponds to this tree:
 
      9
     / \
@@ -74,5 +74,19 @@ to ensure you call HasValue and Empty with arguments of the correct type.
 tree2 : BinaryTree
 tree2 = ?tree2_ex
 ```
+
+## Binary Search Tree Insertion
+
+Great, now that we have a way to represent binary trees in Idris we can get our hands dirty writing a binary tree insertion function. Above we declared `tree1` and `tree2` to be values of type `BinaryTree`. To declare a function in Idris we do the same thing: we declare a value called `insert` of type `BinaryTree -> Nat -> BinaryTree`, that is a function which takes as input a binary tree, a natural number to insert, and returns the updated binary tree. Lastly, to define the value of `insert` we can write the arguments on the left hand side of the `=` and the body of the function on the right hand side:
+
+```idris,editable,path=BST.idr,slice=3
+insert : BinaryTree -> Nat -> BinaryTree
+insert tree n = ?insert_hole
+```
+
+Before we actually write the body of the function, let's take stock of where we are at. On the left of the `=` we have our 2 arguments `tree` and `n`, and on the right side we have `?insert_hole`, which is a **hole** standing in place of the implementation of `insert`. You should try inspecting the type of `?insert_hole` by putting your cursor over it in the above code, and hitting **Ctrl-Alt-T**. This tells you that in this context, `tree` has type `BinaryTree` and `n` has type `Nat`, and our goal (of the hole) is to produce something of type `BinaryTree`.
+
+
+
 
 [^4color]: [https://www.ams.org/notices/200811/tx081101382p.pdf](https://www.ams.org/notices/200811/tx081101382p.pdf)
