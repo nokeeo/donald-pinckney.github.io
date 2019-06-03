@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2019-06-03T13:01:38-07:00</updated>
+ <updated>2019-06-03T14:18:49-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -20,7 +20,7 @@
    <content type="html">&lt;p&gt;Today was the big day of WWDC 2019, and after the excitement of waiting for the keynote, here are my immediate thoughts and reactions to the announcements:&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;Declarative UI in Swift seems like a massive step forward for iOS development. I first started iOS development back in iOS 5. at a time when the platform and developer tools for iOS were just vastly more elegant and efficient compared to Android. Since then Android / Google has stepped up its game, with a better IDE (Android Studio), a better language (Kotlin), and recently a declarative UI framework (&lt;a href=&quot;https://flutter.dev&quot;&gt;Flutter&lt;/a&gt;). SwiftUI seems like a natural evolution in the competition of UI frameworks, and I&amp;#39;m super excited to see it. Here are some of my deeper thoughts and questions I look forward to exploring:
+&lt;li&gt;Declarative UI in Swift seems like a massive step forward for iOS development. I first started iOS development back in iOS 5 at a time when the platform and developer tools for iOS were just vastly more elegant and efficient compared to Android. Since then Android / Google has stepped up its game, with a better IDE (Android Studio), a better language (Kotlin), and recently a declarative UI framework (&lt;a href=&quot;https://flutter.dev&quot;&gt;Flutter&lt;/a&gt;). SwiftUI seems like a natural evolution in the competition of UI frameworks, and I&amp;#39;m super excited to see it. Here are some of my deeper thoughts and questions I look forward to exploring:
 
 &lt;ul&gt;
 &lt;li&gt;How far does SwiftUI embrace pure functional programming? How is state managed?&lt;/li&gt;
