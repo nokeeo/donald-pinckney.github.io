@@ -6,7 +6,12 @@ categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/2018-03-21-multi-variable.md
 subscribeName: TensorFlow
+hidden: true
 ---
+
+<link rel="stylesheet" href="/public/css/bootstrap.min.css">
+
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2018-03-21-multi-variable.html">the corresponding PyTorch tutorials.</a></div>
 
 # Multi Variable Regression
 

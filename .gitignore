@@ -1,8 +1,11 @@
 books/tensorflow/book/
+books/pytorch/book/
 books/pl/book/
 _posts/tensorflow/
+_posts/pytorch/
 _posts/pl/
 _drafts/tensorflow/
+_drafts/pytorch/
 _drafts/pl/
 
 # Ignore docs files

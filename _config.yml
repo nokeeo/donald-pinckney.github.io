@@ -44,6 +44,7 @@ plugins_dir: [jekyll-sitemap, jekyll-seo-tag, _plugins]
 subscription_issues:
   TensorFlow: https://github.com/donald-pinckney/donald-pinckney.github.io/issues/18
   Metal: https://github.com/donald-pinckney/donald-pinckney.github.io/issues/17
+  PyTorch: https://github.com/donald-pinckney/donald-pinckney.github.io/issues/21
 
 markdown: Runnable
 
