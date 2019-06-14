@@ -8,4 +8,5 @@ if [ -d "../../mdBook/" ]; then
 fi
 
 ./build_book.sh tensorflow
+./build_book.sh pytorch
 # ./build_book.sh pl

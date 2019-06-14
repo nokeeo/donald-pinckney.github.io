@@ -84,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li><a href="ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="ch2-linreg/2018-11-15-feature-scaling.html"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li><a href="ch2-linreg/nonlinear.html"><strong aria-hidden="true">2.5.</strong> Nonlinear Regression</a></li><li><a href="ch2-linreg/regularization.html"><strong aria-hidden="true">2.6.</strong> Regularization</a></li><li><a href="ch2-linreg/evaluation.html"><strong aria-hidden="true">2.7.</strong> Evaluation</a></li><li><a href="ch2-linreg/mle.html"><strong aria-hidden="true">2.8.</strong> Bonus: Why we square errors</a></li><li class="spacer"></li></ol></li></ol>
+                <ol class="chapter"><li><a href="ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="ch1-setup/linux.html"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="ch2-linreg/2018-11-15-feature-scaling.html"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li class="spacer"></li></ol></li></ol>
                 <ol class="chapter">
                     <li><a href="/"><i class="fa fa-arrow-circle-left"></i> Home</a></li>
                 </ol>
@@ -154,7 +154,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="#introduction" id="introduction"><h1>Introduction</h1></a>
+                        <p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch1-setup/intro.html">the corresponding PyTorch tutorials.</a></div>
+<a class="header" href="#introduction" id="introduction"><h1>Introduction</h1></a>
 <p>Welcome to <em>Machine Learning with TensorFlow</em>, an easy to follow guide / blog about understanding machine learning concepts and their implementation in <a href="https://www.python.org">Python</a> and <a href="https://www.tensorflow.org">TensorFlow</a>. My goal is to create an intuitive explanation of machine learning methods, paired with practical knowledge of implementation with TensorFlow. This guide does assume some small working knowledge of programming, but Python specific syntax will be briefly introduced as needed.  In addition, some mathematics background will be useful, in particular linear algebra and calculus, but is not needed to follow the intuition and implementation. Resources to review relevant math concepts will be provided as required. Finally, this guide is <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/tree/src/books/tensorflow/src">open source on GitHub</a>, and I would be happy to consider edits, both tiny and large. Feel free to open pull requests with changes to improve this guide!</p>
 <a class="header" href="#what-exactly-is-machine-learning" id="what-exactly-is-machine-learning"><h2>What exactly is machine learning?</h2></a>
 <p>Though the exact definition of machine learning is up for debate, we can roughly define machine learning as &quot;a field of computer science that gives computers the ability to learn without being explicitly programmed&quot; (Wikipedia). Traditionally, programming has been used to great effect to solve problems which have explicit steps. For example, consider the problem of determining if a number \(n\) is prime. We can easily determine if \(n\) is prime using fairly simple steps: check if \(n\) is divisible by \(2\), check if \(n\) is divisible by \(3\), \(\cdots\), check if \(n\) is divisible by \(n-1\). If \(n\) is divisible by any of these, then \(n\) is not prime, and otherwise it is prime. With traditional programming we then need to write these specific steps (an <strong>algorithm</strong>) in a programming language that our computer can interpret, and we have a working program which can classify numbers as prime much faster than a human ever could.</p>
@@ -175,6 +177,8 @@
 <a class="header" href="#so-what-is-tensorflow-and-why-do-we-need-it" id="so-what-is-tensorflow-and-why-do-we-need-it"><h2>So, what is TensorFlow, and why do we need it?</h2></a>
 <p>Without diving into the details of various machine learning methods, I'll generally state that there <em>could</em> be a fairly significant amount of math involved. Not necessarily super difficult math, but some pretty cumbersome math. Roughly, TensorFlow takes care of the calculus grunt work for us: instead of spending a ton of time finding messy derivatives and many lines of code to compute them, TensorFlow lets us focus on the fairly elegant work of defining our machine learning methods, and the more important math necessary to obtain intuition.</p>
 <p>So, without further ado, we can get started by installing Python, TensorFlow, and a few other useful tools. Just follow the appropriate directions for your operating system.</p>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch1-setup/intro.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#macos-setup" id="macos-setup"><h1>macOS Setup</h1></a>
 <p>Without a doubt, Python 3 is the future of Python, and thus we will use Python 3 with TensorFlow. While I summarize the instructions to install TensorFlow with Python 3 here, the <a href="https://www.tensorflow.org/install/install_mac">official TensorFlow documentation</a> should always provide up-to-date and comprehensive instructions for installation as well. If you run into any installation problems, please file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,TensorFlow">here</a>.</p>
 <a class="header" href="#installing-python-3" id="installing-python-3"><h2>Installing Python 3</h2></a>
@@ -251,6 +255,8 @@ print(sess.run(hello))
 <p>If the above test produces errors, please see this list of <a href="https://www.tensorflow.org/install/install_mac#common_installation_problems">common TensorFlow installation problems</a> or Google it, and file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,Duplicate&amp;title=Installation%20error%20on%20macOS">here</a>.</p>
 <a class="header" href="#optional-installing-an-ide" id="optional-installing-an-ide"><h2>Optional: Installing an IDE</h2></a>
 <p>At this point, everything we need for writing TensorFlow code is installed. We can write our Python code in a text editor of our choice, and run it using <code>python</code> from terminal. In the future I won't assume use of an IDE specifically, but rather assume that you can create new Python files and run them, either from terminal or an IDE. However, some people may prefer using an IDE, which can reduce the time spent in Terminal, and help provide better syntax and semantic checking of Python code. Personally, I use and recommend PyCharm, which you can download for free <a href="https://www.jetbrains.com/pycharm/download/#section=mac">here</a>. I won't provide specific installation instructions, but I found it very easy to install and configure to use the <code>~/tensorflow</code> virtualenv.</p>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch1-setup/intro.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#linux-ubuntu-setup" id="linux-ubuntu-setup"><h1>Linux (Ubuntu) Setup</h1></a>
 <p>Without a doubt, Python 3 is the future of Python, and thus we will use Python 3 with TensorFlow. While I summarize the instructions to install TensorFlow with Python 3 here, the <a href="https://www.tensorflow.org/install/install_linux">official TensorFlow documentation</a> should always provide up-to-date and comprehensive instructions for installation as well. If you run into any installation problems, please file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,TensorFlow">here</a>. Note that Ubuntu is the only officially supported Linux distribution for TensorFlow, but with a bit of effort TensorFlow can likely be installed on other distributions as well.</p>
 <a class="header" href="#optional-install-gpu-support" id="optional-install-gpu-support"><h2>Optional: Install GPU Support</h2></a>
@@ -307,11 +313,15 @@ print(sess.run(hello))
 <p>If the above test produces errors, please see this list of <a href="https://www.tensorflow.org/install/install_linux#common_installation_problems">common TensorFlow installation problems</a> or Google it, and file a bug <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/issues/new?labels=Installation%20problem,Duplicate&amp;title=Installation%20error%20on%20Linux">here</a>.</p>
 <a class="header" href="#optional-installing-an-ide-1" id="optional-installing-an-ide-1"><h2>Optional: Installing an IDE</h2></a>
 <p>At this point, everything we need for writing TensorFlow code is installed. We can write our Python code in a text editor of our choice, and run it using <code>python</code> from terminal. In the future I won't assume use of an IDE specifically, but rather assume that you can create new Python files and run them, either from terminal or an IDE. However, some people may prefer using an IDE, which can reduce the time spent in terminal, and help provide better syntax and semantic checking of Python code. Personally, I use and recommend PyCharm, which you can download for free <a href="https://www.jetbrains.com/pycharm/download/#section=linux">here</a>. I won't provide specific installation instructions, but I found it very easy to install and configure to use the <code>~/tensorflow</code> virtualenv.</p>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch1-setup/intro.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#windows-setup" id="windows-setup"><h1>Windows Setup</h1></a>
 <p>To be blunt, I only use macOS and Linux, and I have no experience installing TensorFlow or even Python on Windows. Instead, I will simply direct you to the <a href="https://www.tensorflow.org/install/install_windows">official documentation for TensorFlow on Windows</a>.</p>
 <p>When installing Python, please ensure that you use Python 3, rather than Python 2. Also, install the Python packages <a href="https://www.numpy.org">NumPy</a>, <a href="https://pandas.pydata.org">Pandas</a> and <a href="https://matplotlib.org">matplotlib</a> in addition to TensorFlow.</p>
 <a class="header" href="#optional-installing-an-ide-2" id="optional-installing-an-ide-2"><h2>Optional: Installing an IDE</h2></a>
 <p>At this point, everything we need for writing TensorFlow code in installed. We can write our Python code in a text editor of our choice, and run it using <code>python</code> from terminal. In the future I won't assume use of an IDE specifically, but rather assume that you can create new Python files and run them, either from terminal or an IDE. However, some people may prefer using an IDE, which can reduce the time spent in terminal, and help provide better syntax and semantic checking of Python code. Personally, I use and recommend PyCharm, which you can download for free <a href="https://www.jetbrains.com/pycharm/download/#section=windows">here</a>. I won't provide specific installation instructions, but I found it very easy to install and configure.</p>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/intro.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#linear-regression" id="linear-regression"><h1>Linear Regression</h1></a>
 <p>Roughly, there are two categories of machine learning:</p>
 <ol>
@@ -332,6 +342,8 @@ print(sess.run(hello))
 <tr><td align="center"><img src="ch2-linreg//books/tensorflow/book/ch2-linreg/assets/regression.png" alt="Regression Image" />  </td><td align="center"> <img src="ch2-linreg//books/tensorflow/book/ch2-linreg/assets/classification.png" alt="Classification Image" /></td></tr>
 </tbody></table>
 <p>In this chapter we look at regression only, and specifically the simplest form: linear regression. We start with the most basic form of linear regression (single variable linear regression), and then move on to consider variants of linear regression. Using these variants we can obtain models that are both fairly simple and powerful.</p>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2017-12-03-single-variable.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#single-variable-regression" id="single-variable-regression"><h1>Single Variable Regression</h1></a>
 <p>Since this is the very first tutorial in this guide and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow <a href="ch2-linreg/#implementation">implementation</a>.</p>
 <a class="header" href="#motivation" id="motivation"><h2>Motivation</h2></a>
@@ -679,6 +691,8 @@ plt.show()
 <div class="footnote-definition" id="fn1"><sup class="footnote-definition-label">1</sup>
 <p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="https://wonder.cdc.gov/ucd-icd10.html">https://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM.</p>
 </div>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2017-12-27-optimization.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#exploring-optimization-convergence" id="exploring-optimization-convergence"><h1>Exploring Optimization Convergence</h1></a>
 <p>In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn't introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this guide and just about any machine learning you do.</p>
 <p>To explore optimization we are going to exactly copy the code from the previous chapter, and experiment with it. To review, let's look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):</p>
@@ -956,6 +970,8 @@ for t in range(NUM_ITERS):
     summary_writer.add_summary(summary, t)
     # print(&quot;t = %g, loss = %g, a = %g, b = %g&quot; % (t, current_loss, current_a, current_b))
 </code></pre>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2018-03-21-multi-variable.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#multi-variable-regression" id="multi-variable-regression"><h1>Multi Variable Regression</h1></a>
 <p>In <a href="ch2-linreg//books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html">chapter 2.1</a> we learned the basics of TensorFlow by creating a single variable linear regression model. In this chapter we expand this model to handle multiple variables. Note that less time will be spent explaining the basics of TensorFlow: only new concepts will be explained, so feel free to refer to previous chapters as needed.</p>
 <a class="header" href="#motivation-1" id="motivation-1"><h2>Motivation</h2></a>
@@ -1234,6 +1250,8 @@ MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2018-11-15-feature-scaling.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#feature-scaling" id="feature-scaling"><h1>Feature Scaling</h1></a>
 <p>In chapters <a href="ch2-linreg//books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html">2.1</a>, <a href="ch2-linreg//books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html">2.2</a>, <a href="ch2-linreg//books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html">2.3</a> we used the gradient descent algorithm (or variants of) to minimize a loss function, and thus achieve a line of best fit. However, it turns out that the optimization in chapter 2.3 was much, much slower than it needed to be. While this isn’t a big problem for these fairly simple linear regression models that we can train in seconds anyways, this inefficiency becomes a much more drastic problem when dealing with large data sets and models.</p>
 <a class="header" href="#example-of-the-problem" id="example-of-the-problem"><h2>Example of the Problem</h2></a>
@@ -1497,30 +1515,6 @@ for t in range(2000):
     print(&quot;t = %g, loss = %g, A = %s, b = %g&quot; % (t, current_loss, str(current_A), current_b))
 
 </code></pre>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-<a class="header" href="#nonlinear-regression-content-coming-soon" id="nonlinear-regression-content-coming-soon"><h1>Nonlinear Regression: content coming soon!</h1></a>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-<a class="header" href="#regularization-content-coming-soon" id="regularization-content-coming-soon"><h1>Regularization: content coming soon!</h1></a>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-<a class="header" href="#evaluation-content-coming-soon" id="evaluation-content-coming-soon"><h1>Evaluation: content coming soon!</h1></a>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
-<a class="header" href="#why-we-square-errors-content-coming-soon" id="why-we-square-errors-content-coming-soon"><h1>Why we square errors: content coming soon!</h1></a>
 
                     </main>
 

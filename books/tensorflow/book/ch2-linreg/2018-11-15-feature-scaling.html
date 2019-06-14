@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li><a href="../ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="../ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="../ch1-setup/linux.html"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="../ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="../ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="../ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="../ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="../ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="../ch2-linreg/2018-11-15-feature-scaling.html" class="active"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li><a href="../ch2-linreg/nonlinear.html"><strong aria-hidden="true">2.5.</strong> Nonlinear Regression</a></li><li><a href="../ch2-linreg/regularization.html"><strong aria-hidden="true">2.6.</strong> Regularization</a></li><li><a href="../ch2-linreg/evaluation.html"><strong aria-hidden="true">2.7.</strong> Evaluation</a></li><li><a href="../ch2-linreg/mle.html"><strong aria-hidden="true">2.8.</strong> Bonus: Why we square errors</a></li><li class="spacer"></li></ol></li></ol>
+                <ol class="chapter"><li><a href="../ch1-setup/intro.html"><strong aria-hidden="true">1.</strong> Introduction and Setup</a></li><li><ol class="section"><li><a href="../ch1-setup/mac.html"><strong aria-hidden="true">1.1.</strong> macOS Setup</a></li><li><a href="../ch1-setup/linux.html"><strong aria-hidden="true">1.2.</strong> Linux Setup</a></li><li><a href="../ch1-setup/windows.html"><strong aria-hidden="true">1.3.</strong> Windows Setup</a></li></ol></li><li><a href="../ch2-linreg/intro.html"><strong aria-hidden="true">2.</strong> Linear Regression</a></li><li><ol class="section"><li><a href="../ch2-linreg/2017-12-03-single-variable.html"><strong aria-hidden="true">2.1.</strong> Single Variable Regression</a></li><li><a href="../ch2-linreg/2017-12-27-optimization.html"><strong aria-hidden="true">2.2.</strong> Optimization Convergence</a></li><li><a href="../ch2-linreg/2018-03-21-multi-variable.html"><strong aria-hidden="true">2.3.</strong> Multi Variable Regression</a></li><li><a href="../ch2-linreg/2018-11-15-feature-scaling.html" class="active"><strong aria-hidden="true">2.4.</strong> Feature Scaling</a></li><li class="spacer"></li></ol></li></ol>
                 <ol class="chapter">
                     <li><a href="/"><i class="fa fa-arrow-circle-left"></i> Home</a></li>
                 </ol>
@@ -157,6 +157,8 @@ MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
+<p><link rel="stylesheet" href="/public/css/bootstrap.min.css"></p>
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2018-11-15-feature-scaling.html">the corresponding PyTorch tutorials.</a></div>
 <a class="header" href="#feature-scaling" id="feature-scaling"><h1>Feature Scaling</h1></a>
 <p>In chapters <a href="/books/tensorflow/book/ch2-linreg/2017-12-03-single-variable.html">2.1</a>, <a href="/books/tensorflow/book/ch2-linreg/2017-12-27-optimization.html">2.2</a>, <a href="/books/tensorflow/book/ch2-linreg/2018-03-21-multi-variable.html">2.3</a> we used the gradient descent algorithm (or variants of) to minimize a loss function, and thus achieve a line of best fit. However, it turns out that the optimization in chapter 2.3 was much, much slower than it needed to be. While this isn’t a big problem for these fairly simple linear regression models that we can train in seconds anyways, this inefficiency becomes a much more drastic problem when dealing with large data sets and models.</p>
 <a class="header" href="#example-of-the-problem" id="example-of-the-problem"><h2>Example of the Problem</h2></a>
@@ -432,10 +434,6 @@ for t in range(2000):
                         
 
                         
-                            <a rel="next" href="../ch2-linreg/nonlinear.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        
 
                         <div style="clear: both"></div>
                     </nav>
@@ -449,10 +447,6 @@ for t in range(2000):
                     </a>
                 
 
-                
-                    <a href="../ch2-linreg/nonlinear.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
                 
             </nav>
 

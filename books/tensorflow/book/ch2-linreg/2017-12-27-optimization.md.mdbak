@@ -165,6 +165,46 @@
           
         
           
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+        
+          
+            
+          
+        
+          
+            
+          
         
           
             
@@ -238,7 +278,7 @@
 
         <a class="horizontal-item sidebar-nav-item active" href="/blog/">Blog Posts</a>
 
-        <a class="horizontal-item sidebar-nav-item" href="/books/tensorflow/book/ch1-setup/intro.html">TensorFlow Guide</a>
+        <a class="horizontal-item sidebar-nav-item" href="/books/pytorch/book/ch1-setup/intro.html">PyTorch Guide</a>
 
         <div class="horizontal-item">
         </div>
@@ -247,6 +287,26 @@
       <hr />
 
       <div class="horizontal-block">
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
         
           
         
@@ -378,6 +438,10 @@
   });
 </script>
 
+
+<link rel="stylesheet" href="/public/css/bootstrap.min.css">
+
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2017-12-27-optimization.html">the corresponding PyTorch tutorials.</a></div>
 
 # Exploring Optimization Convergence
 

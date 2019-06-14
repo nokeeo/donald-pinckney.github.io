@@ -10,8 +10,4 @@
     - [Optimization Convergence](ch2-linreg/2017-12-27-optimization.md)
     - [Multi Variable Regression](ch2-linreg/2018-03-21-multi-variable.md)
     - [Feature Scaling](ch2-linreg/2018-11-15-feature-scaling.md)
-    - [Nonlinear Regression](ch2-linreg/nonlinear.md)
-    - [Regularization](ch2-linreg/regularization.md)
-    - [Evaluation](ch2-linreg/evaluation.md)
-    - [Bonus: Why we square errors](ch2-linreg/mle.md)
 ---
