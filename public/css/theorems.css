@@ -1,0 +1,65 @@
+/* .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+}
+
+.center-full {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+} */
+
+/* .hide {
+    display: none;
+ } */
+
+ .theorem {
+    display: block;
+    font-style: italic;
+    margin-bottom: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+.theorem:before {
+    content: "Theorem. ";
+    font-weight: bold;
+    font-style: normal;
+}
+.theorem[text]:before {
+    content: "Theorem (" attr(text) "). ";
+}
+
+.lemma {
+    display: block;
+    font-style: italic;
+    margin-bottom: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
+}
+.lemma:before {
+    content: "Lemma. ";
+    font-weight: bold;
+    font-style: normal;
+}
+.lemma[text]:before {
+    content: "Lemma (" attr(text) "). ";
+}
+
+.proof {
+    display: block;
+    margin-bottom: 1em;
+    /* font-style: italic; */
+}
+.proof:before {
+    content: "Proof. ";
+    /* font-weight: bold; */
+    font-style: italic;
+}
+.proof:after {
+    content: "\220e";
+}
