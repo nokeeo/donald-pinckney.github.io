@@ -4,7 +4,7 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2019-06-13T18:15:35-07:00</updated>
+ <updated>2019-06-24T20:45:55-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
@@ -3260,8 +3260,9 @@ rm &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; /tmp/tensorflow/single_var_
 
 &lt;span class=&quot;n&quot;&gt;writer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&quot;using-tensorboard&quot;&gt;Using TensorBoard&lt;/h3&gt;
-&lt;p&gt;With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to &lt;code&gt;runs/{log_name}&lt;/code&gt; (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight shell&quot;&gt;&lt;code&gt;tensorboard &lt;span class=&quot;nt&quot;&gt;--logdir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;runs/
+&lt;p&gt;With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to &lt;code&gt;runs/{log_name}&lt;/code&gt; (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal in the same directory as you run your Python code from:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight shell&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Make sure you cd first to the directory that contains runs/ (probably where you .py file is)&lt;/span&gt;
+tensorboard &lt;span class=&quot;nt&quot;&gt;--logdir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;runs/
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Once you run that command, go to &lt;a href=&quot;http://localhost:6006&quot;&gt;http://localhost:6006&lt;/a&gt; in your web browser, and you should see plots of &lt;code&gt;L&lt;/code&gt;, &lt;code&gt;a&lt;/code&gt;, and &lt;code&gt;b&lt;/code&gt; as the training progressed. With the hyperparameter choices from above, the plots should look like:&lt;/p&gt;
 

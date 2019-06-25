@@ -631,9 +631,10 @@ writer.close()
 
 ### Using TensorBoard
 
-With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to `runs/{log_name}` (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal:
+With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to `runs/{log_name}` (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal in the same directory as you run your Python code from:
 
 ```bash
+# Make sure you cd first to the directory that contains runs/ (probably where you .py file is)
 tensorboard --logdir=runs/
 ```
 

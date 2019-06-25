@@ -313,8 +313,9 @@ for t in range(NUM_ITERS):
 writer.close()
 </code></pre>
 <a class="header" href="#using-tensorboard" id="using-tensorboard"><h3>Using TensorBoard</h3></a>
-<p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code>runs/{log_name}</code> (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal:</p>
-<pre><code class="language-bash">tensorboard --logdir=runs/
+<p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code>runs/{log_name}</code> (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal in the same directory as you run your Python code from:</p>
+<pre><code class="language-bash"># Make sure you cd first to the directory that contains runs/ (probably where you .py file is)
+tensorboard --logdir=runs/
 </code></pre>
 <p>Once you run that command, go to <a href="http://localhost:6006">http://localhost:6006</a> in your web browser, and you should see plots of <code>L</code>, <code>a</code>, and <code>b</code> as the training progressed. With the hyperparameter choices from above, the plots should look like:</p>
 <p><img src="/books/pytorch/book/ch2-linreg/assets/tensorboard_1.png" alt="TensorBoard 1" /></p>

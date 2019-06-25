@@ -603,8 +603,9 @@
 
 <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div><h3 id="using-tensorboard-3">Using TensorBoard</h3>
-<p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code>runs/{log_name}</code> (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal:</p>
-<div class="highlight"><pre class="highlight shell"><code>tensorboard <span class="nt">--logdir</span><span class="o">=</span>runs/
+<p>With the Python code prepared, we can now run it and use TensorBoard to visualize the training. First, run the Python code as usual, using Terminal, or your IDE. This will write logs to <code>runs/{log_name}</code> (relative to the directory from where you run the code). Now, we can open this up with TensorBoard, by running this command in Terminal in the same directory as you run your Python code from:</p>
+<div class="highlight"><pre class="highlight shell"><code><span class="c"># Make sure you cd first to the directory that contains runs/ (probably where you .py file is)</span>
+tensorboard <span class="nt">--logdir</span><span class="o">=</span>runs/
 </code></pre></div>
 <p>Once you run that command, go to <a href="http://localhost:6006">http://localhost:6006</a> in your web browser, and you should see plots of <code>L</code>, <code>a</code>, and <code>b</code> as the training progressed. With the hyperparameter choices from above, the plots should look like:</p>
 
