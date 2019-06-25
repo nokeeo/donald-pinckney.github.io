@@ -6,6 +6,7 @@ categories: TensorFlow
 isEditable: true
 editPath: books/tensorflow/src/ch2-linreg/2018-11-15-feature-scaling.md
 subscribeName: TensorFlow
+hidden: true
 ---
 
 <script type="text/x-mathjax-config">
@@ -13,6 +14,10 @@ MathJax.Hub.Config({
   TeX: { equationNumbers: { autoNumber: "AMS" } }
 });
 </script>
+
+<link rel="stylesheet" href="/public/css/bootstrap.min.css">
+
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/2018-11-15-feature-scaling.html">the corresponding PyTorch tutorials.</a></div>
 
 # Feature Scaling
 

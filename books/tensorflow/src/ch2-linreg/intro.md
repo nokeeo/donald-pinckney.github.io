@@ -8,9 +8,14 @@ editPath: books/tensorflow/src/ch2-linreg/intro.md
 published: false
 ---
 
+<link rel="stylesheet" href="/public/css/bootstrap.min.css">
+
+<div class="alert alert-danger" role="alert">Warning: The TensorFlow tutorials are now deprecated and will not be updated. Please see <a href="/books/pytorch/book/ch2-linreg/intro.html">the corresponding PyTorch tutorials.</a></div>
+
 # Linear Regression
 
 Roughly, there are two categories of machine learning:
+
 1. In **supervised learning** one already has access to a data set of example inputs and desired outputs, and teaches the computer to produce the desired outputs given the example inputs.
 2. In **unsupervised learning** one only has access to a data set: there is not necessarily any notion of "input" and "output". The goal is to teach the computer to autonomously discover underlying patterns in the data set.
 
@@ -21,6 +26,7 @@ Supervised Learning              |  Unsupervised Learning
 ![Regression Image][regression]  | ![Clustering Image][clustering]
 
 Unsupervised machine learning will be touched on later, but for now we focus on supervised machine learning: in general it is easier, and the objective is clearer.  Specifically, there are two main types of supervised learning:
+
 1. **Regression** aims to predict a continuous output, given the inputs.
 2. **Classification** aims to predict a classification, given the inputs.
 

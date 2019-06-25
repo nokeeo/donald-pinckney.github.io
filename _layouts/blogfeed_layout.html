@@ -8,6 +8,8 @@ layout: default
 
 <div class="posts">
   {% for post in paginator.posts %}
+
+  {% if post.hidden != "true" %}
   <div class="post">
     <h1 class="post-title">
       <a href="{{ post.url }}" class="titular">
@@ -36,6 +38,8 @@ layout: default
     {% endif %}
 
   </div>
+
+  {% endif %}
   {% endfor %}
 </div>
 
