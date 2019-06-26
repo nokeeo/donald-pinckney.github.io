@@ -222,7 +222,7 @@ Congratulations! You have written some pretty interesting Idris code to implemen
 
 # Complete Code
 
-The [complete code is available on GitHub](), as well as directly here:
+The [complete code is available on GitHub](https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/public/post_assets/idris/idris-intro/OTP.idr), as well as directly here:
 
 ```idris,editable,path=OTP_sol.idr,slice=0
 module OTP
