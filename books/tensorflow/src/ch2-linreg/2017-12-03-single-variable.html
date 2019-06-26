@@ -272,6 +272,10 @@
           
         
           
+            
+          
+        
+          
         
           
         
@@ -287,6 +291,8 @@
       <hr />
 
       <div class="horizontal-block">
+        
+          
         
           
         
@@ -754,7 +760,7 @@ But estimates – created from public health surveys and population models – s
 <li>Run single variable linear regression on a data set of your choice. You can look at <a href="https://donaldpinckney.com/ml.html#regression">my list of regression data sets</a> for ideas, you can search <a href="https://www.kaggle.com/datasets">Kaggle</a>, or you can search online, such as I did for the homicide data set. Many data sets might have multiple input variables, and right now you only know how to do single variable linear regression. We will deal with multiple variables soon, but for now you can always use only 1 of the input variables and ignore the rest.</li>
 <li>Experiment with altering the loss function, and observe the effects on the trained model. For example, you could change \((y&#39; - y)^2\) to \(\mid y&#39; - y \mid \) (use <code>tf.abs(...)</code>), or really anything you can think of.</li>
 </ol>
-<h1 id="complete-code-8">Complete Code</h1>
+<h1 id="complete-code-9">Complete Code</h1>
 <p>The <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/single_var_reg.py">complete example code is available on GitHub</a>, as well as directly here:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>

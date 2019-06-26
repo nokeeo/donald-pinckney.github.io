@@ -272,6 +272,10 @@
           
         
           
+            
+          
+        
+          
         
           
         
@@ -287,6 +291,8 @@
       <hr />
 
       <div class="horizontal-block">
+        
+          
         
           
         
@@ -672,7 +678,7 @@ rm <span class="nt">-rf</span> /tmp/tensorflow/single_var_reg/5e-05,<span class=
 <span class="n">y_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">653.0</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span>
 </code></pre></div>
 <p>On your own, add this code and see if you can achieve convergence using only gradient descent. You can also see how quickly you can achieve convergence using a more advanced algorithm such as Adam.</p>
-<h1 id="complete-code-10">Complete Code</h1>
+<h1 id="complete-code-11">Complete Code</h1>
 <p>The complete code including TensorBoard summaries, and using Adagrad is <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/books/tensorflow/src/ch2-linreg/code/single_var_reg_optim.py">available on GitHub</a> and directly below. Note that this code lacks the plotting of the data and the linear regression line:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>

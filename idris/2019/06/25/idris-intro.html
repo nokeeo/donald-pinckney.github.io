@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <!-- <link href="https://gmpg.org/xfn/11" rel="profile"> -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/hyde.css">
+  <link rel="stylesheet" href="/public/fonts/abril_pt.css">
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface"> -->
+
+  
+  <link href="/public/book_deps/fonts/SourceCodePro/source-code-pro.css" rel="stylesheet" type="text/css">
+
+  <!-- Highlight.js Stylesheets -->
+  <link rel="stylesheet" href="/public/book_deps/css/highlight.css">
+  
+
+
+  <!-- CMU Fonts -->
+  <style type="text/css">
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunss.otf');
+    }
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunsx.otf');
+      font-weight: bold;
+    }
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunsi.otf');
+      font-style: italic, oblique;
+    }
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('/public/fonts/cmunbxo.otf');
+      font-weight: bold;
+      font-style: italic, oblique;
+    }
+    @font-face {
+      font-family: "Classical Computer Modern";
+      src: url('/public/fonts/cmunci.otf');
+      /* font-style: italic, oblique; */
+    }
+  </style>
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- <link rel="stylesheet" href="/public/book_deps/FontAwesome/css/font-awesome.css"> -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <!-- MathJax -->
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'></script> -->
+  <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML'></script> -->
+  <!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
+      MathJax.Hub.Insert(MathJax.InputJax.TeX.Definitions.macros,{
+        cancel: ["Extension","cancel"],
+        bcancel: ["Extension","cancel"],
+        xcancel: ["Extension","cancel"],
+        cancelto: ["Extension","cancel"]
+      });
+    });
+  </script> -->
+
+  <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+
+  <!-- jQuery -->
+  <script src="/public/js/jquery.js"></script>
+
+  <!-- TOC -->
+  <script src="/public/js/toc.js"></script>
+
+  <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>An Interactive Introduction to Dependent Types with Idris | Donald Pinckney</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="An Interactive Introduction to Dependent Types with Idris" />
+<meta name="author" content="Donald Pinckney" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="1st year programming languages PhD student at UMass Amherst." />
+<meta property="og:description" content="1st year programming languages PhD student at UMass Amherst." />
+<link rel="canonical" href="https://donaldpinckney.com/idris/2019/06/25/idris-intro.html" />
+<meta property="og:url" content="https://donaldpinckney.com/idris/2019/06/25/idris-intro.html" />
+<meta property="og:site_name" content="Donald Pinckney" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-06-25T00:00:00-07:00" />
+<script type="application/ld+json">
+{"description":"1st year programming languages PhD student at UMass Amherst.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/idris/2019/06/25/idris-intro.html","headline":"An Interactive Introduction to Dependent Types with Idris","dateModified":"2019-06-25T00:00:00-07:00","datePublished":"2019-06-25T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/idris/2019/06/25/idris-intro.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+</head>
+
+
+  <body class="theme-base-0b">
+
+    <div class="sidebar">
+  <div class="container">
+    <div class="sidebar-about">
+      <h1>
+        <a href="/">
+          Donald Pinckney
+        </a>
+      </h1>
+      <p class="lead">1st year programming languages PhD student at UMass Amherst.</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="horizontal-block">
+        <div class="horizontal-item">
+        </div>
+        
+        
+
+        <a class="horizontal-item sidebar-nav-item" href="/">Home</a>
+
+        
+
+        
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+            
+              
+              <a class="horizontal-item sidebar-nav-item " href="/publications.html">Publications</a>
+            
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+        
+          
+            
+          
+        
+          
+            
+          
+        
+          
+        
+          
+        
+
+        <a class="horizontal-item sidebar-nav-item active" href="/blog/">Blog Posts</a>
+
+        <a class="horizontal-item sidebar-nav-item" href="/books/pytorch/book/ch1-setup/intro.html">PyTorch Guide</a>
+
+        <div class="horizontal-item">
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="horizontal-block">
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+
+
+        <a href="https://github.com/donald-pinckney" class="sidebar-nav-item horizontal-item social" target="_blank">
+          <i class="fa fa-github"></i><span class="only-desktop"> donald-pinckney</span>
+        </a>
+        <a href="https://twitter.com/donald_pinckney" class="sidebar-nav-item horizontal-item social" target="_blank">
+          <i class="fa fa-twitter"></i><span class="only-desktop">@donald_pinckney</span>
+        </a>
+        <a href="mailto:dpinckney@cs.umass.edu" class="sidebar-nav-item horizontal-item social" target="_blank">
+          <i class="fa fa-envelope"></i>&nbsp;<span class="only-desktop">dpinckney@cs.umass.edu</span>
+        </a>
+        <a href="/public/files/documents/resume.pdf" class="sidebar-nav-item horizontal-item social" target="_blank">
+            <i class="fa fa-file"></i>&nbsp;<span>Curriculum vitae</span>
+        </a>
+
+      </div>
+    </nav>
+
+    <div class="sidebar-footnote">
+      <p class="sidebar-footnote">
+        &copy; 2019 Donald Pinckney. All rights reserved.
+        <!-- <br />
+        The views and opinions expressed here are my own, and do not reflect the views of Apple, Inc. -->
+      </p>
+    </div>
+  </div>
+</div>
+
+
+    <div class="content container">
+      <div class="post">
+
+  
+    <h1 class="post-title titular">An Interactive Introduction to Dependent Types with Idris</h1>
+  
+  
+    <div class="floating-box-right">
+      
+
+
+      
+    </div> 
+
+  <span class="post-date">25 Jun 2019. Categories: 
+  <!-- <div class="post-categories"> -->
+  
+  
+  <a href="/categories/#Idris">Idris</a>
+  
+  
+<!-- </div> -->
+
+</span>
+
+
+
+<div id="toc"></div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // alert("READY");
+      $('#toc').toc();
+  });
+</script>
+
+
+<p><link rel="stylesheet" href="/public/css/theorems.css"></p>
+<h1 id="what-are-dependent-types">What are Dependent Types?</h1>
+<p>Type theory and programming languages research in recent decades has produced this incredibly interesting extension to ordinary types in programming languages called <strong>dependent types</strong>. Roughly speaking, dependent types let you <em>mathematically prove complex properties about your code</em>, and on top of that the computer will check that your proof is indeed correct. But the power of dependent types doesn&#39;t stop there: in addition to proving things about programs, dependent types also let you write fully-verified proofs about general mathematics. For example, in 2005 dependent types were used to formally prove the famous Four-Color Theorem<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>. While there are several systems available for programming with dependent types, I want to introduce dependent types in <a href="https://www.idris-lang.org">Idris</a>, as Idris offers theorem proving abilities via dependent types while also being a fairly nice language for writing programs, all while being quite accessible to learn.</p>
+
+<p>Idris is based strongly on Haskell, so learning Idris will also involve learning functional programming, if that is new to you. However, many of the topics that have accrued a reputation of being difficult to learn in Haskell (such as <a href="https://wiki.haskell.org/Monad_tutorials_timeline">monads</a>) are fairly orthogonal to the basics of functional programming and dependent types. If you have no experience with Haskell, I would highly recommend giving Idris a try: you might be pleasantly surprised, as I was.</p>
+<h1 id="how-to-interact-with-this-post">How to Interact with This Post</h1>
+<p>Most of the code for this post will actually be written by you, rather than just shown to you. The code blocks in this post are a fully interactive editor, including support for Idris. If you are just curious about Idris then <em>you don&#39;t need to install anything at all for this post, you can just edit directly in the code blocks here</em>. If you prefer to install Idris locally you can of course follow along by coding in the text editor of your choice (Idris has good plugins for Atom, Vim and Emacs). </p>
+<h1 id="idris-in-action-implementing-one-time-pad-otp-encryption">Idris in Action: Implementing One Time Pad (OTP) Encryption</h1>
+<p>Dependent types have a deep history and metatheory behind them, but I don&#39;t want to talk about that, rather I want to introduce functional programming and dependent types via a fairly simple application: implementing the One Time Pad (OTP) encryption scheme. If OTP is new to you, don&#39;t worry, it&#39;s pretty simple. We will work entirely with strings of bits. Suppose Alice and Bob both know a secret key \(K\), and Alice wants to send a message \(M\) to Bob, such that if the message is intercepted, it can not be read.</p>
+
+<p>Alice does this by encrypting \(M\) by computing the so-called cipher text to be: \(C = M \oplus K\), that is, Alice takes each bit of \(M\) and XORs it with each bit of \(K\). Then Alice transmits this cipher text to Bob. When Bob receives the cipher text \(C\) he decrypts it by XORing again with the key: \(C \oplus K = (M \oplus K) \oplus K = M\):</p>
+
+<p>\[
+    Alice \xrightarrow{\;\;\;C = M \oplus K\;\;\;} Bob, \textrm{ decrypts by computing  } (M \oplus K) \oplus K = M
+\]</p>
+<h2 id="defining-bits-and-xor-in-idris-via-interactive-editing">Defining Bits and XOR in Idris via Interactive Editing</h2>
+<p>First, let&#39;s start with basic stuff: defining what bits even are, and how to compute XOR. We start a new Idris file <code>OTP.idr</code>, and define <code>Bit</code>:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="0"><code class="language-idris editable  path=OTP.idr slice=0">module OTP
+
+data Bit : Type where
+    ZeroBit : Bit
+    OneBit : Bit
+</code></pre></pre>
+<p>The <code>data</code> syntax is used to define a new <strong>type</strong>, in this case we call the new type <code>Bit</code>. After the <code>where</code> keyword we define the <strong>data constructors</strong>, which are the (only) ways in which a <code>Bit</code> can be created: a <code>Bit</code> can either be <code>ZeroBit</code> or <code>OneBit</code>. <code>Bit</code> is very much like an enumeration type in other languages, such as C or Java. </p>
+
+<p>Next let&#39;s try to define the XOR operation on bits. We define XOR as a function: it takes as input 2 Bits, and returns a Bit as output. Thus, we say that the XOR operation has the type <code>Bit -&gt; Bit -&gt; Bit</code>. We can write it down like so:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="1"><code class="language-idris editable  path=OTP.idr slice=1">xor : Bit -&gt; Bit -&gt; Bit
+</code></pre></pre>
+<p>Now we need to actually write the code that implements the <code>xor</code> function. We can have Idris create the body of the function for us by putting the cursor on <code>xor</code> above, and hitting <code>Ctrl-Alt-a</code>. You should see code appear which looks like <code>xor x y = ?xor_rhs</code>. This says that when the <code>xor</code> function is applied to arguments <code>x</code> and <code>y</code> (arbitrary Bits), then the value <code>?xor_rhs</code> is returned. The syntax <code>?xor_rhs</code> is called a <strong>hole</strong>: it stands in place for something that you still need to write. We can <strong>inspect</strong> this hole by putting the cursor on the hole, and hitting <code>Ctrl-Alt-t</code>. Idris shows us the variables <code>x</code> and <code>y</code> with type <code>Bit</code> above the line, and shows the hole below the line, with type <code>Bit</code> as well. This means that in the context of having variables <code>x</code> and <code>y</code> of type <code>Bit</code>, to fill in the hole <code>?xor_rhs</code> we need to produce something of type <code>Bit</code>.</p>
+
+<p>The Bit we want to return depends on what <code>x</code> and <code>y</code> are exactly. In most programming languages you would now use an if statement to test if <code>x</code> is <code>ZeroBit</code> or <code>OneBit</code>, etc. While Idris does have if statements, a much more powerful way to proceed is with <strong>case splitting</strong>. Put your cursor on the <code>x</code> and hit <code>Ctrl-Alt-c</code>, and you should see Idris split the equation into 2 cases, one for when <code>x</code> is <code>ZeroBit</code> and one for when <code>x</code> is <code>OneBit</code>. For each of these cases <code>y</code> is still arbitrary, so repeat by case splitting on <code>y</code> twice (once on each of the <code>x</code> cases).</p>
+
+<p>At this point you should see 4 different cases, each of which look like <code>xor ZeroBit ZeroBit = ?xor_rhs_3</code> (for example). You can now complete the <code>xor</code> function by filling in the right hand side for each of the cases. For example, for this first case you should write <code>xor ZeroBit ZeroBit = ZeroBit</code>. Continue completing all the other cases.</p>
+<h2 id="defining-a-bit-vector">Defining a Bit Vector</h2>
+<p>Now that we have a basic Bit type and <code>xor</code> function implemented, let&#39;s move on to dealing with <strong>bit vectors</strong>, since ultimately we will want to do encryption over <strong>bit vectors</strong>, not just single bits. In most programming languages we could define an array or list of Bits, and then have a type such as <code>BitList</code>. But in Idris we can do something much more interesting, we can include the length of the bit vector in the type. In this case we would have many (infinitely many) distinct types, such as <code>BitVector 0</code>, <code>BitVector 1</code>, <code>BitVector 42</code>, etc. This is called a <strong>family of types</strong>, indexed by natural numbers. We can define such a BitVector like so:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="2"><code class="language-idris editable  path=OTP.idr slice=2">data BitVector : Nat -&gt; Type where
+    Nil : BitVector Z
+    Cons : Bit -&gt; BitVector n -&gt; BitVector (S n)
+%name BitVector xs, ys -- This is unimportant, just gives Idris hints for automatically making variable names.
+</code></pre></pre>
+<p>There is a lot going on here, so let&#39;s break it down. First, note that <code>BitVector</code> is defined as <code>Nat -&gt; Type</code>, that is, given a natural number such as <code>42</code>, a type is returned, namely the type <code>BitVector 42</code>. For the data constructors, we have 2, named <code>Nil</code> and <code>Cons</code>. What <code>Nil</code> represents is the empty list, i.e. the BitVector of length zero. Thus, <code>Nil</code> takes no arguments, and has type <code>BitVector Z</code> (<code>Z</code> is zero for natural numbers in Idris). Now, <code>Cons</code> is a bit more tricky. <code>Cons</code> represents taking a new <code>Bit</code> and attaching it to the front of an existing bit vector. When we do this we get a new bit vector whose length is one greater. Thus, <code>Cons</code> takes 2 arguments, a <code>Bit</code> and a bit vector of length <code>n</code>, for any arbitrary natural number <code>n</code>. The result of <code>Cons</code> is a bit vector of length <code>S n</code>, since <code>S n</code> is used to represent the natural number that is one greater than <code>n</code> (<code>Nat</code>, <code>Z</code> and <code>S</code> all come from the Idris standard library).</p>
+
+<p>This may be all a bit abstract, so let&#39;s look at some examples to see why the definition above actually is a list. We can just define some constants of various <code>BitVector</code> types:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="3"><code class="language-idris editable  path=OTP.idr slice=3">-- this represents the empty bit vector
+emptyBitVect : BitVector Z
+emptyBitVect = Nil
+
+
+-- this represents the bits 101
+aBitVect : BitVector 3
+aBitVect = Cons OneBit (Cons ZeroBit (Cons OneBit Nil))
+
+-- this represents the bits 110
+anotherBitVect : BitVector 3
+anotherBitVect = Cons OneBit (Cons OneBit (Cons ZeroBit Nil))
+</code></pre></pre>
+<p>Another way to put this is that the data of the bit vector is encoded in the structure of the expression, with the length of the list being the same as the number of nested <code>Cons</code>.</p>
+
+<p>Note that in term of programming, dependent types give us greater type safety compared to types in other statically typed languages, such as Java, Haskell, etc. as we can encode constraints such as lengths of lists in the types. For example, in the above definition you can change the declaration of <code>anotherBitVect</code> to have the type <code>BitVector 4</code> for example (but leave the definition as is), and then if you type-check the code by hitting <code>Ctrl-Alt-r</code>, Idris will report that the types do not match. Make sure you change it back before continuing.</p>
+<h2 id="defining-bitwise-xor-and-the-otp">Defining Bitwise XOR and the OTP</h2>
+<p>At this point we have bit vectors defined as well as the XOR operation on single bits. We now want to define a <em>bitwise</em> XOR operation, that is, we want to define a function <code>bitwiseXor</code> which given 2 bit vectors <code>xs</code> and <code>ys</code> computes a new bit vector which consists of each bit of <code>xs</code> XORed with each corresponding bit of <code>ys</code>. For example, we would expect <code>bitwiseXor aBitVect anotherBitVect = Cons ZeroBit (Cons OneBit (Cons OneBit Nil))</code>. </p>
+
+<p>Let&#39;s first discuss what the type of <code>bitwiseXor</code> should be. In a typical programming language such as Java you would write <code>bitwiseXor</code> to take as input 2 arrays of bits, and return a new array, such as <code>Bit[] bitwiseXor(Bit[] xs, Bit[] ys) { ... }</code>. But then you would have to include a guard to check that they have the same lengths, eg.:</p>
+<div class="highlight"><pre class="highlight java"><code><span class="n">Bit</span><span class="o">[]</span> <span class="nf">bitwiseXor</span><span class="o">(</span><span class="n">Bit</span><span class="o">[]</span> <span class="n">xs</span><span class="o">,</span> <span class="n">Bit</span><span class="o">[]</span> <span class="n">ys</span><span class="o">)</span> <span class="o">{</span> 
+    <span class="k">if</span><span class="o">(</span><span class="n">xs</span><span class="o">.</span><span class="na">length</span> <span class="o">!=</span> <span class="n">ys</span><span class="o">.</span><span class="na">length</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// return null, or throw exception, etc.</span>
+    <span class="o">}</span>
+    <span class="c1">// ...</span>
+</code></pre></div>
+<p>In the error case you need to do something rather untasteful such as returning null or throwing an exception, which code that calls this function would need to handle. Or, possibly you would forget to include the guard, potentially leading to bugs down the road. In either case, the original sin is calling <code>bitwiseXor</code> with differently sized lists, this should be invalid to do. Idris allows us to specify precisely this using <strong>dependent function types</strong>. Let&#39;s take a look at the type of <code>bitwiseXor</code>:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="4"><code class="language-idris editable  path=OTP.idr slice=4">bitwiseXor : (n : Nat) -&gt; BitVector n -&gt; BitVector n -&gt; BitVector n
+</code></pre></pre>
+<p>First, we add an additional <code>Nat</code> parameter to the front of the function. However, we can actually give the <em>name</em> <code>n</code> to this <code>Nat</code>. The key is that later parameters can refer to <code>n</code> in their types. We see exactly that: <code>bitwiseXor</code> then takes as parameters 2 bit vectors each of length <code>n</code>, and returns a new bit vector of the same length <code>n</code>. Since the 2 bit vector parameters refer to the same <code>n</code> in their types, it is impossible to call the function with bit vectors of equal length.</p>
+
+<p>Now we need to define <code>bitwiseXor</code>. As before start by putting your cursor on <code>bitwiseXor</code> and hitting <code>Ctrl-Alt-a</code>. Now there are 2 ways that a bit vector can be constructed, using either <code>Nil</code> or <code>Cons ...</code>. Thus, <code>xs</code> (and <code>ys</code>) should have 2 cases to consider. Case split (<code>Ctrl-alt-c</code>) on both <code>xs</code> and <code>ys</code>. You should end up with the following 2 cases:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="5"><code class="language-idris editable  path=OTP.idr slice=5">bitwiseXor Z [] [] = ?bitwiseXor_rhs_3
+bitwiseXor (S k) (Cons x xs) (Cons y ys) = ?bitwiseXor_rhs_1
+</code></pre></pre>
+<p>Note that this is different than what we might have expected. First, Idris automatically case split <code>n</code> when you case split <code>xs</code> (or <code>ys</code>). This is because of the dependent types above: if <code>xs</code> is <code>[]</code> (Idris uses <code>[]</code> and <code>Nil</code> interchangeably), then since <code>xs</code> has type <code>BitVector n</code> it must be that <code>n</code> is <code>Z</code>. Similarly, if <code>xs</code> is <code>Cons x xs</code> (the inner <code>xs</code> is a new bit vector with the same name, which unfortunately is a bit confusing) then it must be that the length is non-zero, i.e. the length must be of the form <code>S k</code>. Furthermore, Idris also dealt with the relationship between <code>xs</code> and <code>ys</code>: a priori one might expect there to be additional cases to consider, such as when <code>xs = []</code> and <code>ys = Cons y ys</code>, but Idris rules this out because the lengths must be equal.</p>
+
+<p>Finally we just need to fill in the holes. For the first hole, the two input bit vectors are both the empty bit vector, and you want to return an empty bit vector. So all you need to put there is <code>Nil</code> (or <code>[]</code>, same thing).  The 2nd case is more interesting and worth investigating. Inspect the hole (using <code>Ctrl-Alt-t</code>). This tells you that <code>x</code> and <code>y</code> are both <code>Bit</code>, and that the smaller sub-bit-vectors <code>xs</code> and <code>ys</code> have length <code>k</code>. Our goal is to produce a bit vector of length <code>S k</code>. We can produce a bit vector of length <code>S k</code>, by using <code>Cons</code> (as can be read from the type of <code>Cons</code> above). Try replacing the hole with <code>Cons ?head_hole ?tail_hole</code>, which now has 2 holes, one for each argument to <code>Cons</code>. Then, you can verify that this type-checks with <code>Ctrl-Alt-r</code> which means using <code>Cons</code> here is the right thing, we just need to fill in stuff for the holes.</p>
+
+<p>The first hole is easier so we wil start with this. The situation is we have 2 bit vectors of the form \([x, \cdots xs \cdots]\) and \([y, \cdots ys \cdots]\), and we want to compute the bitwise XOR. So our new bit vector should certainly have the form \([xor\;x\;y, \cdots zs \cdots]\). Thus we want <code>xor x y</code> for the <code>?head_hole</code>. For the <code>?tail_hole</code>, we can note that <code>xs</code> and <code>ys</code> are both bit vectors of the same length <code>k</code>, just one smaller than the original bit vectors. Thus, <code>bitwiseXor k xs ys</code> will be the bitwise XOR of <code>xs</code> and <code>ys</code>, so when combined with the answer for <code>?head_hole</code> it gives the desired solution. The final expression that you need to fill in for this case is thus <code>Cons (xor x y) (bitwiseXor k xs ys)</code>. If this style of functional programming recursion is new to you, this might not be totally natural. It can help to manually trace the execution of this function on example inputs such as on <code>aBitVect</code> and <code>anotherBitVect</code>.</p>
+
+<p>Finally, we can use <code>bitwiseXor</code> to very easily give definitions of the One Time Pad encryption / decryption:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="6"><code class="language-idris editable  path=OTP.idr slice=6">otpEncrypt : (n : Nat) -&gt; (message : BitVector n) -&gt; (key : BitVector n) -&gt; BitVector n
+otpEncrypt n message key = bitwiseXor n message key
+
+otpDecrypt : (n : Nat) -&gt; (cipherText : BitVector n) -&gt; (key : BitVector n) -&gt; BitVector n
+otpDecrypt n cipherText key = bitwiseXor n cipherText key
+</code></pre></pre>
+<p>Note that here I have named the parameters <code>message</code>, <code>key</code>, etc. even though they are not used in dependent types. This is perfectly fine and does nothing special, it can just be nice to have as a sort of documentation. However, you can&#39;t name the return type. Also, note that the encryption and decryption routines are actually the same, but for clarify it is nice to keep them separate (and it wouldn&#39;t be true with other ciphers).</p>
+<h2 id="proofs-using-dependent-types">Proofs Using Dependent Types</h2>
+<p>I started this post by remarking that dependent types are powerful enough to encode much (most, all??) of mathematics, and I hope to give a hint of that here. So far we have an implementation of the OTP cipher. However it is plausible that we could have a bug in our implementation. As a sanity check for out implementation, it should be the case that decrypting and encrypted message gives back the original message. Written as a mathematical theorem:</p>
+
+<div class="theorem">
+    For all natural numbers \(n\) and all bit vector messages \(m\) and keys \(k\) of length \(n\),
+    \[
+        otpDecrypt \; n \; (otpDecrypt \; n \; m \; k) \; k = m
+    \]
+</div>
+<h3 id="propositions-as-types">Propositions as Types</h3>
+<p>Using dependent function types in Idris we can <em>encode this theorem as a type</em>. To see how, we have to understand how to encode the equality in the above theorem. The equality above is very different from the equality when we define functions. For instance, the function definition <code>xor ZeroBit ZeroBit = ZeroBit</code> means that <code>xor ZeroBit ZeroBit</code><em>by definition</em> is the same as <code>ZeroBit</code>. This kind of equality is called <strong>definitional equality</strong>. However, the equality in the above theorem might or might not actually be true, thus we regard it as a <strong>proposition</strong>, a potential fact yet to be proven. For instance, if we have a bug in our above code, this proposition might not be true. This kind of equality is called <strong>propositional equality</strong>.</p>
+
+<p>In Idris we represent propositions as types, and we prove that a proposition is true by showing that there exists something of the type representing it. Such an element of the type is called <strong>evidence</strong>. Idris has a built-in type which represents <strong>propositional equality</strong>. Suppose <code>a</code> and <code>b</code> are both elements of the same type. Then <code>a = b</code> is a type representing the proposition that <code>a</code> and <code>b</code> are in fact equal. The only immediate way to create evidence of the propositional equality type is through the data constructor <code>Refl : a = a</code>, which produces an element of the type <code>a = a</code>. To make things more concrete, let&#39;s look at some examples:</p>
+
+<ol>
+<li><code>4 = 4</code> is a type, and <code>Refl : 4 = 4</code> is an element of that type (i.e. <code>Refl</code> is evidence of <code>4 = 4</code>).</li>
+<li><code>5 = 5</code> is a different type from <code>4 = 4</code>. We can again use <code>Refl : 5 = 5</code> to get evidence of it.</li>
+<li><code>4 = 5</code> is yet another type. Note that <code>4 = 5</code> is a perfectly valid type, but we can&#39;t use <code>Refl</code> to get evidence. We expect that it should be impossible to construct evidence of this type since it represents a false proposition.</li>
+<li>Suppose <code>n</code> and <code>m</code> are <code>Nat</code>s. Then <code>n + m = m + n</code> is a type. But since <code>n + m</code> and <code>m + n</code> aren&#39;t definitionally equal we can&#39;t immediately use <code>Refl</code> to construct evidence. Additional effort is needed since it is a more involved fact about addition.</li>
+</ol>
+
+<p>So in this case we have that if <code>n</code> is a <code>Nat</code>, and <code>m</code> and <code>k</code> both are of type <code>BitVector n</code> then <code>otpDecrypt n (otpEncrypt n m k) k = m</code> is a valid type representing the equality we want to prove. While we aren&#39;t quite ready to <em>prove</em> the above theorem, using the techniques just discussed we can at least give a statement of the theorem:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="7"><code class="language-idris editable  path=OTP.idr slice=7">total otpCorrect_TMP : (n : Nat) -&gt; (m : BitVector n) -&gt; (k : BitVector n) -&gt; otpDecrypt n (otpEncrypt n m k) k = m
+</code></pre></pre>
+<p>Intuitively, what the above function declaration says is that given an <code>n</code>, <code>m</code>, and <code>k</code> (of appropriate length), the function will return evidence that the desired equation is true. Giving an implementation of this function is equivalent to giving a proof of the theorem. We can&#39;t quite prove it yet, and when we do so we will state it again, hence the <code>_TMP</code> name. Finally, note that I marked it as <code>total</code>: this means that Idris will check (at type-checking time) that the function will always execute in finite time. This is necessary to enforce valid mathematical proofs.</p>
+<h3 id="a-warm-up-theorem">A Warm-Up Theorem</h3>
+<p>First, I want to start by proving a smaller helper theorem (called a lemma in the parlance of mathematicians) which has the dual purpose of serving as an easier warm-up and being a building block for the main proof. The lemma is really the essence of what the main theorem boils down to, that XOR-ing twice gets you nothing. That is, we want to prove the following lemma:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="8"><code class="language-idris editable  path=OTP.idr slice=8">total xorCancel : (x : Bit) -&gt; (y : Bit) -&gt; xor (xor x y) y = x
+</code></pre></pre>
+<p>Start by putting your cursor on <code>xorCancel</code> and hitting <code>Ctrl-Alt-a</code>, and then inspecting the type of the hole with <code>Ctrl-Alt-t</code>. Previously this showed us the current variables in scope, and what type we want to try to return. We now regard it as showing us what fact we want to prove. Right now it says that if <code>x</code> and <code>y</code> are <code>Bit</code>s then we want to prove <code>xor (xor x y) y = x</code>. We call this our <strong>proof goal</strong>. We don&#39;t have much to go on here, so try case splitting on <code>x</code> (<code>Ctrl-Alt-c</code>) and then inspecting the hole for the <code>ZeroBit</code> case. Now we can see that the proof goal has been updated to <code>xor (xor ZeroBit y) y = ZeroBit</code> (and <code>x</code> has been deleted from the context). This seems more concrete, but we sill can&#39;t yet prove it. Case split on <code>y</code>, and then inspect the hole for the <code>ZeroBit ZeroBit</code> case. Finally we see an easy proof goal: <code>ZeroBit = ZeroBit</code>. We can fill in the hole by simply putting <code>Refl</code>.</p>
+
+<p>Why exactly did we got this proof goal? When we case split on both <code>x</code> and <code>y</code> (say in the <code>ZeroBit ZeroBit</code> case) we essentially substitute <code>ZeroBit</code> for both <code>x</code> and <code>y</code> in the goal. That is, the goal became <code>xor (xor ZeroBit ZeroBit) ZeroBit = ZeroBit</code>. However, <code>xor ZeroBit ZeroBit</code> corresponds directly to one of the definitional equality rules that we gave when we defined the <code>xor</code> function. Idris then automatically evaluates the inner function call to turn <code>xor (xor ZeroBit ZeroBit) ZeroBit</code> into <code>xor ZeroBit ZeroBit</code>, and then this turns into <code>ZeroBit</code>. Thus, we end up with the proof goal of <code>ZeroBit = ZeroBit</code>. In the cases of <code>x</code> and <code>y</code> being arbitrary bits Idris is not able to perform the simplification automatically.</p>
+
+<p>If you inspect the holes of other cases you should see similar contexts and goals as for the <code>ZeroBit ZeroBit</code> case. Use <code>Refl</code> to complete these cases on your own. You can check that your proof is correct by type-checking with <code>Ctrl-Alt-r</code>.</p>
+<h2 id="the-main-proof">The Main Proof</h2>
+<p>We now want to implement / prove the function <code>otpCorrect : (n : Nat) -&gt; (msg : BitVector n) -&gt; (ky : BitVector n) -&gt; otpDecrypt n (otpEncrypt n msg ky) ky = msg</code>.</p>
+
+<p>The first thing to note is that by nature this is more difficult than the warm-up lemma. In the lemma we proved things about 2 bits, and since there are only finitely many (4) cases we can just explicitly cover all the cases. But for this theorem there are an infinite number of possible bit vectors, so we can not use quite the same strategy. However, the key in the previous lemma was not to case split all possible cases, rather the key was to case split sufficiently until Idris could directly apply the definitional equality rules of the <code>xor</code> function. If we look at the definition of <code>bitwiseXor</code> (which is essentially the same as <code>otpEncrypt</code> / <code>otpDecrypt</code>) we see that it has 2 definitional equality rules: both bit vectors are <code>[]</code> or both bit vectors in the <code>Cons</code> form. The crucial insight is that in the case of <code>Cons x xs</code> we don&#39;t know much about <code>xs</code>, but the 2nd definitional equality rule of <code>bitwiseXor</code> still applies to be able to do some (partial) evaluation. Let&#39;s see this in action.</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP.idr" data-slice="9"><code class="language-idris editable  path=OTP.idr slice=9">total
+otpCorrect : (n : Nat) -&gt; (msg : BitVector n) -&gt; (ky : BitVector n) -&gt; otpDecrypt n (otpEncrypt n msg ky) ky = msg
+</code></pre></pre>
+<p>As usual you can start the proof with <code>Ctrl-Alt-a</code> and then inspecting the holes. You will see the context and proof goal pretty much directly copied from the function declaration.</p>
+
+<p>Case split on both <code>msg</code> and <code>ky</code> to get 2 cases. In the <code>Cons</code> case you might want to use variable names that better match the original names, such as <code>otpCorrect (S n) (Cons m ms) (Cons k ks) = ...</code>. From here on I&#39;ll refer to these variable names. First, you can start with the easy case and inspect the hole of the <code>[] []</code> case. In this case Idris knows that <code>otpEncrypt</code> / <code>otpDecrypt</code> applied to the empty bit vector returns the empty bit vector, so we have a proof goal of <code>[] = []</code>. You can fill in the hole with <code>Refl</code>.</p>
+
+<p>Now inspect the double <code>Cons</code> case. This tells us that we have proof goal of <code>Cons (xor (xor m k) k) (bitwiseXor n (bitwiseXor n ms ks) ks) = Cons m ms</code>. Since the goal has a <code>Cons</code> at the top of both the left and right hand sides of the goal, we should try to prove that <code>(xor (xor m k) k) = m</code> and that <code>bitwiseXor n (bitwiseXor n ms ks) ks = ms</code>. The first one should be true because of the <code>xorCancel</code> lemma that we proved above. Let&#39;s call that function / lemma to get the evidence we need and save it in a local variable. The syntax for doing so looks like so:</p>
+<div class="highlight"><pre class="highlight haskell"><code><span class="n">otpCorrect</span> <span class="p">(</span><span class="kt">S</span> <span class="n">n</span><span class="p">)</span> <span class="p">(</span><span class="kt">Cons</span> <span class="n">m</span> <span class="n">ms</span><span class="p">)</span> <span class="p">(</span><span class="kt">Cons</span> <span class="n">k</span> <span class="n">ks</span><span class="p">)</span> <span class="o">=</span> 
+    <span class="kr">let</span> <span class="n">xor_eq</span> <span class="o">=</span> <span class="n">xorCancel</span> <span class="n">m</span> <span class="n">k</span> <span class="kr">in</span>
+    <span class="o">?</span><span class="n">otpCorrect_rhs_3</span>
+</code></pre></div>
+<p>Put a similar local variable into your code, and then inspect the hole again. The goal is the same, but now we have <code>xor_eq : xor (xor m k) k = m</code> in the context. We can now use this to <strong>rewrite</strong> the proof goal using this syntax:</p>
+<div class="highlight"><pre class="highlight haskell"><code><span class="n">otpCorrect</span> <span class="p">(</span><span class="kt">S</span> <span class="n">n</span><span class="p">)</span> <span class="p">(</span><span class="kt">Cons</span> <span class="n">m</span> <span class="n">ms</span><span class="p">)</span> <span class="p">(</span><span class="kt">Cons</span> <span class="n">k</span> <span class="n">ks</span><span class="p">)</span> <span class="o">=</span>
+    <span class="kr">let</span> <span class="n">xor_eq</span> <span class="o">=</span> <span class="n">xorCancel</span> <span class="n">m</span> <span class="n">k</span> <span class="kr">in</span>
+    <span class="n">rewrite</span> <span class="n">xor_eq</span> <span class="kr">in</span>
+    <span class="o">?</span><span class="n">otpCorrect_rhs_3</span>
+</code></pre></div>
+<p>If you put that into your code and then inspect the hole, you will see a simplified proof goal in which <code>xor (xor m k) k</code> has been rewritten to just <code>m</code>. In other words, we proved that the first arguments to <code>Cons</code> are equal, so now we just need to show that <code>bitwiseXor n (bitwiseXor n ms ks) ks = ms</code>. But this is exactly the theorem we are trying to prove (except for renaming of <code>bitwiseXor</code> with <code>otpEncrypt</code> / <code>otpDecrypt</code>), but on the smaller sub-lists of <code>ms</code> / <code>ks</code>! Thus, we can use recursion to obtain the evidence we need. Like above, bind to a local variable the value of <code>otpCorrect n ms ks</code>, inspect the hole to make sure you got the right thing, and then use it to rewrite the goal. If all goes well you should end up with a goal of <code>Cons m ms = Cons m ms</code>. At this point you can complete the proof by using <code>Refl</code> in place of the hole! Lastly, you can check that your proof is correct by type-checking with <code>Ctrl-Alt-r</code>.</p>
+
+<blockquote>
+<p>If you are familiar with writing traditional mathematical proofs using induction, that is precisely what we did above using recursion. There is a relationship between recursion for programming and induction for proofs.</p>
+</blockquote>
+<h1 id="conclusions">Conclusions</h1>
+<p>Congratulations! You have written some pretty interesting Idris code to implement OTP encryption, and proved a simple but fundamental and necessary theorem about OTP that the decryption and encryption are inverses. Because of this proof, we know that there is no bug in the OTP implementation that can cause a cipher text to not be properly decrypted. That being said, we haven&#39;t proved that our OTP implementation is actually bug free in general: it <em>could</em> for example just be the identity function which performs no encryption. In that case our theorem would still hold, since the bug would instead violate the property that the OTP is actually secure. So then we could take another step and formalize what it means for an encryption algorithm to be secure and prove that property about the OTP implementation. Whether or not that is a worthwhile time investment is a another question, dependent on your aims. This is a repeating pattern of using dependent types in practice: it can be tricky to identify properties which are both important and relatively easy to specify and prove (such as <code>otpCorrect</code>), but taking the opportunity to do so can be really fun and rewarding.</p>
+<h1 id="complete-code-8">Complete Code</h1>
+<p>The <a href="https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/public/post_assets/idris/idris-intro/OTP.idr">complete code is available on GitHub</a>, as well as directly here:</p>
+<pre class="playpen-wrapper"><pre class="playpen" data-path="OTP_sol.idr" data-slice="0"><code class="language-idris editable  path=OTP_sol.idr slice=0">module OTP
+
+data Bit : Type where
+    ZeroBit : Bit
+    OneBit : Bit
+
+xor : Bit -&gt; Bit -&gt; Bit
+xor ZeroBit ZeroBit = ZeroBit
+xor ZeroBit OneBit = OneBit
+xor OneBit ZeroBit = OneBit
+xor OneBit OneBit = ZeroBit
+
+data BitVector : Nat -&gt; Type where
+    Nil : BitVector Z
+    Cons : Bit -&gt; BitVector n -&gt; BitVector (S n)
+%name BitVector xs, ys -- This is unimportant, just gives Idris hints for automatically making variable names.
+
+-- this represents the empty bit vector
+emptyBitVect : BitVector Z
+emptyBitVect = Nil
+
+
+-- this represents the bits 101
+aBitVect : BitVector 3
+aBitVect = Cons OneBit (Cons ZeroBit (Cons OneBit Nil))
+
+-- this represents the bits 110
+anotherBitVect : BitVector 3
+anotherBitVect = Cons OneBit (Cons OneBit (Cons ZeroBit Nil))
+
+
+bitwiseXor : (n : Nat) -&gt; BitVector n -&gt; BitVector n -&gt; BitVector n
+bitwiseXor Z [] [] = []
+bitwiseXor (S k) (Cons x xs) (Cons y ys) = Cons (xor x y) (bitwiseXor k xs ys)
+
+otpEncrypt : (n : Nat) -&gt; (message : BitVector n) -&gt; (key : BitVector n) -&gt; BitVector n
+otpEncrypt n message key = bitwiseXor n message key
+
+otpDecrypt : (n : Nat) -&gt; (cipherText : BitVector n) -&gt; (key : BitVector n) -&gt; BitVector n
+otpDecrypt n cipherText key = bitwiseXor n cipherText key
+
+
+
+
+total xorCancel : (x : Bit) -&gt; (y : Bit) -&gt; xor (xor x y) y = x
+xorCancel ZeroBit ZeroBit = Refl
+xorCancel ZeroBit OneBit = Refl
+xorCancel OneBit ZeroBit = Refl
+xorCancel OneBit OneBit = Refl
+
+total
+otpCorrect : (n : Nat) -&gt; (msg : BitVector n) -&gt; (ky : BitVector n) -&gt; otpDecrypt n (otpEncrypt n msg ky) ky = msg
+otpCorrect Z [] [] = Refl
+otpCorrect (S n) (Cons m ms) (Cons k ks) =
+    let xor_eq = xorCancel m k in
+    rewrite xor_eq in
+    let ih = otpCorrect n ms ks in
+    rewrite ih in
+    Refl
+
+</code></pre></pre>
+<div class="footnotes">
+<hr>
+<ol>
+
+<li id="fn1">
+<p><a href="https://www.ams.org/notices/200811/tx081101382p.pdf">https://www.ams.org/notices/200811/tx081101382p.pdf</a>&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+</div>
+
+
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/2019/06/03/wwdc2019.html" class="titular">
+            Top questions and thoughts from WWDC 2019
+            <small>03 Jun 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/machine%20learning/2019/05/02/tda.html" class="titular">
+            Topological Data Analysis and Persistent Homology
+            <small>02 May 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+      <li>
+        <h3>
+          <a href="/idris/2019/03/26/idris-serverless.html" class="titular">
+            Coding Serverless Functions in Idris
+            <small>26 Mar 2019</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+    </div>
+
+    <script type="text/javascript">
+      window.is_book_mode = false;
+    </script>
+    
+    <script src="/public/book_deps/js/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/editor-setup.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/book_deps/js/mode-rust.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/book_deps/js/mode-idris.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/book_deps/js/theme-chrome.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/book_deps/js/theme-tomorrow_night.js" type="text/javascript" charset="utf-8"></script>
+
+
+    <script src="/public/book_deps/js/highlight.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/public/js/idris-setup.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/public/js/code-snippets.js" type="text/javascript" charset="utf-8"></script>
+    
+  </body>
+</html>

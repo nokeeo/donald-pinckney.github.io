@@ -4,13 +4,249 @@
  <title>Donald Pinckney</title>
  <link href="https://donaldpinckney.com/atom.xml" rel="self"/>
  <link href="https://donaldpinckney.com/"/>
- <updated>2019-06-24T20:45:55-07:00</updated>
+ <updated>2019-06-25T22:46:33-07:00</updated>
  <id>https://donaldpinckney.com</id>
  <author>
    <name>Donald Pinckney</name>
    <email>donald_pinckney@icloud.com</email>
  </author>
 
+ 
+ <entry>
+   <title>An Interactive Introduction to Dependent Types with Idris</title>
+   <link href="https://donaldpinckney.com/idris/2019/06/25/idris-intro.html"/>
+   <updated>2019-06-25T00:00:00-07:00</updated>
+   <id>https://donaldpinckney.com/idris/2019/06/25/idris-intro</id>
+   <content type="html">&lt;p&gt;&lt;link rel=&quot;stylesheet&quot; href=&quot;/public/css/theorems.css&quot;&gt;&lt;/p&gt;
+&lt;h1 id=&quot;what-are-dependent-types&quot;&gt;What are Dependent Types?&lt;/h1&gt;
+&lt;p&gt;Type theory and programming languages research in recent decades has produced this incredibly interesting extension to ordinary types in programming languages called &lt;strong&gt;dependent types&lt;/strong&gt;. Roughly speaking, dependent types let you &lt;em&gt;mathematically prove complex properties about your code&lt;/em&gt;, and on top of that the computer will check that your proof is indeed correct. But the power of dependent types doesn&amp;#39;t stop there: in addition to proving things about programs, dependent types also let you write fully-verified proofs about general mathematics. For example, in 2005 dependent types were used to formally prove the famous Four-Color Theorem&lt;sup id=&quot;fnref1&quot;&gt;&lt;a href=&quot;#fn1&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. While there are several systems available for programming with dependent types, I want to introduce dependent types in &lt;a href=&quot;https://www.idris-lang.org&quot;&gt;Idris&lt;/a&gt;, as Idris offers theorem proving abilities via dependent types while also being a fairly nice language for writing programs, all while being quite accessible to learn.&lt;/p&gt;
+
+&lt;p&gt;Idris is based strongly on Haskell, so learning Idris will also involve learning functional programming, if that is new to you. However, many of the topics that have accrued a reputation of being difficult to learn in Haskell (such as &lt;a href=&quot;https://wiki.haskell.org/Monad_tutorials_timeline&quot;&gt;monads&lt;/a&gt;) are fairly orthogonal to the basics of functional programming and dependent types. If you have no experience with Haskell, I would highly recommend giving Idris a try: you might be pleasantly surprised, as I was.&lt;/p&gt;
+&lt;h1 id=&quot;how-to-interact-with-this-post&quot;&gt;How to Interact with This Post&lt;/h1&gt;
+&lt;p&gt;Most of the code for this post will actually be written by you, rather than just shown to you. The code blocks in this post are a fully interactive editor, including support for Idris. If you are just curious about Idris then &lt;em&gt;you don&amp;#39;t need to install anything at all for this post, you can just edit directly in the code blocks here&lt;/em&gt;. If you prefer to install Idris locally you can of course follow along by coding in the text editor of your choice (Idris has good plugins for Atom, Vim and Emacs). &lt;/p&gt;
+&lt;h1 id=&quot;idris-in-action-implementing-one-time-pad-otp-encryption&quot;&gt;Idris in Action: Implementing One Time Pad (OTP) Encryption&lt;/h1&gt;
+&lt;p&gt;Dependent types have a deep history and metatheory behind them, but I don&amp;#39;t want to talk about that, rather I want to introduce functional programming and dependent types via a fairly simple application: implementing the One Time Pad (OTP) encryption scheme. If OTP is new to you, don&amp;#39;t worry, it&amp;#39;s pretty simple. We will work entirely with strings of bits. Suppose Alice and Bob both know a secret key \(K\), and Alice wants to send a message \(M\) to Bob, such that if the message is intercepted, it can not be read.&lt;/p&gt;
+
+&lt;p&gt;Alice does this by encrypting \(M\) by computing the so-called cipher text to be: \(C = M \oplus K\), that is, Alice takes each bit of \(M\) and XORs it with each bit of \(K\). Then Alice transmits this cipher text to Bob. When Bob receives the cipher text \(C\) he decrypts it by XORing again with the key: \(C \oplus K = (M \oplus K) \oplus K = M\):&lt;/p&gt;
+
+&lt;p&gt;\[
+    Alice \xrightarrow{\;\;\;C = M \oplus K\;\;\;} Bob, \textrm{ decrypts by computing  } (M \oplus K) \oplus K = M
+\]&lt;/p&gt;
+&lt;h2 id=&quot;defining-bits-and-xor-in-idris-via-interactive-editing&quot;&gt;Defining Bits and XOR in Idris via Interactive Editing&lt;/h2&gt;
+&lt;p&gt;First, let&amp;#39;s start with basic stuff: defining what bits even are, and how to compute XOR. We start a new Idris file &lt;code&gt;OTP.idr&lt;/code&gt;, and define &lt;code&gt;Bit&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;0&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=0&quot;&gt;module OTP
+
+data Bit : Type where
+    ZeroBit : Bit
+    OneBit : Bit
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;data&lt;/code&gt; syntax is used to define a new &lt;strong&gt;type&lt;/strong&gt;, in this case we call the new type &lt;code&gt;Bit&lt;/code&gt;. After the &lt;code&gt;where&lt;/code&gt; keyword we define the &lt;strong&gt;data constructors&lt;/strong&gt;, which are the (only) ways in which a &lt;code&gt;Bit&lt;/code&gt; can be created: a &lt;code&gt;Bit&lt;/code&gt; can either be &lt;code&gt;ZeroBit&lt;/code&gt; or &lt;code&gt;OneBit&lt;/code&gt;. &lt;code&gt;Bit&lt;/code&gt; is very much like an enumeration type in other languages, such as C or Java. &lt;/p&gt;
+
+&lt;p&gt;Next let&amp;#39;s try to define the XOR operation on bits. We define XOR as a function: it takes as input 2 Bits, and returns a Bit as output. Thus, we say that the XOR operation has the type &lt;code&gt;Bit -&amp;gt; Bit -&amp;gt; Bit&lt;/code&gt;. We can write it down like so:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;1&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=1&quot;&gt;xor : Bit -&amp;gt; Bit -&amp;gt; Bit
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;Now we need to actually write the code that implements the &lt;code&gt;xor&lt;/code&gt; function. We can have Idris create the body of the function for us by putting the cursor on &lt;code&gt;xor&lt;/code&gt; above, and hitting &lt;code&gt;Ctrl-Alt-a&lt;/code&gt;. You should see code appear which looks like &lt;code&gt;xor x y = ?xor_rhs&lt;/code&gt;. This says that when the &lt;code&gt;xor&lt;/code&gt; function is applied to arguments &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; (arbitrary Bits), then the value &lt;code&gt;?xor_rhs&lt;/code&gt; is returned. The syntax &lt;code&gt;?xor_rhs&lt;/code&gt; is called a &lt;strong&gt;hole&lt;/strong&gt;: it stands in place for something that you still need to write. We can &lt;strong&gt;inspect&lt;/strong&gt; this hole by putting the cursor on the hole, and hitting &lt;code&gt;Ctrl-Alt-t&lt;/code&gt;. Idris shows us the variables &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; with type &lt;code&gt;Bit&lt;/code&gt; above the line, and shows the hole below the line, with type &lt;code&gt;Bit&lt;/code&gt; as well. This means that in the context of having variables &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; of type &lt;code&gt;Bit&lt;/code&gt;, to fill in the hole &lt;code&gt;?xor_rhs&lt;/code&gt; we need to produce something of type &lt;code&gt;Bit&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The Bit we want to return depends on what &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; are exactly. In most programming languages you would now use an if statement to test if &lt;code&gt;x&lt;/code&gt; is &lt;code&gt;ZeroBit&lt;/code&gt; or &lt;code&gt;OneBit&lt;/code&gt;, etc. While Idris does have if statements, a much more powerful way to proceed is with &lt;strong&gt;case splitting&lt;/strong&gt;. Put your cursor on the &lt;code&gt;x&lt;/code&gt; and hit &lt;code&gt;Ctrl-Alt-c&lt;/code&gt;, and you should see Idris split the equation into 2 cases, one for when &lt;code&gt;x&lt;/code&gt; is &lt;code&gt;ZeroBit&lt;/code&gt; and one for when &lt;code&gt;x&lt;/code&gt; is &lt;code&gt;OneBit&lt;/code&gt;. For each of these cases &lt;code&gt;y&lt;/code&gt; is still arbitrary, so repeat by case splitting on &lt;code&gt;y&lt;/code&gt; twice (once on each of the &lt;code&gt;x&lt;/code&gt; cases).&lt;/p&gt;
+
+&lt;p&gt;At this point you should see 4 different cases, each of which look like &lt;code&gt;xor ZeroBit ZeroBit = ?xor_rhs_3&lt;/code&gt; (for example). You can now complete the &lt;code&gt;xor&lt;/code&gt; function by filling in the right hand side for each of the cases. For example, for this first case you should write &lt;code&gt;xor ZeroBit ZeroBit = ZeroBit&lt;/code&gt;. Continue completing all the other cases.&lt;/p&gt;
+&lt;h2 id=&quot;defining-a-bit-vector&quot;&gt;Defining a Bit Vector&lt;/h2&gt;
+&lt;p&gt;Now that we have a basic Bit type and &lt;code&gt;xor&lt;/code&gt; function implemented, let&amp;#39;s move on to dealing with &lt;strong&gt;bit vectors&lt;/strong&gt;, since ultimately we will want to do encryption over &lt;strong&gt;bit vectors&lt;/strong&gt;, not just single bits. In most programming languages we could define an array or list of Bits, and then have a type such as &lt;code&gt;BitList&lt;/code&gt;. But in Idris we can do something much more interesting, we can include the length of the bit vector in the type. In this case we would have many (infinitely many) distinct types, such as &lt;code&gt;BitVector 0&lt;/code&gt;, &lt;code&gt;BitVector 1&lt;/code&gt;, &lt;code&gt;BitVector 42&lt;/code&gt;, etc. This is called a &lt;strong&gt;family of types&lt;/strong&gt;, indexed by natural numbers. We can define such a BitVector like so:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;2&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=2&quot;&gt;data BitVector : Nat -&amp;gt; Type where
+    Nil : BitVector Z
+    Cons : Bit -&amp;gt; BitVector n -&amp;gt; BitVector (S n)
+%name BitVector xs, ys -- This is unimportant, just gives Idris hints for automatically making variable names.
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;There is a lot going on here, so let&amp;#39;s break it down. First, note that &lt;code&gt;BitVector&lt;/code&gt; is defined as &lt;code&gt;Nat -&amp;gt; Type&lt;/code&gt;, that is, given a natural number such as &lt;code&gt;42&lt;/code&gt;, a type is returned, namely the type &lt;code&gt;BitVector 42&lt;/code&gt;. For the data constructors, we have 2, named &lt;code&gt;Nil&lt;/code&gt; and &lt;code&gt;Cons&lt;/code&gt;. What &lt;code&gt;Nil&lt;/code&gt; represents is the empty list, i.e. the BitVector of length zero. Thus, &lt;code&gt;Nil&lt;/code&gt; takes no arguments, and has type &lt;code&gt;BitVector Z&lt;/code&gt; (&lt;code&gt;Z&lt;/code&gt; is zero for natural numbers in Idris). Now, &lt;code&gt;Cons&lt;/code&gt; is a bit more tricky. &lt;code&gt;Cons&lt;/code&gt; represents taking a new &lt;code&gt;Bit&lt;/code&gt; and attaching it to the front of an existing bit vector. When we do this we get a new bit vector whose length is one greater. Thus, &lt;code&gt;Cons&lt;/code&gt; takes 2 arguments, a &lt;code&gt;Bit&lt;/code&gt; and a bit vector of length &lt;code&gt;n&lt;/code&gt;, for any arbitrary natural number &lt;code&gt;n&lt;/code&gt;. The result of &lt;code&gt;Cons&lt;/code&gt; is a bit vector of length &lt;code&gt;S n&lt;/code&gt;, since &lt;code&gt;S n&lt;/code&gt; is used to represent the natural number that is one greater than &lt;code&gt;n&lt;/code&gt; (&lt;code&gt;Nat&lt;/code&gt;, &lt;code&gt;Z&lt;/code&gt; and &lt;code&gt;S&lt;/code&gt; all come from the Idris standard library).&lt;/p&gt;
+
+&lt;p&gt;This may be all a bit abstract, so let&amp;#39;s look at some examples to see why the definition above actually is a list. We can just define some constants of various &lt;code&gt;BitVector&lt;/code&gt; types:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;3&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=3&quot;&gt;-- this represents the empty bit vector
+emptyBitVect : BitVector Z
+emptyBitVect = Nil
+
+
+-- this represents the bits 101
+aBitVect : BitVector 3
+aBitVect = Cons OneBit (Cons ZeroBit (Cons OneBit Nil))
+
+-- this represents the bits 110
+anotherBitVect : BitVector 3
+anotherBitVect = Cons OneBit (Cons OneBit (Cons ZeroBit Nil))
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;Another way to put this is that the data of the bit vector is encoded in the structure of the expression, with the length of the list being the same as the number of nested &lt;code&gt;Cons&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Note that in term of programming, dependent types give us greater type safety compared to types in other statically typed languages, such as Java, Haskell, etc. as we can encode constraints such as lengths of lists in the types. For example, in the above definition you can change the declaration of &lt;code&gt;anotherBitVect&lt;/code&gt; to have the type &lt;code&gt;BitVector 4&lt;/code&gt; for example (but leave the definition as is), and then if you type-check the code by hitting &lt;code&gt;Ctrl-Alt-r&lt;/code&gt;, Idris will report that the types do not match. Make sure you change it back before continuing.&lt;/p&gt;
+&lt;h2 id=&quot;defining-bitwise-xor-and-the-otp&quot;&gt;Defining Bitwise XOR and the OTP&lt;/h2&gt;
+&lt;p&gt;At this point we have bit vectors defined as well as the XOR operation on single bits. We now want to define a &lt;em&gt;bitwise&lt;/em&gt; XOR operation, that is, we want to define a function &lt;code&gt;bitwiseXor&lt;/code&gt; which given 2 bit vectors &lt;code&gt;xs&lt;/code&gt; and &lt;code&gt;ys&lt;/code&gt; computes a new bit vector which consists of each bit of &lt;code&gt;xs&lt;/code&gt; XORed with each corresponding bit of &lt;code&gt;ys&lt;/code&gt;. For example, we would expect &lt;code&gt;bitwiseXor aBitVect anotherBitVect = Cons ZeroBit (Cons OneBit (Cons OneBit Nil))&lt;/code&gt;. &lt;/p&gt;
+
+&lt;p&gt;Let&amp;#39;s first discuss what the type of &lt;code&gt;bitwiseXor&lt;/code&gt; should be. In a typical programming language such as Java you would write &lt;code&gt;bitwiseXor&lt;/code&gt; to take as input 2 arrays of bits, and return a new array, such as &lt;code&gt;Bit[] bitwiseXor(Bit[] xs, Bit[] ys) { ... }&lt;/code&gt;. But then you would have to include a guard to check that they have the same lengths, eg.:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight java&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;Bit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;bitwiseXor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Bit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; 
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ys&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// return null, or throw exception, etc.&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;In the error case you need to do something rather untasteful such as returning null or throwing an exception, which code that calls this function would need to handle. Or, possibly you would forget to include the guard, potentially leading to bugs down the road. In either case, the original sin is calling &lt;code&gt;bitwiseXor&lt;/code&gt; with differently sized lists, this should be invalid to do. Idris allows us to specify precisely this using &lt;strong&gt;dependent function types&lt;/strong&gt;. Let&amp;#39;s take a look at the type of &lt;code&gt;bitwiseXor&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;4&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=4&quot;&gt;bitwiseXor : (n : Nat) -&amp;gt; BitVector n -&amp;gt; BitVector n -&amp;gt; BitVector n
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;First, we add an additional &lt;code&gt;Nat&lt;/code&gt; parameter to the front of the function. However, we can actually give the &lt;em&gt;name&lt;/em&gt; &lt;code&gt;n&lt;/code&gt; to this &lt;code&gt;Nat&lt;/code&gt;. The key is that later parameters can refer to &lt;code&gt;n&lt;/code&gt; in their types. We see exactly that: &lt;code&gt;bitwiseXor&lt;/code&gt; then takes as parameters 2 bit vectors each of length &lt;code&gt;n&lt;/code&gt;, and returns a new bit vector of the same length &lt;code&gt;n&lt;/code&gt;. Since the 2 bit vector parameters refer to the same &lt;code&gt;n&lt;/code&gt; in their types, it is impossible to call the function with bit vectors of equal length.&lt;/p&gt;
+
+&lt;p&gt;Now we need to define &lt;code&gt;bitwiseXor&lt;/code&gt;. As before start by putting your cursor on &lt;code&gt;bitwiseXor&lt;/code&gt; and hitting &lt;code&gt;Ctrl-Alt-a&lt;/code&gt;. Now there are 2 ways that a bit vector can be constructed, using either &lt;code&gt;Nil&lt;/code&gt; or &lt;code&gt;Cons ...&lt;/code&gt;. Thus, &lt;code&gt;xs&lt;/code&gt; (and &lt;code&gt;ys&lt;/code&gt;) should have 2 cases to consider. Case split (&lt;code&gt;Ctrl-alt-c&lt;/code&gt;) on both &lt;code&gt;xs&lt;/code&gt; and &lt;code&gt;ys&lt;/code&gt;. You should end up with the following 2 cases:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;5&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=5&quot;&gt;bitwiseXor Z [] [] = ?bitwiseXor_rhs_3
+bitwiseXor (S k) (Cons x xs) (Cons y ys) = ?bitwiseXor_rhs_1
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;Note that this is different than what we might have expected. First, Idris automatically case split &lt;code&gt;n&lt;/code&gt; when you case split &lt;code&gt;xs&lt;/code&gt; (or &lt;code&gt;ys&lt;/code&gt;). This is because of the dependent types above: if &lt;code&gt;xs&lt;/code&gt; is &lt;code&gt;[]&lt;/code&gt; (Idris uses &lt;code&gt;[]&lt;/code&gt; and &lt;code&gt;Nil&lt;/code&gt; interchangeably), then since &lt;code&gt;xs&lt;/code&gt; has type &lt;code&gt;BitVector n&lt;/code&gt; it must be that &lt;code&gt;n&lt;/code&gt; is &lt;code&gt;Z&lt;/code&gt;. Similarly, if &lt;code&gt;xs&lt;/code&gt; is &lt;code&gt;Cons x xs&lt;/code&gt; (the inner &lt;code&gt;xs&lt;/code&gt; is a new bit vector with the same name, which unfortunately is a bit confusing) then it must be that the length is non-zero, i.e. the length must be of the form &lt;code&gt;S k&lt;/code&gt;. Furthermore, Idris also dealt with the relationship between &lt;code&gt;xs&lt;/code&gt; and &lt;code&gt;ys&lt;/code&gt;: a priori one might expect there to be additional cases to consider, such as when &lt;code&gt;xs = []&lt;/code&gt; and &lt;code&gt;ys = Cons y ys&lt;/code&gt;, but Idris rules this out because the lengths must be equal.&lt;/p&gt;
+
+&lt;p&gt;Finally we just need to fill in the holes. For the first hole, the two input bit vectors are both the empty bit vector, and you want to return an empty bit vector. So all you need to put there is &lt;code&gt;Nil&lt;/code&gt; (or &lt;code&gt;[]&lt;/code&gt;, same thing).  The 2nd case is more interesting and worth investigating. Inspect the hole (using &lt;code&gt;Ctrl-Alt-t&lt;/code&gt;). This tells you that &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; are both &lt;code&gt;Bit&lt;/code&gt;, and that the smaller sub-bit-vectors &lt;code&gt;xs&lt;/code&gt; and &lt;code&gt;ys&lt;/code&gt; have length &lt;code&gt;k&lt;/code&gt;. Our goal is to produce a bit vector of length &lt;code&gt;S k&lt;/code&gt;. We can produce a bit vector of length &lt;code&gt;S k&lt;/code&gt;, by using &lt;code&gt;Cons&lt;/code&gt; (as can be read from the type of &lt;code&gt;Cons&lt;/code&gt; above). Try replacing the hole with &lt;code&gt;Cons ?head_hole ?tail_hole&lt;/code&gt;, which now has 2 holes, one for each argument to &lt;code&gt;Cons&lt;/code&gt;. Then, you can verify that this type-checks with &lt;code&gt;Ctrl-Alt-r&lt;/code&gt; which means using &lt;code&gt;Cons&lt;/code&gt; here is the right thing, we just need to fill in stuff for the holes.&lt;/p&gt;
+
+&lt;p&gt;The first hole is easier so we wil start with this. The situation is we have 2 bit vectors of the form \([x, \cdots xs \cdots]\) and \([y, \cdots ys \cdots]\), and we want to compute the bitwise XOR. So our new bit vector should certainly have the form \([xor\;x\;y, \cdots zs \cdots]\). Thus we want &lt;code&gt;xor x y&lt;/code&gt; for the &lt;code&gt;?head_hole&lt;/code&gt;. For the &lt;code&gt;?tail_hole&lt;/code&gt;, we can note that &lt;code&gt;xs&lt;/code&gt; and &lt;code&gt;ys&lt;/code&gt; are both bit vectors of the same length &lt;code&gt;k&lt;/code&gt;, just one smaller than the original bit vectors. Thus, &lt;code&gt;bitwiseXor k xs ys&lt;/code&gt; will be the bitwise XOR of &lt;code&gt;xs&lt;/code&gt; and &lt;code&gt;ys&lt;/code&gt;, so when combined with the answer for &lt;code&gt;?head_hole&lt;/code&gt; it gives the desired solution. The final expression that you need to fill in for this case is thus &lt;code&gt;Cons (xor x y) (bitwiseXor k xs ys)&lt;/code&gt;. If this style of functional programming recursion is new to you, this might not be totally natural. It can help to manually trace the execution of this function on example inputs such as on &lt;code&gt;aBitVect&lt;/code&gt; and &lt;code&gt;anotherBitVect&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Finally, we can use &lt;code&gt;bitwiseXor&lt;/code&gt; to very easily give definitions of the One Time Pad encryption / decryption:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;6&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=6&quot;&gt;otpEncrypt : (n : Nat) -&amp;gt; (message : BitVector n) -&amp;gt; (key : BitVector n) -&amp;gt; BitVector n
+otpEncrypt n message key = bitwiseXor n message key
+
+otpDecrypt : (n : Nat) -&amp;gt; (cipherText : BitVector n) -&amp;gt; (key : BitVector n) -&amp;gt; BitVector n
+otpDecrypt n cipherText key = bitwiseXor n cipherText key
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;Note that here I have named the parameters &lt;code&gt;message&lt;/code&gt;, &lt;code&gt;key&lt;/code&gt;, etc. even though they are not used in dependent types. This is perfectly fine and does nothing special, it can just be nice to have as a sort of documentation. However, you can&amp;#39;t name the return type. Also, note that the encryption and decryption routines are actually the same, but for clarify it is nice to keep them separate (and it wouldn&amp;#39;t be true with other ciphers).&lt;/p&gt;
+&lt;h2 id=&quot;proofs-using-dependent-types&quot;&gt;Proofs Using Dependent Types&lt;/h2&gt;
+&lt;p&gt;I started this post by remarking that dependent types are powerful enough to encode much (most, all??) of mathematics, and I hope to give a hint of that here. So far we have an implementation of the OTP cipher. However it is plausible that we could have a bug in our implementation. As a sanity check for out implementation, it should be the case that decrypting and encrypted message gives back the original message. Written as a mathematical theorem:&lt;/p&gt;
+
+&lt;div class=&quot;theorem&quot;&gt;
+    For all natural numbers \(n\) and all bit vector messages \(m\) and keys \(k\) of length \(n\),
+    \[
+        otpDecrypt \; n \; (otpDecrypt \; n \; m \; k) \; k = m
+    \]
+&lt;/div&gt;
+&lt;h3 id=&quot;propositions-as-types&quot;&gt;Propositions as Types&lt;/h3&gt;
+&lt;p&gt;Using dependent function types in Idris we can &lt;em&gt;encode this theorem as a type&lt;/em&gt;. To see how, we have to understand how to encode the equality in the above theorem. The equality above is very different from the equality when we define functions. For instance, the function definition &lt;code&gt;xor ZeroBit ZeroBit = ZeroBit&lt;/code&gt; means that &lt;code&gt;xor ZeroBit ZeroBit&lt;/code&gt;&lt;em&gt;by definition&lt;/em&gt; is the same as &lt;code&gt;ZeroBit&lt;/code&gt;. This kind of equality is called &lt;strong&gt;definitional equality&lt;/strong&gt;. However, the equality in the above theorem might or might not actually be true, thus we regard it as a &lt;strong&gt;proposition&lt;/strong&gt;, a potential fact yet to be proven. For instance, if we have a bug in our above code, this proposition might not be true. This kind of equality is called &lt;strong&gt;propositional equality&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;In Idris we represent propositions as types, and we prove that a proposition is true by showing that there exists something of the type representing it. Such an element of the type is called &lt;strong&gt;evidence&lt;/strong&gt;. Idris has a built-in type which represents &lt;strong&gt;propositional equality&lt;/strong&gt;. Suppose &lt;code&gt;a&lt;/code&gt; and &lt;code&gt;b&lt;/code&gt; are both elements of the same type. Then &lt;code&gt;a = b&lt;/code&gt; is a type representing the proposition that &lt;code&gt;a&lt;/code&gt; and &lt;code&gt;b&lt;/code&gt; are in fact equal. The only immediate way to create evidence of the propositional equality type is through the data constructor &lt;code&gt;Refl : a = a&lt;/code&gt;, which produces an element of the type &lt;code&gt;a = a&lt;/code&gt;. To make things more concrete, let&amp;#39;s look at some examples:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;4 = 4&lt;/code&gt; is a type, and &lt;code&gt;Refl : 4 = 4&lt;/code&gt; is an element of that type (i.e. &lt;code&gt;Refl&lt;/code&gt; is evidence of &lt;code&gt;4 = 4&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;5 = 5&lt;/code&gt; is a different type from &lt;code&gt;4 = 4&lt;/code&gt;. We can again use &lt;code&gt;Refl : 5 = 5&lt;/code&gt; to get evidence of it.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;4 = 5&lt;/code&gt; is yet another type. Note that &lt;code&gt;4 = 5&lt;/code&gt; is a perfectly valid type, but we can&amp;#39;t use &lt;code&gt;Refl&lt;/code&gt; to get evidence. We expect that it should be impossible to construct evidence of this type since it represents a false proposition.&lt;/li&gt;
+&lt;li&gt;Suppose &lt;code&gt;n&lt;/code&gt; and &lt;code&gt;m&lt;/code&gt; are &lt;code&gt;Nat&lt;/code&gt;s. Then &lt;code&gt;n + m = m + n&lt;/code&gt; is a type. But since &lt;code&gt;n + m&lt;/code&gt; and &lt;code&gt;m + n&lt;/code&gt; aren&amp;#39;t definitionally equal we can&amp;#39;t immediately use &lt;code&gt;Refl&lt;/code&gt; to construct evidence. Additional effort is needed since it is a more involved fact about addition.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;So in this case we have that if &lt;code&gt;n&lt;/code&gt; is a &lt;code&gt;Nat&lt;/code&gt;, and &lt;code&gt;m&lt;/code&gt; and &lt;code&gt;k&lt;/code&gt; both are of type &lt;code&gt;BitVector n&lt;/code&gt; then &lt;code&gt;otpDecrypt n (otpEncrypt n m k) k = m&lt;/code&gt; is a valid type representing the equality we want to prove. While we aren&amp;#39;t quite ready to &lt;em&gt;prove&lt;/em&gt; the above theorem, using the techniques just discussed we can at least give a statement of the theorem:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;7&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=7&quot;&gt;total otpCorrect_TMP : (n : Nat) -&amp;gt; (m : BitVector n) -&amp;gt; (k : BitVector n) -&amp;gt; otpDecrypt n (otpEncrypt n m k) k = m
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;Intuitively, what the above function declaration says is that given an &lt;code&gt;n&lt;/code&gt;, &lt;code&gt;m&lt;/code&gt;, and &lt;code&gt;k&lt;/code&gt; (of appropriate length), the function will return evidence that the desired equation is true. Giving an implementation of this function is equivalent to giving a proof of the theorem. We can&amp;#39;t quite prove it yet, and when we do so we will state it again, hence the &lt;code&gt;_TMP&lt;/code&gt; name. Finally, note that I marked it as &lt;code&gt;total&lt;/code&gt;: this means that Idris will check (at type-checking time) that the function will always execute in finite time. This is necessary to enforce valid mathematical proofs.&lt;/p&gt;
+&lt;h3 id=&quot;a-warm-up-theorem&quot;&gt;A Warm-Up Theorem&lt;/h3&gt;
+&lt;p&gt;First, I want to start by proving a smaller helper theorem (called a lemma in the parlance of mathematicians) which has the dual purpose of serving as an easier warm-up and being a building block for the main proof. The lemma is really the essence of what the main theorem boils down to, that XOR-ing twice gets you nothing. That is, we want to prove the following lemma:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;8&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=8&quot;&gt;total xorCancel : (x : Bit) -&amp;gt; (y : Bit) -&amp;gt; xor (xor x y) y = x
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;Start by putting your cursor on &lt;code&gt;xorCancel&lt;/code&gt; and hitting &lt;code&gt;Ctrl-Alt-a&lt;/code&gt;, and then inspecting the type of the hole with &lt;code&gt;Ctrl-Alt-t&lt;/code&gt;. Previously this showed us the current variables in scope, and what type we want to try to return. We now regard it as showing us what fact we want to prove. Right now it says that if &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; are &lt;code&gt;Bit&lt;/code&gt;s then we want to prove &lt;code&gt;xor (xor x y) y = x&lt;/code&gt;. We call this our &lt;strong&gt;proof goal&lt;/strong&gt;. We don&amp;#39;t have much to go on here, so try case splitting on &lt;code&gt;x&lt;/code&gt; (&lt;code&gt;Ctrl-Alt-c&lt;/code&gt;) and then inspecting the hole for the &lt;code&gt;ZeroBit&lt;/code&gt; case. Now we can see that the proof goal has been updated to &lt;code&gt;xor (xor ZeroBit y) y = ZeroBit&lt;/code&gt; (and &lt;code&gt;x&lt;/code&gt; has been deleted from the context). This seems more concrete, but we sill can&amp;#39;t yet prove it. Case split on &lt;code&gt;y&lt;/code&gt;, and then inspect the hole for the &lt;code&gt;ZeroBit ZeroBit&lt;/code&gt; case. Finally we see an easy proof goal: &lt;code&gt;ZeroBit = ZeroBit&lt;/code&gt;. We can fill in the hole by simply putting &lt;code&gt;Refl&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Why exactly did we got this proof goal? When we case split on both &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; (say in the &lt;code&gt;ZeroBit ZeroBit&lt;/code&gt; case) we essentially substitute &lt;code&gt;ZeroBit&lt;/code&gt; for both &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; in the goal. That is, the goal became &lt;code&gt;xor (xor ZeroBit ZeroBit) ZeroBit = ZeroBit&lt;/code&gt;. However, &lt;code&gt;xor ZeroBit ZeroBit&lt;/code&gt; corresponds directly to one of the definitional equality rules that we gave when we defined the &lt;code&gt;xor&lt;/code&gt; function. Idris then automatically evaluates the inner function call to turn &lt;code&gt;xor (xor ZeroBit ZeroBit) ZeroBit&lt;/code&gt; into &lt;code&gt;xor ZeroBit ZeroBit&lt;/code&gt;, and then this turns into &lt;code&gt;ZeroBit&lt;/code&gt;. Thus, we end up with the proof goal of &lt;code&gt;ZeroBit = ZeroBit&lt;/code&gt;. In the cases of &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; being arbitrary bits Idris is not able to perform the simplification automatically.&lt;/p&gt;
+
+&lt;p&gt;If you inspect the holes of other cases you should see similar contexts and goals as for the &lt;code&gt;ZeroBit ZeroBit&lt;/code&gt; case. Use &lt;code&gt;Refl&lt;/code&gt; to complete these cases on your own. You can check that your proof is correct by type-checking with &lt;code&gt;Ctrl-Alt-r&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;the-main-proof&quot;&gt;The Main Proof&lt;/h2&gt;
+&lt;p&gt;We now want to implement / prove the function &lt;code&gt;otpCorrect : (n : Nat) -&amp;gt; (msg : BitVector n) -&amp;gt; (ky : BitVector n) -&amp;gt; otpDecrypt n (otpEncrypt n msg ky) ky = msg&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The first thing to note is that by nature this is more difficult than the warm-up lemma. In the lemma we proved things about 2 bits, and since there are only finitely many (4) cases we can just explicitly cover all the cases. But for this theorem there are an infinite number of possible bit vectors, so we can not use quite the same strategy. However, the key in the previous lemma was not to case split all possible cases, rather the key was to case split sufficiently until Idris could directly apply the definitional equality rules of the &lt;code&gt;xor&lt;/code&gt; function. If we look at the definition of &lt;code&gt;bitwiseXor&lt;/code&gt; (which is essentially the same as &lt;code&gt;otpEncrypt&lt;/code&gt; / &lt;code&gt;otpDecrypt&lt;/code&gt;) we see that it has 2 definitional equality rules: both bit vectors are &lt;code&gt;[]&lt;/code&gt; or both bit vectors in the &lt;code&gt;Cons&lt;/code&gt; form. The crucial insight is that in the case of &lt;code&gt;Cons x xs&lt;/code&gt; we don&amp;#39;t know much about &lt;code&gt;xs&lt;/code&gt;, but the 2nd definitional equality rule of &lt;code&gt;bitwiseXor&lt;/code&gt; still applies to be able to do some (partial) evaluation. Let&amp;#39;s see this in action.&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP.idr&quot; data-slice=&quot;9&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP.idr slice=9&quot;&gt;total
+otpCorrect : (n : Nat) -&amp;gt; (msg : BitVector n) -&amp;gt; (ky : BitVector n) -&amp;gt; otpDecrypt n (otpEncrypt n msg ky) ky = msg
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;p&gt;As usual you can start the proof with &lt;code&gt;Ctrl-Alt-a&lt;/code&gt; and then inspecting the holes. You will see the context and proof goal pretty much directly copied from the function declaration.&lt;/p&gt;
+
+&lt;p&gt;Case split on both &lt;code&gt;msg&lt;/code&gt; and &lt;code&gt;ky&lt;/code&gt; to get 2 cases. In the &lt;code&gt;Cons&lt;/code&gt; case you might want to use variable names that better match the original names, such as &lt;code&gt;otpCorrect (S n) (Cons m ms) (Cons k ks) = ...&lt;/code&gt;. From here on I&amp;#39;ll refer to these variable names. First, you can start with the easy case and inspect the hole of the &lt;code&gt;[] []&lt;/code&gt; case. In this case Idris knows that &lt;code&gt;otpEncrypt&lt;/code&gt; / &lt;code&gt;otpDecrypt&lt;/code&gt; applied to the empty bit vector returns the empty bit vector, so we have a proof goal of &lt;code&gt;[] = []&lt;/code&gt;. You can fill in the hole with &lt;code&gt;Refl&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now inspect the double &lt;code&gt;Cons&lt;/code&gt; case. This tells us that we have proof goal of &lt;code&gt;Cons (xor (xor m k) k) (bitwiseXor n (bitwiseXor n ms ks) ks) = Cons m ms&lt;/code&gt;. Since the goal has a &lt;code&gt;Cons&lt;/code&gt; at the top of both the left and right hand sides of the goal, we should try to prove that &lt;code&gt;(xor (xor m k) k) = m&lt;/code&gt; and that &lt;code&gt;bitwiseXor n (bitwiseXor n ms ks) ks = ms&lt;/code&gt;. The first one should be true because of the &lt;code&gt;xorCancel&lt;/code&gt; lemma that we proved above. Let&amp;#39;s call that function / lemma to get the evidence we need and save it in a local variable. The syntax for doing so looks like so:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight haskell&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;otpCorrect&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;S&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Cons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Cons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 
+    &lt;span class=&quot;kr&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xor_eq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xorCancel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;in&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;otpCorrect_rhs_3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Put a similar local variable into your code, and then inspect the hole again. The goal is the same, but now we have &lt;code&gt;xor_eq : xor (xor m k) k = m&lt;/code&gt; in the context. We can now use this to &lt;strong&gt;rewrite&lt;/strong&gt; the proof goal using this syntax:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight haskell&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;otpCorrect&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;S&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Cons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Cons&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xor_eq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xorCancel&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;in&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;rewrite&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;xor_eq&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;in&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;otpCorrect_rhs_3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If you put that into your code and then inspect the hole, you will see a simplified proof goal in which &lt;code&gt;xor (xor m k) k&lt;/code&gt; has been rewritten to just &lt;code&gt;m&lt;/code&gt;. In other words, we proved that the first arguments to &lt;code&gt;Cons&lt;/code&gt; are equal, so now we just need to show that &lt;code&gt;bitwiseXor n (bitwiseXor n ms ks) ks = ms&lt;/code&gt;. But this is exactly the theorem we are trying to prove (except for renaming of &lt;code&gt;bitwiseXor&lt;/code&gt; with &lt;code&gt;otpEncrypt&lt;/code&gt; / &lt;code&gt;otpDecrypt&lt;/code&gt;), but on the smaller sub-lists of &lt;code&gt;ms&lt;/code&gt; / &lt;code&gt;ks&lt;/code&gt;! Thus, we can use recursion to obtain the evidence we need. Like above, bind to a local variable the value of &lt;code&gt;otpCorrect n ms ks&lt;/code&gt;, inspect the hole to make sure you got the right thing, and then use it to rewrite the goal. If all goes well you should end up with a goal of &lt;code&gt;Cons m ms = Cons m ms&lt;/code&gt;. At this point you can complete the proof by using &lt;code&gt;Refl&lt;/code&gt; in place of the hole! Lastly, you can check that your proof is correct by type-checking with &lt;code&gt;Ctrl-Alt-r&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If you are familiar with writing traditional mathematical proofs using induction, that is precisely what we did above using recursion. There is a relationship between recursion for programming and induction for proofs.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;conclusions&quot;&gt;Conclusions&lt;/h1&gt;
+&lt;p&gt;Congratulations! You have written some pretty interesting Idris code to implement OTP encryption, and proved a simple but fundamental and necessary theorem about OTP that the decryption and encryption are inverses. Because of this proof, we know that there is no bug in the OTP implementation that can cause a cipher text to not be properly decrypted. That being said, we haven&amp;#39;t proved that our OTP implementation is actually bug free in general: it &lt;em&gt;could&lt;/em&gt; for example just be the identity function which performs no encryption. In that case our theorem would still hold, since the bug would instead violate the property that the OTP is actually secure. So then we could take another step and formalize what it means for an encryption algorithm to be secure and prove that property about the OTP implementation. Whether or not that is a worthwhile time investment is a another question, dependent on your aims. This is a repeating pattern of using dependent types in practice: it can be tricky to identify properties which are both important and relatively easy to specify and prove (such as &lt;code&gt;otpCorrect&lt;/code&gt;), but taking the opportunity to do so can be really fun and rewarding.&lt;/p&gt;
+&lt;h1 id=&quot;complete-code-8&quot;&gt;Complete Code&lt;/h1&gt;
+&lt;p&gt;The &lt;a href=&quot;https://github.com/donald-pinckney/donald-pinckney.github.io/blob/src/public/post_assets/idris/idris-intro/OTP.idr&quot;&gt;complete code is available on GitHub&lt;/a&gt;, as well as directly here:&lt;/p&gt;
+&lt;pre class=&quot;playpen-wrapper&quot;&gt;&lt;pre class=&quot;playpen&quot; data-path=&quot;OTP_sol.idr&quot; data-slice=&quot;0&quot;&gt;&lt;code class=&quot;language-idris editable  path=OTP_sol.idr slice=0&quot;&gt;module OTP
+
+data Bit : Type where
+    ZeroBit : Bit
+    OneBit : Bit
+
+xor : Bit -&amp;gt; Bit -&amp;gt; Bit
+xor ZeroBit ZeroBit = ZeroBit
+xor ZeroBit OneBit = OneBit
+xor OneBit ZeroBit = OneBit
+xor OneBit OneBit = ZeroBit
+
+data BitVector : Nat -&amp;gt; Type where
+    Nil : BitVector Z
+    Cons : Bit -&amp;gt; BitVector n -&amp;gt; BitVector (S n)
+%name BitVector xs, ys -- This is unimportant, just gives Idris hints for automatically making variable names.
+
+-- this represents the empty bit vector
+emptyBitVect : BitVector Z
+emptyBitVect = Nil
+
+
+-- this represents the bits 101
+aBitVect : BitVector 3
+aBitVect = Cons OneBit (Cons ZeroBit (Cons OneBit Nil))
+
+-- this represents the bits 110
+anotherBitVect : BitVector 3
+anotherBitVect = Cons OneBit (Cons OneBit (Cons ZeroBit Nil))
+
+
+bitwiseXor : (n : Nat) -&amp;gt; BitVector n -&amp;gt; BitVector n -&amp;gt; BitVector n
+bitwiseXor Z [] [] = []
+bitwiseXor (S k) (Cons x xs) (Cons y ys) = Cons (xor x y) (bitwiseXor k xs ys)
+
+otpEncrypt : (n : Nat) -&amp;gt; (message : BitVector n) -&amp;gt; (key : BitVector n) -&amp;gt; BitVector n
+otpEncrypt n message key = bitwiseXor n message key
+
+otpDecrypt : (n : Nat) -&amp;gt; (cipherText : BitVector n) -&amp;gt; (key : BitVector n) -&amp;gt; BitVector n
+otpDecrypt n cipherText key = bitwiseXor n cipherText key
+
+
+
+
+total xorCancel : (x : Bit) -&amp;gt; (y : Bit) -&amp;gt; xor (xor x y) y = x
+xorCancel ZeroBit ZeroBit = Refl
+xorCancel ZeroBit OneBit = Refl
+xorCancel OneBit ZeroBit = Refl
+xorCancel OneBit OneBit = Refl
+
+total
+otpCorrect : (n : Nat) -&amp;gt; (msg : BitVector n) -&amp;gt; (ky : BitVector n) -&amp;gt; otpDecrypt n (otpEncrypt n msg ky) ky = msg
+otpCorrect Z [] [] = Refl
+otpCorrect (S n) (Cons m ms) (Cons k ks) =
+    let xor_eq = xorCancel m k in
+    rewrite xor_eq in
+    let ih = otpCorrect n ms ks in
+    rewrite ih in
+    Refl
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/pre&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+
+&lt;li id=&quot;fn1&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.ams.org/notices/200811/tx081101382p.pdf&quot;&gt;https://www.ams.org/notices/200811/tx081101382p.pdf&lt;/a&gt;&amp;nbsp;&lt;a href=&quot;#fnref1&quot; rev=&quot;footnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+ </entry>
  
  <entry>
    <title>Top questions and thoughts from WWDC 2019</title>
