@@ -435,7 +435,16 @@ plt.show()
 
 # References
 
-[^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at [https://wonder.cdc.gov/ucd-icd10.html](https://wonder.cdc.gov/ucd-icd10.html) on Nov 22, 2017 2:18:46 PM.
+[^fn1]: Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at [https://wonder.cdc.gov/ucd-icd10.html](https://wonder.cdc.gov/ucd-icd10.html) on Nov 22, 2017 2:18:46 PM. 
+> Query Criteria:
+> Injury Intent:	Homicide
+> Year/Month:	2015
+> Group By:	Single-Year Ages
+> Show Totals:	True
+> Show Zero Values:	True
+> Show Suppressed:	False
+> Calculate Rates Per:	100,000
+> Rate Options:	Default intercensal populations for years 2001-2009 (except Infant Age Groups)
 
 [homicide]: /books/pytorch/book/ch2-linreg/assets/homicide.png
 [homicide_fit]: /books/pytorch/book/ch2-linreg/assets/homicide_fit.png
