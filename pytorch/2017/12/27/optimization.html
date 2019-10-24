@@ -96,7 +96,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-12-27T00:00:00-08:00" />
 <script type="application/ld+json">
-{"description":"Exploring Optimization Convergence","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/pytorch/2017/12/27/optimization.html","headline":"Exploring Optimization Convergence","dateModified":"2017-12-27T00:00:00-08:00","datePublished":"2017-12-27T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/pytorch/2017/12/27/optimization.html"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/pytorch/2017/12/27/optimization.html"},"description":"Exploring Optimization Convergence","@type":"BlogPosting","url":"https://donaldpinckney.com/pytorch/2017/12/27/optimization.html","headline":"Exploring Optimization Convergence","dateModified":"2017-12-27T00:00:00-08:00","datePublished":"2017-12-27T00:00:00-08:00","author":{"@type":"Person","name":"Donald Pinckney"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -449,21 +449,21 @@
 <p>In the previous chapter we created a simple single variable linear regression model to fit a data set. While the Python code was actually fairly short and simple, I did gloss over some details related to the optimization, and I hope to use this short chapter to answer some dangling questions about it. Since this chapter doesn&#39;t introduce new models or concepts you can skip it (or come back later) if you prefer. However, getting a feel for optimization is useful for training just about any model, not just the single variable linear regression model, and this chapter should give you insight that is useful for the rest of this guide and just about any machine learning you do.</p>
 
 <p>To explore optimization we are going to exactly copy the code from the previous chapter, and experiment with it. To review, let&#39;s look at the part of the code from before that performed the optimization (just look at the previous chapter if you need to review the entire thing):</p>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># Setup the optimizer object, so it optimizes a and b.</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># Setup the optimizer object, so it optimizes a and b.
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to a and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update a and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to a and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update a and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"t = {t}, loss = {current_loss}, a = {a.item()}, b = {b.item()}"</span><span class="p">)</span>
 </code></pre></div>
 <p>The main unanswered questions to address are:</p>
@@ -492,55 +492,55 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
 
-<span class="c">### Hyperparameters ###</span>
-
-<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="c"># Much smaller training rate, to make sure the optimization is at least reliable.</span>
-<span class="n">NUM_ITERS</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c"># Twice as many training iterations, just gives us more room to experiment later.</span>
-<span class="n">OPTIMIZER_CONSTRUCTOR</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span> <span class="c"># This is the simplest optimization algorithm.</span>
-
-<span class="c"># .. all the rest of the code, hyperparameter constants properly substituted</span>
-</code></pre></div><h3 id="installing-tensorboard">Installing TensorBoard</h3>
+<span class="c1">### Hyperparameters ###
+</span>
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="c1"># Much smaller training rate, to make sure the optimization is at least reliable.
+</span><span class="n">NUM_ITERS</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c1"># Twice as many training iterations, just gives us more room to experiment later.
+</span><span class="n">OPTIMIZER_CONSTRUCTOR</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span> <span class="c1"># This is the simplest optimization algorithm.
+</span>
+<span class="c1"># .. all the rest of the code, hyperparameter constants properly substituted
+</span></code></pre></div><h3 id="installing-tensorboard">Installing TensorBoard</h3>
 <p>Next we need to actually install TensorBoard on our system. The following command should do it:</p>
-<div class="highlight"><pre class="highlight shell"><code>pip3 install tb-nightly future
+<div class="highlight"><pre class="highlight shell"><code>pip3 <span class="nb">install </span>tb-nightly future
 </code></pre></div><h3 id="setting-up-tensorboard">Setting up TensorBoard</h3>
 <p>Now, we need to add some code to configure TensorBoard for our model. We will need to add a new import:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 </code></pre></div>
 <p>We want to tell PyTorch where to save a log of all the parameter and loss values. We setup the log location based on the values of the hyperparameters:</p>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># ... above this is where loss is defined</span>
-
-<span class="c">### TensorBoard Writer Setup ###</span>
-
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># ... above this is where loss is defined
+</span>
+<span class="c1">### TensorBoard Writer Setup ###
+</span>
 <span class="n">log_name</span> <span class="o">=</span> <span class="n">f</span><span class="s">"{LEARNING_RATE}, {OPTIMIZER_CONSTRUCTOR.__name__}"</span>
 <span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">f</span><span class="s">"runs/{log_name}"</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s">"To see tensorboard, run: tensorboard --logdir=runs/"</span><span class="p">)</span>
 
-<span class="c"># ... below this is where we create the optimizer and session</span>
-</code></pre></div>
+<span class="c1"># ... below this is where we create the optimizer and session
+</span></code></pre></div>
 <p>The point of basing the log location names on the hyperparameter values is so that we can later compare logs that used different hyperparameters.</p>
 
 <p>The last thing we need to do is make PyTorch actually write the values of <code>a</code>, <code>b</code> and the loss to the log as training progresses. In our training code before we had a <code>print</code> statement that showed how training was going, but now we can replace it (or keep it, you choose):</p>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ITERS</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to a and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update a and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ITERS</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to a and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update a and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-    <span class="c"># This is where we write the current values of a, b, and loss to the log.</span>
-    <span class="c"># global_step=t tells tensorboard at what step of the training this is.</span>
-    <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'a'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+    <span class="c1"># This is where we write the current values of a, b, and loss to the log.
+</span>    <span class="c1"># global_step=t tells tensorboard at what step of the training this is.
+</span>    <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'a'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'b'</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'L'</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
 
-<span class="c"># After we are done with the writer, we should close the log file.</span>
-<span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="c1"># After we are done with the writer, we should close the log file.
+</span><span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div>
 <p>And as a final touch, we can also delete or comment out the code that plots the data set, since it reduces the amount of clicking we have to do when trying different hyperparameters. The complete modified code should look something like this:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
@@ -549,59 +549,59 @@
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 
-<span class="c">### Hyperparameters ###</span>
-
-<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="c"># Much smaller training rate, to make sure the optimization is at least reliable.</span>
-<span class="n">NUM_ITERS</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c"># Twice as many training iterations, just gives us more room to experiment later.</span>
-<span class="n">OPTIMIZER_CONSTRUCTOR</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span> <span class="c"># This is the simplest optimization algorithm.</span>
-
-<span class="c"># Load the data</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
+<span class="c1">### Hyperparameters ###
+</span>
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mf">0.000001</span> <span class="c1"># Much smaller training rate, to make sure the optimization is at least reliable.
+</span><span class="n">NUM_ITERS</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c1"># Twice as many training iterations, just gives us more room to experiment later.
+</span><span class="n">OPTIMIZER_CONSTRUCTOR</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span> <span class="c1"># This is the simplest optimization algorithm.
+</span>
+<span class="c1"># Load the data
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
 <span class="n">x_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">y_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 
 
-<span class="c">### Model definition ###</span>
+<span class="c1">### Model definition ###
+</span>
+<span class="c1"># First we define the trainable parameters a and b 
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># requires_grad means it is trainable
+</span><span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c"># First we define the trainable parameters a and b </span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># requires_grad means it is trainable</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="c"># Then we define the prediction model</span>
-<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
+<span class="c1"># Then we define the prediction model
+</span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x_input</span> <span class="o">+</span> <span class="n">b</span>
 
 
-<span class="c">### Loss function definition ###</span>
-
+<span class="c1">### Loss function definition ###
+</span>
 <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_target</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y_target</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
 
 
-<span class="c">### TensorBoard Writer Setup ###</span>
-
+<span class="c1">### TensorBoard Writer Setup ###
+</span>
 <span class="n">log_name</span> <span class="o">=</span> <span class="n">f</span><span class="s">"{LEARNING_RATE}, {OPTIMIZER_CONSTRUCTOR.__name__}"</span>
 <span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">f</span><span class="s">"runs/{log_name}"</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s">"To see tensorboard, run: tensorboard --logdir=runs/"</span><span class="p">)</span>
 
 
-<span class="c">### Training the model ###</span>
+<span class="c1">### Training the model ###
+</span>
+<span class="c1"># Setup the optimizer object, so it optimizes a and b.
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZER_CONSTRUCTOR</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
 
-<span class="c"># Setup the optimizer object, so it optimizes a and b.</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZER_CONSTRUCTOR</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
-
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ITERS</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to a and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update a and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ITERS</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to a and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update a and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
     <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'a'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'b'</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
@@ -651,9 +651,9 @@ tensorboard <span class="nt">--logdir</span><span class="o">=</span>runs/
 
 <p>Now this is looking like progress! For the first time we start to get a sense of the loss rapidly decreasing, and then slowing down substantially. In addition, the final value of <code>a</code> is now negative (which we know is correct) compared to previous runs which ended either positive or close to zero. However, by looking at the plots for <code>a</code> and <code>b</code> (and to a lesser degree <code>L</code>) we can see that we still haven&#39;t achieved convergence: <code>a</code> and <code>b</code> haven&#39;t stopped changing substantially at the end of training. So, time to increase the learning rate even more! Before doing so, I am going to delete the logs of previous runs, except for the Adagrad run with a learning rate of 5, so that we can read the plots more clearly:</p>
 <div class="highlight"><pre class="highlight shell"><code><span class="c"># This will delete logs of all the runs</span>
-rm <span class="nt">-rf</span> runs/
+<span class="nb">rm</span> <span class="nt">-rf</span> runs/
 <span class="c"># Or, you can delete a specific run, for example:</span>
-rm <span class="nt">-rf</span> runs/10,<span class="se">\ </span>Adagrad/
+<span class="nb">rm</span> <span class="nt">-rf</span> runs/10,<span class="se">\ </span>Adagrad/
 </code></pre></div>
 <p>By trying learning rates of 10 and 50, we finally achieve convergence:</p>
 
@@ -678,12 +678,12 @@ rm <span class="nt">-rf</span> runs/10,<span class="se">\ </span>Adagrad/
 <li>Experiment on your own with a few other built-in PyTorch optimization algorithms, and try different learning rates. If you prefer a more focused goal, try to beat my configuration of an Adagrad optimizer with a learning rate of 50, and converge faster. Also note that some optimization algorithms have additional hyperparameters other than the learning rate. See the PyTorch documentation for information about these.</li>
 <li>One other cause of slow convergence for the homicide rate linear regression is the somewhat extreme scaling of the problem. The \(y\) variable is a whole order of magnitude greater than the \(x\) variable, and this affects optimization. We will actually look at this problem specifically in chapter 2.4, but for now you can experiment on your own with one solution: instead of using the \(x\) and \(y\) data directly from the data set, modify them first to rescale them. A quick, hacky way is to modify the code that loads the data, so that \(x\) and \(y\) vary between 0 and 1:</li>
 </ol>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># Load the data, and convert to 1x30 vectors</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
-<span class="c"># 21 and 50 are the min and max of x_data</span>
-<span class="n">x_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="mf">21.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">50.0</span> <span class="o">-</span> <span class="mf">21.0</span><span class="p">)</span>
-<span class="c"># 196 and 653 are the min and max of y_data</span>
-<span class="n">y_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">653.0</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span>
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># Load the data, and convert to 1x30 vectors
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
+<span class="c1"># 21 and 50 are the min and max of x_data
+</span><span class="n">x_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="mf">21.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">50.0</span> <span class="o">-</span> <span class="mf">21.0</span><span class="p">)</span>
+<span class="c1"># 196 and 653 are the min and max of y_data
+</span><span class="n">y_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">653.0</span> <span class="o">-</span> <span class="mf">196.0</span><span class="p">)</span>
 </code></pre></div>
 <p>On your own, add this code and see if you can achieve convergence using only gradient descent. You can also see how quickly you can achieve convergence using a more advanced algorithm such as Adam.</p>
 <h1 id="complete-code-2">Complete Code</h1>
@@ -694,58 +694,58 @@ rm <span class="nt">-rf</span> runs/10,<span class="se">\ </span>Adagrad/
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
 <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 
-<span class="c">### Hyperparameters ###</span>
-
-<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mi">50</span> <span class="c"># Much smaller training rate, to make sure the optimization is at least reliable.</span>
-<span class="n">NUM_ITERS</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c"># Twice as many training iterations, just gives us more room to experiment later.</span>
-<span class="n">OPTIMIZER_CONSTRUCTOR</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adagrad</span> <span class="c"># This is the simplest optimization algorithm.</span>
-
-<span class="c"># Load the data</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
+<span class="c1">### Hyperparameters ###
+</span>
+<span class="n">LEARNING_RATE</span> <span class="o">=</span> <span class="mi">50</span> <span class="c1"># Much smaller training rate, to make sure the optimization is at least reliable.
+</span><span class="n">NUM_ITERS</span> <span class="o">=</span> <span class="mi">20000</span> <span class="c1"># Twice as many training iterations, just gives us more room to experiment later.
+</span><span class="n">OPTIMIZER_CONSTRUCTOR</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adagrad</span> <span class="c1"># This is the simplest optimization algorithm.
+</span>
+<span class="c1"># Load the data
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
 <span class="n">x_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">y_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 
 
-<span class="c">### Model definition ###</span>
+<span class="c1">### Model definition ###
+</span>
+<span class="c1"># First we define the trainable parameters a and b 
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># requires_grad means it is trainable
+</span><span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c"># First we define the trainable parameters a and b </span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># requires_grad means it is trainable</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="c"># Then we define the prediction model</span>
-<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
+<span class="c1"># Then we define the prediction model
+</span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x_input</span> <span class="o">+</span> <span class="n">b</span>
 
 
-<span class="c">### Loss function definition ###</span>
-
+<span class="c1">### Loss function definition ###
+</span>
 <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_target</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y_target</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
 
 
-<span class="c">### TensorBoard Writer Setup ###</span>
-<span class="n">log_name</span> <span class="o">=</span> <span class="n">f</span><span class="s">"{LEARNING_RATE}, {OPTIMIZER_CONSTRUCTOR.__name__}"</span>
+<span class="c1">### TensorBoard Writer Setup ###
+</span><span class="n">log_name</span> <span class="o">=</span> <span class="n">f</span><span class="s">"{LEARNING_RATE}, {OPTIMIZER_CONSTRUCTOR.__name__}"</span>
 <span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="o">=</span><span class="n">f</span><span class="s">"runs/{log_name}"</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="s">"To see tensorboard, run: tensorboard --logdir=runs/"</span><span class="p">)</span>
 
 
-<span class="c">### Training the model ###</span>
+<span class="c1">### Training the model ###
+</span>
+<span class="c1"># Setup the optimizer object, so it optimizes a and b.
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZER_CONSTRUCTOR</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
 
-<span class="c"># Setup the optimizer object, so it optimizes a and b.</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZER_CONSTRUCTOR</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="n">LEARNING_RATE</span><span class="p">)</span>
-
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ITERS</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to a and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update a and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_ITERS</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to a and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update a and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
     <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'a'</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s">'b'</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>

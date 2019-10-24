@@ -96,7 +96,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-12-03T00:00:00-08:00" />
 <script type="application/ld+json">
-{"description":"1st year programming languages PhD student at UMass Amherst.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2017-12-03-single-variable.html","headline":"Single Variable Linear Regression","dateModified":"2017-12-03T00:00:00-08:00","datePublished":"2017-12-03T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2017-12-03-single-variable.html"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2017-12-03-single-variable.html"},"description":"1st year programming languages PhD student at UMass Amherst.","@type":"BlogPosting","url":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2017-12-03-single-variable.html","headline":"Single Variable Linear Regression","dateModified":"2017-12-03T00:00:00-08:00","datePublished":"2017-12-03T00:00:00-08:00","author":{"@type":"Person","name":"Donald Pinckney"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -448,7 +448,7 @@
 <h1 id="single-variable-regression-4">Single Variable Regression</h1>
 <p>Since this is the very first tutorial in this guide and no knowledge is assumed about machine learning or PyTorch, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in PyTorch. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the PyTorch <a href="#implementation">implementation</a>.</p>
 <h2 id="motivation-5">Motivation</h2>
-<p>Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>, and the line of best fit next to it.</p>
+<p>Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age<sup id="fnref1"><a href="#fn1">1</a></sup>, and the line of best fit next to it.</p>
 
 <table><thead>
 <tr>
@@ -553,8 +553,8 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
 <p>Note that <code>x_dataset</code> and <code>y_dataset</code> are <em>not</em> single numbers, but are actually what are called tensors. Roughly, a tensor is just an \(n\) dimensional grid of numbers, so a 1-tensor is a <a href="https://en.wikipedia.org/wiki/Vector_space">vector</a>, i.e. a single list of numbers. Both <code>x_dataset</code> and <code>y_dataset</code> are 1-tensors (vectors). The vectors are each 30 numbers long, since there are 30 data points in the CSV file. So, <code>(x_dataset[0], y_dataset[0])</code> would be \((x_1, y_1) = (21, 652)\). When we look at multi variable regression later, we will have to work much more with matrices and linear algebra, but for now you only need to worry about vectors.</p>
 
 <p>Whenever possible, I would recommend plotting data, since this helps you verify that you loaded the data set correctly and gain visual intuition about the shape of the data. This is also pretty easy using matplotlib:</p>
-<div class="highlight"><pre class="highlight python"><code><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s">'x'</span><span class="p">)</span> <span class="c"># The 'x' means that data points will be marked with an x</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
+<div class="highlight"><pre class="highlight python"><code><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s">'x'</span><span class="p">)</span> <span class="c1"># The 'x' means that data points will be marked with an x
+</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Relationship between age and homicide deaths in the US'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -618,8 +618,8 @@ Before, we thought of \(x\) and \(y&#39;\) as single numbers. However, we just l
 <h3 id="minimizing-the-loss-function-with-gradient-descent-3">Minimizing the loss function with gradient descent</h3>
 <p>With our model and loss function defined, we are now ready to use the gradient descent algorithm to minimize the loss function, and thus find the optimal \(a\) and \(b\). Fortunately, PyTorch has already implemented the gradient descent algorithm for us, we just need to use it. The algorithm acts almost like a ball rolling downhill into the minimum of the function, but it does so in discrete time steps. PyTorch does not handle this aspect, we need to be responsible for performing each time step of gradient descent. So, roughly in pseudo-code we want to do this:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="c"># Tell PyTorch to do 1 time step of gradient descent</span>
-</code></pre></div>
+    <span class="c1"># Tell PyTorch to do 1 time step of gradient descent
+</span></code></pre></div>
 <p>We can&#39;t do this yet, since we don&#39;t yet have a way to tell PyTorch to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\(\alpha)\) of \(0.2\):</p>
 <div class="highlight"><pre class="highlight python"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 </code></pre></div>
@@ -627,13 +627,13 @@ Before, we thought of \(x\) and \(y&#39;\) as single numbers. However, we just l
 
 <p>Using our new <code>optimizer</code>object we are ready to write the optimization loop pseudo-code that we originally wanted. Let&#39;s look at the code first, and then break it down:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span> <span class="c"># 1.</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span> <span class="c"># 2.</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span> <span class="c"># 3.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span> <span class="c"># 4.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span> <span class="c"># 5.</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"t = {t}, loss = {current_loss}, a = {a}, b = {b}"</span><span class="p">)</span> <span class="c"># 6.</span>
-</code></pre></div>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span> <span class="c1"># 1.
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span> <span class="c1"># 2.
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span> <span class="c1"># 3.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span> <span class="c1"># 4.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span> <span class="c1"># 5.
+</span>    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"t = {t}, loss = {current_loss}, a = {a}, b = {b}"</span><span class="p">)</span> <span class="c1"># 6.
+</span></code></pre></div>
 <p>Let&#39;s walk through each of the 6 steps to understand all that is happening here:</p>
 
 <ol>
@@ -663,8 +663,8 @@ t = 9999, loss = 39295.82421875, a = -17.272401809692383, b = 997.3334350585938
 \]</p>
 
 <p>The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use <code>x_dataset</code> as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. Outside of the training <code>for</code> loop, we can use the function <code>linspace</code> to create a bunch of evenly spaced values between 20 and 55:</p>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]</span>
-<span class="n">x_test_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]
+</span><span class="n">x_test_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
 </code></pre></div>
 <p>Then, we can compute the model&#39;s prediction:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="n">y_test_prediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test_data</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
@@ -702,8 +702,8 @@ t = 9999, loss = 39295.82421875, a = -17.272401809692383, b = 997.3334350585938
 <p>Recall that we created and used the optimizer like so:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="c"># Run one step of optimizer</span>
-</code></pre></div>
+    <span class="c1"># Run one step of optimizer
+</span></code></pre></div>
 <p>You might be wondering what the magic numbers of <code>lr=0.2</code> (\( \alpha \)) and <code>10000</code> are.  Let&#39;s start with the learning rate. In each iteration, gradient descent (and variants of it) take one small step that is determined by the derivative of the loss function. The learning rate is just the relative size of the step. So to take larger steps, we can use a larger learning rate. A larger learning rate can help us to converge more quickly, since we cover more distance in each iteration. But a learning rate too large can cause gradient descent to diverge that is, it won&#39;t reliably find the minimum.</p>
 
 <p>So, once you have chosen a learning rate, then you need to run the optimizer for enough iterations so it actually converges to the minimum. The easiest way to make sure it runs long enough is just to monitor the value of the loss function, as we did in this tutorial.</p>
@@ -740,66 +740,66 @@ But estimates – created from public health surveys and population models – s
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
 
-<span class="c"># Load the data</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
+<span class="c1"># Load the data
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
 <span class="n">x_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 <span class="n">y_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 
-<span class="c"># Plot the data</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s">'x'</span><span class="p">)</span> <span class="c"># The 'x' means that data points will be marked with an x</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
+<span class="c1"># Plot the data
+</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s">'x'</span><span class="p">)</span> <span class="c1"># The 'x' means that data points will be marked with an x
+</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Relationship between age and homicide deaths in the US'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 
 
-<span class="c">### Model definition ###</span>
+<span class="c1">### Model definition ###
+</span>
+<span class="c1"># First we define the trainable parameters a and b 
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># requires_grad means it is trainable
+</span><span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c"># First we define the trainable parameters a and b </span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># requires_grad means it is trainable</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="c"># Then we define the prediction model</span>
-<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
+<span class="c1"># Then we define the prediction model
+</span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x_input</span> <span class="o">+</span> <span class="n">b</span>
 
 
-<span class="c">### Loss function definition ###</span>
-
+<span class="c1">### Loss function definition ###
+</span>
 <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_target</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y_target</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
 
-<span class="c">### Training the model ###</span>
+<span class="c1">### Training the model ###
+</span>
+<span class="c1"># Setup the optimizer object, so it optimizes a and b.
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 
-<span class="c"># Setup the optimizer object, so it optimizes a and b.</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to a and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update a and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to a and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update a and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"t = {t}, loss = {current_loss}, a = {a.item()}, b = {b.item()}"</span><span class="p">)</span>
 
 
-<span class="c">### Using the trained model to make predictions ###</span>
+<span class="c1">### Using the trained model to make predictions ###
+</span>
+<span class="c1"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]
+</span><span class="n">x_test_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
+<span class="c1"># Predict the homicide rate for each age in x_test_data
+# .detach() tells PyTorch to not find gradients for this computation.
+</span><span class="n">y_test_prediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test_data</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
-<span class="c"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]</span>
-<span class="n">x_test_data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
-<span class="c"># Predict the homicide rate for each age in x_test_data</span>
-<span class="c"># .detach() tells PyTorch to not find gradients for this computation.</span>
-<span class="n">y_test_prediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_test_data</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-
-<span class="c"># Plot the original data and the prediction line</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s">'x'</span><span class="p">)</span>
+<span class="c1"># Plot the original data and the prediction line
+</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_dataset</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="s">'x'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_test_data</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">y_test_prediction</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
@@ -811,7 +811,7 @@ But estimates – created from public health surveys and population models – s
 <ol>
 
 <li id="fn1">
-<p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="https://wonder.cdc.gov/ucd-icd10.html">https://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM.&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+<p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="https://wonder.cdc.gov/ucd-icd10.html">https://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM.&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 </ol>

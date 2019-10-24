@@ -96,7 +96,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-12-03T00:00:00-08:00" />
 <script type="application/ld+json">
-{"description":"1st year programming languages PhD student at UMass Amherst.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html","headline":"Single Variable Linear Regression","dateModified":"2017-12-03T00:00:00-08:00","datePublished":"2017-12-03T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html"},"description":"1st year programming languages PhD student at UMass Amherst.","@type":"BlogPosting","url":"https://donaldpinckney.com/tensorflow/2017/12/03/single-variable.html","headline":"Single Variable Linear Regression","dateModified":"2017-12-03T00:00:00-08:00","datePublished":"2017-12-03T00:00:00-08:00","author":{"@type":"Person","name":"Donald Pinckney"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -451,7 +451,7 @@
 <h1 id="single-variable-regression-2">Single Variable Regression</h1>
 <p>Since this is the very first tutorial in this guide and no knowledge is assumed about machine learning or TensorFlow, this tutorial is a bit on the long side. This tutorial will give you an overview of how to do machine learning work in general, a mathematical understanding of single variable linear regression, and how to implement it in TensorFlow. If you already feel comfortable with the mathematical concept of linear regression, feel free to skip to the TensorFlow <a href="#implementation">implementation</a>.</p>
 <h2 id="motivation-1">Motivation</h2>
-<p>Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>, and the line of best fit next to it.</p>
+<p>Single variable linear regression is one of the fundamental tools for any interpretation of data. Using linear regression, we can predict continuous variable outcomes given some data, if the data has a roughly linear shape, i.e. it generally has the shape a line. For example, consider the plot below of 2015 US homicide deaths per age<sup id="fnref1"><a href="#fn1">1</a></sup>, and the line of best fit next to it.</p>
 
 <table><thead>
 <tr>
@@ -556,8 +556,8 @@ where \(\alpha\) is a constant called the <strong>learning rate</strong>, which 
 <p>Note that <code>x_data</code> and <code>y_data</code> are <em>not</em> single numbers, but are actually <a href="https://en.wikipedia.org/wiki/Vector_space">vectors</a>. The vectors are 30 numbers long, since there are 30 data points in the CSV file. So, <code>(x_data[0], y_data[0])</code> would be \((x_1, y_1) = (21, 652)\). When we look at multi variable regression later, we will have to work much more with vectors, matrices and linear algebra, but for now you can think of <code>x_data</code> and <code>y_data</code> just as lists of numbers. Also, we have to use <code>np.matrix(...)</code> to convert the array of numbers <code>D.age.values</code> to an actual numpy vector (likewise for <code>D.num_homicide_deaths.values</code>).</p>
 
 <p>Whenever possible, I would recommend plotting data, since this helps you verify that you loaded the data set correctly and gain visual intuition about the shape of the data. This is also pretty easy using matplotlib:</p>
-<div class="highlight"><pre class="highlight python"><code><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span> <span class="c"># The 'x' means that data points will be marked with an x</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
+<div class="highlight"><pre class="highlight python"><code><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span> <span class="c1"># The 'x' means that data points will be marked with an x
+</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Relationship between age and homicide deaths in the US'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -631,8 +631,8 @@ Note that since \(y&#39;\) and \(y\) are vectors, \(y&#39; - y\) is also a vecto
 <h3 id="minimizing-the-loss-function-with-gradient-descent-1">Minimizing the loss function with gradient descent</h3>
 <p>With our model and loss function defined, we are now ready to use the gradient descent algorithm to minimize the loss function, and thus find the optimal \(a\) and \(b\). Fortunately, TensorFlow as already implemented the gradient descent algorithm for us, we just need to use it. The algorithm acts almost like a ball rolling downhill into the minimum of the function, but it does so in discrete time steps. TensorFlow does not handle this aspect, we need to be responsible for performing each time step of gradient descent. So, roughly in pseudo-code we want to do this:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="c"># Tell TensorFlow to do 1 time step of gradient descent</span>
-</code></pre></div>
+    <span class="c1"># Tell TensorFlow to do 1 time step of gradient descent
+</span></code></pre></div>
 <p>We can&#39;t do this yet, since we don&#39;t yet have a way to tell TensorFlow to perform 1 time step of gradient descent. To do so, we create an optimizer with a learning rate (\(\alpha)\) of \(0.2\):</p>
 <div class="highlight"><pre class="highlight python"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
 </code></pre></div>
@@ -688,8 +688,8 @@ t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 \]</p>
 
 <p>The last remaining thing for this tutorial is to plot the predictions of the model on top of a plot of the data. First, we need to create a bunch of input ages that we will predict the homicide rates for. We could use <code>x_data</code> as the input ages, but it is more interesting to create a new vector of input ages, since then we can predict homicide rates even for ages that were not in the data set. Outside of the training <code>for</code> loop, we can use the numpy function <code>linspace</code> to create a bunch of evenly spaced values between 20 and 55:</p>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]</span>
-<span class="n">x_test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">))</span>
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 54.9, 55.0]
+</span><span class="n">x_test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">))</span>
 </code></pre></div>
 <p>Then, we can feed <code>x_test_data</code> into the <code>x</code> placeholder, and save the outputs of the prediction in <code>y_test_data</code>:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="n">y_test_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
@@ -729,8 +729,8 @@ t = 9999, loss = 39295.8, a = -17.2711, b = 997.285
 <p>Recall that we created and used the optimizer like so:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="c"># Run one step of optimizer</span>
-</code></pre></div>
+    <span class="c1"># Run one step of optimizer
+</span></code></pre></div>
 <p>You might be wondering what the magic numbers of <code>learning_rate=0.2</code> (\( \alpha \)) and <code>10000</code> are.  Let&#39;s start with the learning rate. In each iteration, gradient descent (and variants of it) take one small step that is determined by the derivative of the loss function. The learning rate is just the relative size of the step. So to take larger steps, we can use a larger learning rate. A larger learning rate can help us to converge more quickly, since we cover more distance in each iteration. But a learning rate too large can cause gradient descent to diverge that is, it won&#39;t reliably find the minimum.</p>
 
 <p>So, once you have chosen a learning rate, then you need to run the optimizer for enough iterations so it actually converges to the minimum. The easiest way to make sure it runs long enough is just to monitor the value of the loss function, as we did in this tutorial.</p>
@@ -767,13 +767,13 @@ But estimates – created from public health surveys and population models – s
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
-<span class="c"># Load the data, and convert to 1x30 vectors</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
+<span class="c1"># Load the data, and convert to 1x30 vectors
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"homicide.csv"</span><span class="p">)</span>
 <span class="n">x_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">age</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 <span class="n">y_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">num_homicide_deaths</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
 
-<span class="c"># Plot the data</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
+<span class="c1"># Plot the data
+</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Relationship between age and homicide deaths in the US'</span><span class="p">)</span>
@@ -781,39 +781,39 @@ But estimates – created from public health surveys and population models – s
 
 
 
-<span class="c">### Model definition ###</span>
+<span class="c1">### Model definition ###
+</span>
+<span class="c1"># Define x (input data) placeholder
+</span><span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 
-<span class="c"># Define x (input data) placeholder</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-
-<span class="c"># Define the trainable variables</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
+<span class="c1"># Define the trainable variables
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s">"b"</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">())</span>
 
-<span class="c"># Define the prediction model</span>
-<span class="n">y_predicted</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
+<span class="c1"># Define the prediction model
+</span><span class="n">y_predicted</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span>
 
 
-<span class="c">### Loss function definition ###</span>
+<span class="c1">### Loss function definition ###
+</span>
+<span class="c1"># Define y (correct data) placeholder
+</span><span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
 
-<span class="c"># Define y (correct data) placeholder</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
-
-<span class="c"># Define the loss function</span>
-<span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># Define the loss function
+</span><span class="n">L</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
 
-<span class="c">### Training the model ###</span>
+<span class="c1">### Training the model ###
+</span>
+<span class="c1"># Define optimizer object
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
 
-<span class="c"># Define optimizer object</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-
-<span class="c"># Create a session and initialize variables</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+<span class="c1"># Create a session and initialize variables
+</span><span class="n">session</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
 <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
 
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10000</span><span class="p">):</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_a</span><span class="p">,</span> <span class="n">current_b</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">x_data</span><span class="p">,</span>
         <span class="n">y</span><span class="p">:</span> <span class="n">y_data</span>
@@ -821,18 +821,18 @@ But estimates – created from public health surveys and population models – s
     <span class="k">print</span><span class="p">(</span><span class="s">"t = </span><span class="si">%</span><span class="s">g, loss = </span><span class="si">%</span><span class="s">g, a = </span><span class="si">%</span><span class="s">g, b = </span><span class="si">%</span><span class="s">g"</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">current_loss</span><span class="p">,</span> <span class="n">current_a</span><span class="p">,</span> <span class="n">current_b</span><span class="p">))</span>
 
 
-<span class="c">### Using the trained model to make predictions ###</span>
+<span class="c1">### Using the trained model to make predictions ###
+</span>
+<span class="c1"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 79.9, 80.0]
+</span><span class="n">x_test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">))</span>
 
-<span class="c"># x_test_data has values similar to [20.0, 20.1, 20.2, ..., 79.9, 80.0]</span>
-<span class="n">x_test_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">))</span>
-
-<span class="c"># Predict the homicide rate for each age in x_test_data</span>
-<span class="n">y_test_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
+<span class="c1"># Predict the homicide rate for each age in x_test_data
+</span><span class="n">y_test_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">feed_dict</span><span class="o">=</span><span class="p">{</span>
     <span class="n">x</span><span class="p">:</span> <span class="n">x_test_data</span>
 <span class="p">})</span>
 
-<span class="c"># Plot the original data and the prediction line</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
+<span class="c1"># Plot the original data and the prediction line
+</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="s">'x'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_test_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y_test_data</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Age'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'US Homicide Deaths in 2015'</span><span class="p">)</span>
@@ -844,7 +844,7 @@ But estimates – created from public health surveys and population models – s
 <ol>
 
 <li id="fn1">
-<p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="https://wonder.cdc.gov/ucd-icd10.html">https://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM.&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+<p>Centers for Disease Control and Prevention, National Center for Health Statistics. Underlying Cause of Death 1999-2015 on CDC WONDER Online Database, released December, 2016. Data are from the Multiple Cause of Death Files, 1999-2015, as compiled from data provided by the 57 vital statistics jurisdictions through the Vital Statistics Cooperative Program. Accessed at <a href="https://wonder.cdc.gov/ucd-icd10.html">https://wonder.cdc.gov/ucd-icd10.html</a> on Nov 22, 2017 2:18:46 PM.&nbsp;<a href="#fnref1">&#8617;</a></p>
 </li>
 
 </ol>

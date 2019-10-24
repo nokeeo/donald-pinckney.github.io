@@ -96,7 +96,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-11-15T00:00:00-08:00" />
 <script type="application/ld+json">
-{"description":"1st year programming languages PhD student at UMass Amherst.","author":{"@type":"Person","name":"Donald Pinckney"},"@type":"BlogPosting","url":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2018-11-15-feature-scaling.html","headline":"Feature Scaling","dateModified":"2018-11-15T00:00:00-08:00","datePublished":"2018-11-15T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2018-11-15-feature-scaling.html"},"@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2018-11-15-feature-scaling.html"},"description":"1st year programming languages PhD student at UMass Amherst.","@type":"BlogPosting","url":"https://donaldpinckney.com/books/pytorch/src/ch2-linreg/2018-11-15-feature-scaling.html","headline":"Feature Scaling","dateModified":"2018-11-15T00:00:00-08:00","datePublished":"2018-11-15T00:00:00-08:00","author":{"@type":"Person","name":"Donald Pinckney"},"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 </head>
@@ -521,8 +521,8 @@ MathJax.Hub.Config({
 
 <p>For simplification I have excluded a constant term from this synthetic data set, and when training models I &quot;cheated&quot; by not training the constant term \(b\) and just setting it to 0, so as to simplify visualization. The model that I used was simply:</p>
 <div class="highlight"><pre class="highlight python"><code><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_input</span><span class="p">)</span> <span class="c"># A is a 1x2 matrix</span>
-</code></pre></div>
+    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_input</span><span class="p">)</span> <span class="c1"># A is a 1x2 matrix
+</span></code></pre></div>
 <p>Since this is just a simple application of the ideas from chapter 2.3, one would expect this to work fairly easily. However, when using an <code>optim.SGD</code> optimizer, training goes rather poorly. Here is a plot showing the training progress of <code>A[0]</code> and the loss function side-by-side:</p>
 
 <p><img src="/books/pytorch/book/ch2-linreg/assets/scaling_plot1.png" alt="Training progress without scaling"></p>
@@ -688,54 +688,54 @@ Again, PyTorch provides a convenient <code>.std()</code> method.</p>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
 
-<span class="c">### Load the data</span>
+<span class="c1">### Load the data
+</span>
+<span class="c1"># First we load the entire CSV file into an m x 3
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-scaling-synthetic.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 
-<span class="c"># First we load the entire CSV file into an m x 3</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-scaling-synthetic.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
+<span class="c1"># We extract all rows and the first 2 columns, and then transpose it
+</span><span class="n">x_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
 
-<span class="c"># We extract all rows and the first 2 columns, and then transpose it</span>
-<span class="n">x_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+<span class="c1"># We extract all rows and the last column, and transpose it
+</span><span class="n">y_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
 
-<span class="c"># We extract all rows and the last column, and transpose it</span>
-<span class="n">y_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
-
-<span class="c"># And make a convenient variable to remember the number of input columns</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="c1"># And make a convenient variable to remember the number of input columns
+</span><span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
 
 
-<span class="c">### Model definition ###</span>
-
-<span class="c"># First we define the trainable parameters A and b </span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1">### Model definition ###
+</span>
+<span class="c1"># First we define the trainable parameters A and b 
+</span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c"># Then we define the prediction model</span>
-<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
+<span class="c1"># Then we define the prediction model
+</span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">A</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_input</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
 
 
-<span class="c">### Loss function definition ###</span>
-
+<span class="c1">### Loss function definition ###
+</span>
 <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_target</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y_target</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
 
-<span class="c">### Training the model ###</span>
+<span class="c1">### Training the model ###
+</span>
+<span class="c1"># Setup the optimizer object, so it optimizes a and b.
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
-<span class="c"># Setup the optimizer object, so it optimizes a and b.</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to A and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update A and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to A and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update A and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"t = {t}, loss = {current_loss}, A = {A.detach().numpy()}, b = {b.item()}"</span><span class="p">)</span>
 </code></pre></div>
 <p>If you run this code right now, you might see output like the following:</p>
@@ -757,12 +757,12 @@ t = 1999, loss = 0.50089, A = [[1.9920683  0.01292707]], b = 0.0895451
 <p>Now that we know the means and standard deviations of each feature, we have to use them to transform the inputs via Equation \((\ref{eq:scaling})\). We have two options: we could implement the transformation directly by transforming <code>x_dataset</code> before training, or we could include the transformation within the PyTorch model computations. But since we need to do the transformation again when we want to predict output given new inputs, including it in the PyTorch computations will be a bit more convenient.</p>
 
 <p>When we define the model, we want to first transform the input according to Equation \((\ref{eq:scaling})\):</p>
-<div class="highlight"><pre class="highlight python"><code><span class="c"># First we define the trainable parameters A and b </span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight"><pre class="highlight python"><code><span class="c1"># First we define the trainable parameters A and b 
+</span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c"># Then we define the prediction model</span>
-<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
+<span class="c1"># Then we define the prediction model
+</span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
     <span class="n">x_transformed</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_input</span> <span class="o">-</span> <span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="n">deviations</span>
     <span class="k">return</span> <span class="n">A</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_transformed</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
 </code></pre></div>
@@ -802,62 +802,62 @@ t = 1999, loss = 1.17733e-07, A = [[6.0697703 3.9453504]], b = 16.5
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
 
-<span class="c">### Load the data</span>
+<span class="c1">### Load the data
+</span>
+<span class="c1"># First we load the entire CSV file into an m x 3
+</span><span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-scaling-synthetic.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
 
-<span class="c"># First we load the entire CSV file into an m x 3</span>
-<span class="n">D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"linreg-scaling-synthetic.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="nb">float</span><span class="p">)</span>
+<span class="c1"># We extract all rows and the first 2 columns, and then transpose it
+</span><span class="n">x_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
 
-<span class="c"># We extract all rows and the first 2 columns, and then transpose it</span>
-<span class="n">x_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+<span class="c1"># We extract all rows and the last column, and transpose it
+</span><span class="n">y_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
 
-<span class="c"># We extract all rows and the last column, and transpose it</span>
-<span class="n">y_dataset</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
-
-<span class="c"># And make a convenient variable to remember the number of input columns</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="c1"># And make a convenient variable to remember the number of input columns
+</span><span class="n">n</span> <span class="o">=</span> <span class="mi">2</span>
 
 
-<span class="c">### Feature Scaling computations</span>
-
-<span class="c"># Pre-compute the means and standard deviations of independent variables</span>
-<span class="n">means</span> <span class="o">=</span> <span class="n">x_dataset</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1">### Feature Scaling computations
+</span>
+<span class="c1"># Pre-compute the means and standard deviations of independent variables
+</span><span class="n">means</span> <span class="o">=</span> <span class="n">x_dataset</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">deviations</span> <span class="o">=</span> <span class="n">x_dataset</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 
-<span class="c">### Model definition ###</span>
-
-<span class="c"># First we define the trainable parameters A and b </span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1">### Model definition ###
+</span>
+<span class="c1"># First we define the trainable parameters A and b 
+</span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="c"># Then we define the prediction model</span>
-<span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
+<span class="c1"># Then we define the prediction model
+</span><span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="n">x_input</span><span class="p">):</span>
     <span class="n">x_transformed</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_input</span> <span class="o">-</span> <span class="n">means</span><span class="p">)</span> <span class="o">/</span> <span class="n">deviations</span>
     <span class="k">return</span> <span class="n">A</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_transformed</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span>
 
 
-<span class="c">### Loss function definition ###</span>
-
+<span class="c1">### Loss function definition ###
+</span>
 <span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_target</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">((</span><span class="n">y_predicted</span> <span class="o">-</span> <span class="n">y_target</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
 
-<span class="c">### Training the model ###</span>
+<span class="c1">### Training the model ###
+</span>
+<span class="c1"># Setup the optimizer object, so it optimizes a and b.
+</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
-<span class="c"># Setup the optimizer object, so it optimizes a and b.</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">([</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-
-<span class="c"># Main optimization loop</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
-    <span class="c"># Set the gradients to 0.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="c"># Compute the current predicted y's from x_dataset</span>
-    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
-    <span class="c"># See how far off the prediction is</span>
-    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
-    <span class="c"># Compute the gradient of the loss with respect to A and b.</span>
-    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="c"># Update A and b accordingly.</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="c1"># Main optimization loop
+</span><span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2000</span><span class="p">):</span>
+    <span class="c1"># Set the gradients to 0.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="c1"># Compute the current predicted y's from x_dataset
+</span>    <span class="n">y_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x_dataset</span><span class="p">)</span>
+    <span class="c1"># See how far off the prediction is
+</span>    <span class="n">current_loss</span> <span class="o">=</span> <span class="n">loss</span><span class="p">(</span><span class="n">y_predicted</span><span class="p">,</span> <span class="n">y_dataset</span><span class="p">)</span>
+    <span class="c1"># Compute the gradient of the loss with respect to A and b.
+</span>    <span class="n">current_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="c1"># Update A and b accordingly.
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
     <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s">"t = {t}, loss = {current_loss}, A = {A.detach().numpy()}, b = {b.item()}"</span><span class="p">)</span>
 </code></pre></div>
 </div>
